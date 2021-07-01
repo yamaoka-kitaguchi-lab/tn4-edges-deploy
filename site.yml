@@ -1,5 +1,5 @@
 ---
-- name: Provisioning generic tunnel endpoints of vSIX access service
+- name: Deploy Tn4 edge SWs
   hosts: all
   gather_facts: yes
   become: yes
