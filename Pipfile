@@ -1,0 +1,19 @@
+[[source]]
+url        = "https://pypi.org/simple"
+verify_ssl = true
+name       = "pypi"
+
+[packages]
+ansible      = "~=4.1"
+pyyaml       = "*"
+requests     = "*"
+
+[dev-packages]
+
+[requires]
+
+[scripts]
+develop    = 'ansible-playbook -vvv site.yml'
+dryrun     = 'ansible-playbook -vvv --check site.yml'
+terraform  = 'ansible-playbook -v --skip-tags "develop" site.yml'
+boring     = 'ansible-playbook -v --tags "boring" --skip-tags "develop" site.yml'
