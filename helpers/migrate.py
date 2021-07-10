@@ -22,7 +22,7 @@ def rule_common():
     pass
 
 
-def converter(hostname):
+def migrater(hostname):
     registry = {
         "minami3": rule_minami3()
     }
@@ -33,6 +33,6 @@ def converter(hostname):
 
 
 if __name__ == "__main__":
-    f = converter("minami3")
+    f = migrater("minami3")
     for old in ["ge-0/0/0", "ge-0/0/47", "ge-1/0/0", "ge-1/0/47"]:
         pprint(f(old))

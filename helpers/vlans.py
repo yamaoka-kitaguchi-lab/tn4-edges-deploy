@@ -9,7 +9,7 @@ import re
 VLANTXT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vlans/core-o1.vlan.txt")
 
 
-def loader(path=VLANTXT_PATH):
+def load(path=VLANTXT_PATH):
     vlans = {}
     with open(path) as fd:
         hits = re.findall("set vlans (\S+) (\S+) (\S+)", fd.read(), re.S)
@@ -29,4 +29,4 @@ def loader(path=VLANTXT_PATH):
 
 
 if __name__ == "__main__":
-    pprint(loader())
+    pprint(load())
