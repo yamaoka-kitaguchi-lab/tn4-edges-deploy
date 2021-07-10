@@ -4,12 +4,13 @@ Load sites and devices from Google Spreadsheet
 """
 from oauth2client.service_account import ServiceAccountCredentials
 from pprint import pprint
+import os
 import sys
 import gspread
 
 # See: https://docs.google.com/spreadsheets/d/19ZUxcU-pdpwuNDDOA8u9IaQyuXxwpZh1X7uRygeo7Hw
 SPREADSHEET_KEY = "19ZUxcU-pdpwuNDDOA8u9IaQyuXxwpZh1X7uRygeo7Hw"
-
+KEYJSON_PATH = os.path.join(os.path.dirname(__file__), "../.secrets/googleapi.json")
 
 def open_sheet(keyjson_path, sheetkey):
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
@@ -19,7 +20,7 @@ def open_sheet(keyjson_path, sheetkey):
     return sheets
 
 
-def load(keyjson_path):
+def load(keyjson_path=KEYJSON_PATH):
     devices =[]
     sheet = open_sheet(keyjson_path, SPREADSHEET_KEY).sheet1
     lines = sheet.get_all_values()
@@ -30,12 +31,11 @@ def load(keyjson_path):
                 "fullname": line[1],
                 "slug": line[2]
             },
-            "devicetype": {
+            "type": {
                 "slug": line[3]
             },
             "device": {
-                "fullname": line[5],
-                "slug": line[6]
+                "name": line[5],
             },
             "vc": {"Single": False, "Stacked": True}[line[4]],
         })

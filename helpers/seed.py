@@ -57,17 +57,72 @@ class NetBoxClient:
     vlans = self.get_all_vlans()
     return [vlan["vid"] for vlan in vlans]
   
+  def get_all_sites(self):
+    return self.query("/dcim/sites/")
+  
+  def get_all_siteslugs(self):
+    sites = self.get_all_sites()
+    return [site["slug"] for site in sites]
+  
+  def get_all_devices(self):
+    return self.query("/dcim/devices/")
+  
+  def get_all_devicenames(self):
+    devices = self.get_all_devices()
+    return [device["name"] for device in devices]
+  
   def create_vlans(self, vlans):
     existed_vids = self.get_all_vids()
     data = [
-      {"vid": vid, "name": prop["name"], "status": "active", "description": prop["description"]}
+      {
+        "vid": vid,
+        "name": prop["name"],
+        "status": "active",
+        "description": prop["description"]
+      }
       for vid, prop in vlans.items() if vid not in existed_vids
     ]
-    print("[I] {} VLANs are newly created.".format(len(data)))
-    return self.query("/ipam/vlans/", data)
-    
+    if data:
+      print("[I] {} VLANs are newly created.".format(len(data)))
+      return self.query("/ipam/vlans/", data)
+    print("[I] Skip to create VLAN.")
+    return
+
+  def create_sites(self, sites):
+    existed_sites = self.get_all_siteslugs()
+    data = [
+      {
+        "name": site["name"],
+        "slug": site["slug"],
+        "status": "active",
+      }
+      for site in sites if site["slug"] not in existed_sites
+    ]
+    if data:
+      print("[I] {} sites are newly created.".format(len(data)))
+      return self.query("/dcim/sites/", data)
+    print("[I] Skip to create site.")
+    return
   
   def create_devices(self, devices):
+    existed_devices = self.get_all_devicenames()
+    data = [
+      {
+        "name": device["name"],
+        "device_role": "edge-sw",
+        "device_type": device["type"]["slug"],
+        "site": device["site"]["slug"],
+        "status": "active"
+      }
+      for device in devices if device["name"] not in existed_devices
+    ]
+    if data:
+      print("[I] {} devices are newly created.".format(len(data)))
+      return self.query("/dcim/devices/", data)
+    print("[I] Skip to create device.")
+    return
+  
+  def create_vc(self):
     pass
 
 
@@ -79,14 +134,16 @@ def __load_encrypted_secrets():
       raw = vault.decrypt(v.read())
       return yaml.load(raw, Loader=yaml.CLoader)
     except AnsibleVaultError as e:
-      print("Failed to decrypt the vault. Check your password and try again:", e, file=sys.stderr)
+      print("[E] Failed to decrypt the vault. Check your password and try again:", e, file=sys.stderr)
       sys.exit(1)
 
 
 def main():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  nb.create_vlans(vlan_load())
+  #nb.create_vlans(vlan_load())
+  #nb.create_devices(device_load())
+  nb.create_sites(None)
 
 
 if __name__ == "__main__":
