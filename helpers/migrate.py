@@ -6,7 +6,7 @@ import os
 # Source: https://labo301.slack.com/archives/DCCNU4AA2/p1625829587152400
 def rule_minami3():
     rules = {}
-    with open(os.path.join(os.path.curdir, "./tn3/migration/minami3.txt")) as fd:
+    with open(os.path.join(os.path.dirname(__file__), "./tn3/migration/minami3.txt")) as fd:
         for n, line in enumerate(fd):
             if n == 0:
                 continue

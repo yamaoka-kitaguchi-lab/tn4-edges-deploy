@@ -6,7 +6,7 @@ from pybatfish.question.question import load_questions
 from pprint import pprint
 import os
 
-SNAPSHOT_PATH = os.path.join(os.path.curdir, "./tn3")
+SNAPSHOT_PATH = os.path.join(os.path.dirname(__file__), "./tn3")
 
 
 def group_by_node(props, key="Node", subkey="name"):
