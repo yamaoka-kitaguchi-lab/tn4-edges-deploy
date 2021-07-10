@@ -5,8 +5,10 @@ name       = "pypi"
 
 [packages]
 ansible      = "~=4.1"
+pybatfish    = "*"
 pyyaml       = "*"
 requests     = "*"
+gspread      = "*"
 
 [dev-packages]
 
