@@ -7,6 +7,7 @@ from pprint import pprint
 import sys
 import gspread
 
+# See: https://docs.google.com/spreadsheets/d/19ZUxcU-pdpwuNDDOA8u9IaQyuXxwpZh1X7uRygeo7Hw
 SPREADSHEET_KEY = "19ZUxcU-pdpwuNDDOA8u9IaQyuXxwpZh1X7uRygeo7Hw"
 
 
@@ -16,6 +17,7 @@ def open_sheet(keyjson_path, sheetkey):
     gc = gspread.authorize(credentials)
     sheets = gc.open_by_key(sheetkey)
     return sheets
+
 
 def load(keyjson_path):
     devices =[]

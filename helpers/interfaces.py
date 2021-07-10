@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 from pybatfish.client.commands import *
 from pybatfish.question import bfq
 from pybatfish.question.question import load_questions
@@ -39,7 +40,7 @@ def load(if_type="ge"):
             node: [prop["VLAN_ID"] for prop in props] for node, props in group_by_node(all_vlans).items()
         }
     }
-    
+
 
 if __name__ == "__main__":
     pprint(load())

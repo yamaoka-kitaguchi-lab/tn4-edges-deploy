@@ -6,6 +6,7 @@ from pprint import pprint
 import sys
 import re
 
+
 def loader(path):
     vlans = {}
     with open(path) as fd:
