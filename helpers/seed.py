@@ -71,6 +71,14 @@ class NetBoxClient:
     devices = self.get_all_devices()
     return [device["name"] for device in devices]
   
+  def get_all_vcs(self):
+    return self.query("/dcim/virtual-chassis/")
+  
+  def get_all_vcnames(self):
+    vcs = self.get_all_vcs()
+    pprint(vcs)
+    return [vc["name"] for vc in vcs]
+  
   def create_vlans(self, vlans):
     existed_vids = self.get_all_vids()
     data = [
@@ -94,6 +102,7 @@ class NetBoxClient:
       {
         "name": site["name"],
         "slug": site["slug"],
+        "region": site["region"],
         "status": "active",
       }
       for site in sites if site["slug"] not in existed_sites
@@ -110,8 +119,9 @@ class NetBoxClient:
       {
         "name": device["name"],
         "device_role": "edge-sw",
-        "device_type": device["type"]["slug"],
-        "site": device["site"]["slug"],
+        "device_type": device["device_type"],
+        "site": device["site"],
+        "region": device["region"],
         "status": "active"
       }
       for device in devices if device["name"] not in existed_devices
@@ -122,9 +132,6 @@ class NetBoxClient:
     print("[I] Skip to create device.")
     return
   
-  def create_vc(self):
-    pass
-
 
 def __load_encrypted_secrets():
   with open(VAULT_FILE) as v, open(VAULT_PASSWORD_FILE, "r") as p:
@@ -143,7 +150,7 @@ def main():
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
   #nb.create_vlans(vlan_load())
   #nb.create_devices(device_load())
-  nb.create_sites(None)
+  #nb.create_sites(None)
 
 
 if __name__ == "__main__":
