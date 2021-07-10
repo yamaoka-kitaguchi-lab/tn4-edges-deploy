@@ -20,28 +20,26 @@ def open_sheet(keyjson_path, sheetkey):
 def load(keyjson_path):
     devices =[]
     sheet = open_sheet(keyjson_path, SPREADSHEET_KEY).sheet1
-    idx = 3
-    while True:
-        if not sheet.cell(idx, 1) or idx > 1000:
-            break
+    lines = sheet.get_all_values()
+    for n, line in enumerate(lines):
+        if n < 2: continue
         devices.append({
             "site": {
-                "fullname": sheet.cell(idx, 2).value,
-                "slug": sheet.cell(idx, 3).value
+                "fullname": line[1],
+                "slug": line[2]
             },
             "devicetype": {
-                "slug": sheet.cell(idx, 4).value
+                "slug": line[3]
             },
             "device": {
-                "fullname": sheet.cell(idx, 6).value,
-                "slug": sheet.cell(idx, 7).value
+                "fullname": line[5],
+                "slug": line[6]
             },
-            "vc": {"Single": False, "Stacked": True}[sheet.cell(idx, 5).value],
+            "vc": {"Single": False, "Stacked": True}[line[4]],
         })
-        idx += 1
     return devices
 
 
 if __name__ == "__main__":
     keypath = sys.argv[1]
-    load(keypath)
+    pprint(load(keypath))
