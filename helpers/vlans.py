@@ -2,10 +2,9 @@
 """
 Load VLANs from the output of `show configuration vlans | display set`
 """
-import re
-import sys
 from pprint import pprint
-
+import sys
+import re
 
 def loader(path):
     vlans = {}
