@@ -9,6 +9,7 @@ pybatfish    = "*"
 pyyaml       = "*"
 requests     = "*"
 gspread      = "*"
+oauth2client = "*"
 
 [dev-packages]
 

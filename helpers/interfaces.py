@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 from pybatfish.client.commands import *
 from pybatfish.question import bfq
-from pybatfish.question.question import load_questions, list_questions
-
+from pybatfish.question.question import load_questions
 from pprint import pprint
 
 load_questions()
