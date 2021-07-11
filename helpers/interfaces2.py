@@ -12,7 +12,7 @@ def dirty_interfaces_parser(hostname):
   interfaces = {}
   
   def token(line):
-    return line.lstrip().rstrip("{}; ").split()
+    return line.lstrip().rstrip("{; ").split()
   
   def enum_if_range(if_from, if_to):
     if_base = if_from.split("/")[:-1]
@@ -21,11 +21,16 @@ def dirty_interfaces_parser(hostname):
   
   def enum_vlan_members(members):
     vids = []
-    for s in members.split():
+    for s in members:
+      if s == "[" or s == "]":
+        continue
+      if s == "all":
+        return ["all"]
       if "-" in s:
         a, b = s.split("-")
         vids += [vid for vid in range(int(a), int(b)+1)]
-      vids.append(int(s))
+      else:
+        vids.append(int(s))
     return vids
   
   with open(os.path.join(CONFIG_DIR, hostname)) as fd:
@@ -60,7 +65,7 @@ def dirty_interfaces_parser(hostname):
         if tk[0] == "port-mode":
           common_props["mode"] = tk[1]
         if tk[0] == "members":
-          common_props["vlan"] = enum_vlan_members(tk[1:].strip("[]"))
+          common_props["vlan"] = enum_vlan_members(tk[1:])
         if tk[0] == "description":
           common_props["description"] = tk[1]
         if tk[0] == "disable":
@@ -68,7 +73,7 @@ def dirty_interfaces_parser(hostname):
         l += 1
       for interface in interface_range:
         interfaces[interface] = common_props
-    if ifname != "":
+    elif ifname != "}":
       interfaces[ifname] = {"enable": True}
       l += 1
       while depth > 1:
@@ -80,15 +85,16 @@ def dirty_interfaces_parser(hostname):
         if tk[0] == "port-mode":
           interfaces[ifname]["mode"] = tk[1]
         if tk[0] == "members":
-          interfaces[ifname]["vlan"] = enum_vlan_members(tk[1:].strip("[]"))
+          interfaces[ifname]["vlan"] = enum_vlan_members(tk[1:])
         if tk[0] == "description":
           interfaces[ifname]["description"] = tk[1]
         if tk[0] == "disable":
           interfaces[ifname]["enable"] = False
         l += 1
+    l += 1
     
   return interfaces
 
 
 if __name__ == "__main__":
-  pprint(dirty_interfaces_parser("minami3-1"))
+  pprint(dirty_interfaces_parser("minami3-1.cfg"))
