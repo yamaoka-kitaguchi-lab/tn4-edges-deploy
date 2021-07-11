@@ -26,15 +26,17 @@ def load(keyjson_path=KEYJSON_PATH):
     lines = sheet.get_all_values()
     for n, line in enumerate(lines):
         if n < 2: continue
-        _, region, site_name, site_slug, device_type, vc, name = line
+        _, region, group_name, group, site_name, site, device_type, vc, name = line
         if vc == "Stacked":
             device_type += "-stacked"
         devices.append({
             "name": name,
             "device_type": device_type,
             "region": region,
+            "sitegroup_name": group_name,
+            "sitegroup": group,
             "site_name": site_name,
-            "site": site_slug,
+            "site": site,
         })
     return devices
 

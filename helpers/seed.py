@@ -57,12 +57,18 @@ class NetBoxClient:
     vlans = self.get_all_vlans()
     return [vlan["vid"] for vlan in vlans]
   
+  def get_all_sitegroups(self):
+    return self.query("/dcim/site-groups/")
+  
+  def get_all_sitegroupslugs(self):
+    sitegroups = self.get_all_sitegroups()
+    return [sitegroup["slug"] for sitegroup in sitegroups]
+  
   def get_all_sites(self):
     return self.query("/dcim/sites/")
   
   def get_all_siteslugs(self):
     sites = self.get_all_sites()
-    pprint(sites)
     return [site["slug"] for site in sites]
   
   def get_all_devices(self):
@@ -92,9 +98,21 @@ class NetBoxClient:
       for vid, prop in vlans.items() if vid not in existed_vids
     ]
     if data:
-      print("[I] {} VLANs are newly created.".format(len(data)))
       return self.query("/ipam/vlans/", data)
-    print("[I] Skip to create VLAN.")
+    return
+
+  def create_sitegroups(self, sitegroups):
+    existed_sitegroups = self.get_all_sitegroupslugs()
+    data = [
+      {
+        "name": site["sitegroup_name"],
+        "slug": site["sitegroup"]
+      }
+      for site in sitegroups if site["sitegroup"] not in existed_sitegroups
+    ]
+    data = list({v["slug"]:v for v in data}.values())
+    if data:
+      return self.query("/dcim/site-groups/", data)
     return
 
   def create_sites(self, sites):
@@ -104,15 +122,13 @@ class NetBoxClient:
         "name": site["site_name"],
         "slug": site["site"],
         "region": {"slug": site["region"]},
+        "group": {"slug": site["sitegroup"]},
         "status": "active",
       }
       for site in sites if site["site"] not in existed_sites
     ]
-    #pprint(data)
     if data:
-      print("[I] {} sites are newly created.".format(len(data)))
       return self.query("/dcim/sites/", data)
-    print("[I] Skip to create site.")
     return
   
   def create_devices(self, devices):
@@ -128,11 +144,8 @@ class NetBoxClient:
       }
       for device in devices if device["name"] not in existed_devices
     ]
-    #pprint(data)
     if data:
-      print("[I] {} devices are newly created.".format(len(data)))
       return self.query("/dcim/devices/", data)
-    print("[I] Skip to create device.")
     return
   
 
@@ -154,11 +167,24 @@ def main():
   
   vlans = vlan_load()
   devices = device_load()
-  sites = [{k: d[k] for k in ["region", "site_name", "site"]} for d in devices]
+  sitegroups = [{k: d[k] for k in ["sitegroup_name", "sitegroup"]} for d in devices]
+  sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
   
-  nb.create_vlans(vlans)
-  nb.create_sites(sites)
-  nb.create_devices(devices)
+  res = nb.create_vlans(vlans)
+  if res:
+    pprint(res)
+  
+  res = nb.create_sitegroups(sitegroups)
+  if res:
+    pprint(res)
+
+  res = nb.create_sites(sites)
+  if res:
+    pprint(res)
+
+  res = nb.create_devices(devices)
+  if res:
+    pprint(res)
 
 
 if __name__ == "__main__":
