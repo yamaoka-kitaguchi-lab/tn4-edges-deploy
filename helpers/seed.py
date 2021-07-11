@@ -167,18 +167,20 @@ def __load_encrypted_secrets():
 def migrate_edge(tn4_hostname, tn3_interfaces):
   port_converter = make_port_converter(tn4_hostname)
   tn4_interfaces = {}
-  for old_port, props in tn3_interfaces.items():
-    new_port = port_converter(old_port)
-    tn4_interfaces[new_port] = props
+  for tn3_port, props in tn3_interfaces.items():
+    tn4_port = port_converter(tn3_port)
+    tn4_interfaces[tn4_port] = props
   return tn4_interfaces
 
 
-def migrate_all_edges(devices, tn3_all_interfaces):
+def migrate_all_edges(devices, tn3_all_interfaces, hosts=[]):
   tn4_all_interfaces = {}
   for device in devices:
     tn4_hostname = device["name"]
+    if hosts and tn4_hostname not in hosts:
+      continue
     tn3_hostname = tn4_hostname + "-1"  # Hostname conversion rule
-    tn3_interfaces = tn3_all_interfaces["interfaces"][tn3_hostname]
+    tn3_interfaces = tn3_all_interfaces[tn3_hostname]
     tn4_all_interfaces[tn4_hostname] = migrate_edge(tn4_hostname, tn3_interfaces)
   return tn4_all_interfaces
 
@@ -192,7 +194,8 @@ def main():
   sitegroups = [{k: d[k] for k in ["sitegroup_name", "sitegroup"]} for d in devices]
   sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
   tn3_interfaces = interface_load()
-  tn4_interfaces = migrate_all_edges(devices, tn3_interfaces)
+  tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
+  pprint(tn4_interfaces)
   
   #res = nb.create_vlans(vlans)
   #if res:

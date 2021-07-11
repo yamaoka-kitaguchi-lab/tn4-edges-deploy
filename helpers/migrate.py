@@ -3,6 +3,17 @@ from pprint import pprint
 import os
 
 
+def converter(rules):
+    def inner(tn3_port):
+        try:
+            return rules[tn3_port]
+        except KeyError:
+            if int(tn3_port.split("/")[-1]) >= 24:
+                return "m" + tn3_port
+            return tn3_port
+    return inner
+
+
 # Source: https://labo301.slack.com/archives/DCCNU4AA2/p1625829587152400
 def rule_minami3():
     rules = {}
@@ -11,11 +22,9 @@ def rule_minami3():
             if n == 0:
                 continue
             rule = line.split()
-            if len(rule) == 4:
-                rules[rule[0]] = None
             if len(rule) > 4:
                 rules[rule[0]] = rule[4]
-    return lambda old_port: rules[old_port]
+    return rules
 
 
 def rule_common():
@@ -23,13 +32,14 @@ def rule_common():
 
 
 def make_port_converter(tn4_hostname):
-    registry = {
-        "minami3": rule_minami3()
+    rulebook = {
+        "minami3": rule_minami3(),
+        "*": rule_common(),
     }
     try:
-        return registry[tn4_hostname]
+        return converter(rulebook[tn4_hostname])
     except KeyError:
-        return rule_common()
+        return converter(rulebook["*"])
 
 
 if __name__ == "__main__":
