@@ -61,6 +61,12 @@ class NetBoxClient:
     vlans = self.get_all_vlans()
     return [vlan["vid"] for vlan in vlans]
   
+  def get_vlan_resolve_hints(self):
+    hints = {}
+    for vlan in self.get_all_vlans():
+      hints[vlan["vid"]] = vlan["id"]
+    return hints
+  
   def get_all_sitegroups(self):
     return self.query("/dcim/site-groups/")
   
@@ -171,25 +177,27 @@ class NetBoxClient:
     return
 
   def update_interfaces(self, interfaces):
-    hints = self.get_interface_resolve_hint()
+    interface_hints = self.get_interface_resolve_hint()
+    vlan_hints = self.get_vlan_resolve_hints()
     data = []
     for hostname, device_interfaces in interfaces.items():
       for interface, props in device_interfaces.items():
         if props["mode"] == "NONE":
           continue
         req = {
-          "iid": hints[hostname][interface],
+          "id": interface_hints[hostname][interface],
           "description": props["description"]
         }
         if props["mode"] == "ACCESS":
-          req["untagged_vlan"] = props["untagged"]
+          #req["mode"] = {"label": "Tagged", "value": "tagged"}
+          req["untagged_vlan"] = {"id": vlan_hints[props["untagged"]]}
         if props["mode"] == "TRUNK":
-          req["tagged_vlans"] = props["tagged"]
+          #req["mode"] = {"label": "Access", "value": "access"}
+          req["tagged_vlans"] = [{"id": vlan_hints[vid] for vid in props["tagged"]}] 
         data.append(req)
-    pprint(data)
-    #if data:
-    #  return self.query("/dcim/devices/", data)
-    #return
+    if data:
+      return self.query("/dcim/interfaces/", data, update=True)
+    return
 
 
 def __load_encrypted_secrets():
@@ -252,6 +260,7 @@ def main():
   #if res:
   #  pprint(res)
 
+  #pprint(nb.get_all_interfaces())
   res = nb.update_interfaces(tn4_interfaces)
   if res:
     pprint(res)
