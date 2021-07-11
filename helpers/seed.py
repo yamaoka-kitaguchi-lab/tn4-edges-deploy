@@ -13,10 +13,10 @@ from ansible.parsing.vault import VaultLib
 from ansible.parsing.vault import VaultSecret
 from ansible.parsing.vault import AnsibleVaultError
 
-from migrate import migrater
+from migrate import make_port_converter
 from devices import load as device_load
 from vlans import load as vlan_load
-from interfaces import load as interface_load
+from interfaces import load_interfaces as interface_load
 
 VAULT_FILE = os.path.join(os.path.dirname(__file__), "../inventories/production/group_vars/all/vault.yml")
 VAULT_PASSWORD_FILE = os.path.join(os.path.dirname(__file__), "../.secrets/vault-pass.txt")
@@ -164,6 +164,25 @@ def __load_encrypted_secrets():
       sys.exit(1)
 
 
+def migrate_edge(tn4_hostname, tn3_interfaces):
+  port_converter = make_port_converter(tn4_hostname)
+  tn4_interfaces = {}
+  for old_port, props in tn3_interfaces.items():
+    new_port = port_converter(old_port)
+    tn4_interfaces[new_port] = props
+  return tn4_interfaces
+
+
+def migrate_all_edges(devices, tn3_all_interfaces):
+  tn4_all_interfaces = {}
+  for device in devices:
+    tn4_hostname = device["name"]
+    tn3_hostname = tn4_hostname + "-1"  # Hostname conversion rule
+    tn3_interfaces = tn3_all_interfaces["interfaces"][tn3_hostname]
+    tn4_all_interfaces[tn4_hostname] = migrate_edge(tn4_hostname, tn3_interfaces)
+  return tn4_all_interfaces
+
+
 def main():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
@@ -172,22 +191,28 @@ def main():
   devices = device_load()
   sitegroups = [{k: d[k] for k in ["sitegroup_name", "sitegroup"]} for d in devices]
   sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
+  tn3_interfaces = interface_load()
+  tn4_interfaces = migrate_all_edges(devices, tn3_interfaces)
   
-  res = nb.create_vlans(vlans)
-  if res:
-    pprint(res)
+  #res = nb.create_vlans(vlans)
+  #if res:
+  #  pprint(res)
   
-  res = nb.create_sitegroups(sitegroups)
-  if res:
-    pprint(res)
+  #res = nb.create_sitegroups(sitegroups)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_sites(sites)
-  if res:
-    pprint(res)
+  #res = nb.create_sites(sites)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_devices(devices)
-  if res:
-    pprint(res)
+  #res = nb.create_devices(devices)
+  #if res:
+  #  pprint(res)
+
+  #res = nb.update_interfaces(tn4_interfaces)
+  #if res:
+  #  pprint(res)
 
 
 if __name__ == "__main__":

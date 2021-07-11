@@ -41,6 +41,21 @@ def load(if_type="ge"):
         }
     }
 
+def load_interfaces(if_type="ge"):
+    return {
+        hostname: {
+            ifname.split(".")[0]: {
+                "untagged": prop["Access_VLAN"],
+                "tagged": prop["Allowed_VLANs"],
+                "description": prop["Description"],
+                "mode": prop["Switchport_Mode"]  # "ACCESS" or "TRUNK" or "NONE"
+            }
+            for ifname, prop in props.items()
+        }
+        for hostname, props in load(if_type)["interfaces"].items()
+    }
+
 
 if __name__ == "__main__":
-    pprint(load())
+    #pprint(load())
+    pprint(load_interfaces())

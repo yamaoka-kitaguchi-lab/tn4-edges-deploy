@@ -22,17 +22,17 @@ def rule_common():
     pass
 
 
-def migrater(hostname):
+def make_port_converter(tn4_hostname):
     registry = {
         "minami3": rule_minami3()
     }
     try:
-        return registry[hostname]
+        return registry[tn4_hostname]
     except KeyError:
         return rule_common()
 
 
 if __name__ == "__main__":
-    f = migrater("minami3")
+    f = make_port_converter("minami3")
     for old in ["ge-0/0/0", "ge-0/0/47", "ge-1/0/0", "ge-1/0/47"]:
         pprint(f(old))
