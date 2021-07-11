@@ -62,6 +62,7 @@ class NetBoxClient:
   
   def get_all_siteslugs(self):
     sites = self.get_all_sites()
+    pprint(sites)
     return [site["slug"] for site in sites]
   
   def get_all_devices(self):
@@ -102,7 +103,7 @@ class NetBoxClient:
       {
         "name": site["site_name"],
         "slug": site["site"],
-        "region": site["region"],
+        "region": {"slug": site["region"]},
         "status": "active",
       }
       for site in sites if site["site"] not in existed_sites
@@ -119,10 +120,10 @@ class NetBoxClient:
     data = [
       {
         "name": device["name"],
-        "device_role": "edge-sw",
-        "device_type": device["device_type"],
-        "region": device["region"],
-        "site": device["site"],
+        "device_role": {"slug": "edge-sw"},
+        "device_type": {"slug": device["device_type"]},
+        "region": {"slug": device["region"]},
+        "site": {"slug": device["site"]},
         "status": "active"
       }
       for device in devices if device["name"] not in existed_devices
@@ -157,7 +158,7 @@ def main():
   
   nb.create_vlans(vlans)
   nb.create_sites(sites)
-  #nb.create_devices(devices)
+  nb.create_devices(devices)
 
 
 if __name__ == "__main__":
