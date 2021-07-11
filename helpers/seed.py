@@ -100,13 +100,14 @@ class NetBoxClient:
     existed_sites = self.get_all_siteslugs()
     data = [
       {
-        "name": site["name"],
-        "slug": site["slug"],
+        "name": site["site_name"],
+        "slug": site["site"],
         "region": site["region"],
         "status": "active",
       }
-      for site in sites if site["slug"] not in existed_sites
+      for site in sites if site["site"] not in existed_sites
     ]
+    #pprint(data)
     if data:
       print("[I] {} sites are newly created.".format(len(data)))
       return self.query("/dcim/sites/", data)
@@ -120,12 +121,13 @@ class NetBoxClient:
         "name": device["name"],
         "device_role": "edge-sw",
         "device_type": device["device_type"],
-        "site": device["site"],
         "region": device["region"],
+        "site": device["site"],
         "status": "active"
       }
       for device in devices if device["name"] not in existed_devices
     ]
+    #pprint(data)
     if data:
       print("[I] {} devices are newly created.".format(len(data)))
       return self.query("/dcim/devices/", data)
@@ -148,9 +150,14 @@ def __load_encrypted_secrets():
 def main():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  #nb.create_vlans(vlan_load())
-  #nb.create_devices(device_load())
-  #nb.create_sites(None)
+  
+  vlans = vlan_load()
+  devices = device_load()
+  sites = [{k: d[k] for k in ["region", "site_name", "site"]} for d in devices]
+  
+  nb.create_vlans(vlans)
+  nb.create_sites(sites)
+  #nb.create_devices(devices)
 
 
 if __name__ == "__main__":
