@@ -97,6 +97,7 @@ class NetBoxClient:
       }
       for vid, prop in vlans.items() if vid not in existed_vids
     ]
+    data = list({v["vid"]:v for v in data}.values())
     if data:
       return self.query("/ipam/vlans/", data)
     return
@@ -127,6 +128,7 @@ class NetBoxClient:
       }
       for site in sites if site["site"] not in existed_sites
     ]
+    data = list({v["slug"]:v for v in data}.values())
     if data:
       return self.query("/dcim/sites/", data)
     return
@@ -144,6 +146,7 @@ class NetBoxClient:
       }
       for device in devices if device["name"] not in existed_devices
     ]
+    data = list({v["name"]:v for v in data}.values())
     if data:
       return self.query("/dcim/devices/", data)
     return
