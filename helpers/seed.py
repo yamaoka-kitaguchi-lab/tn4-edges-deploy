@@ -27,7 +27,7 @@ class NetBoxClient:
     self.api_endpoint = netbox_url.rstrip("/") + "/api"
     self.token = netbox_api_token
 
-  def query(self, request_path, data=None):
+  def query(self, request_path, data=None, update=False):
     headers = {
       "Authorization": f"Token {self.token}",
       "Content-Type": "application/json",
@@ -39,7 +39,11 @@ class NetBoxClient:
       cnt, limit = 0, 100
       while cnt < len(data):
         d = data[cnt:cnt+limit]
-        raw = requests.post(url, json.dumps(d), headers=headers, verify=True)
+        raw = None
+        if update:
+          raw = requests.patch(url, json.dumps(d), headers=headers, verify=True)
+        else:
+          raw = requests.post(url, json.dumps(d), headers=headers, verify=True)
         responses += json.loads(raw.text)
         cnt += limit
     else:
@@ -77,6 +81,21 @@ class NetBoxClient:
   def get_all_devicenames(self):
     devices = self.get_all_devices()
     return [device["name"] for device in devices]
+  
+  def get_all_interfaces(self):
+    return self.query("/dcim/interfaces/")
+  
+  def get_interface_resolve_hint(self):
+    hints = {}
+    for interface in self.get_all_interfaces():
+      key = interface["device"]["name"]
+      subkey = interface["name"]
+      iid = interface["id"]
+      try:
+        hints[key][subkey] = iid
+      except KeyError:
+        hints[key] = {subkey: iid}
+    return hints
   
   def get_all_vcs(self):
     return self.query("/dcim/virtual-chassis/")
@@ -132,7 +151,7 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/sites/", data)
     return
-  
+
   def create_devices(self, devices):
     existed_devices = self.get_all_devicenames()
     data = [
@@ -150,7 +169,28 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/devices/", data)
     return
-  
+
+  def update_interfaces(self, interfaces):
+    hints = self.get_interface_resolve_hint()
+    data = []
+    for hostname, device_interfaces in interfaces.items():
+      for interface, props in device_interfaces.items():
+        if props["mode"] == "NONE":
+          continue
+        req = {
+          "iid": hints[hostname][interface],
+          "description": props["description"]
+        }
+        if props["mode"] == "ACCESS":
+          req["untagged_vlan"] = props["untagged"]
+        if props["mode"] == "TRUNK":
+          req["tagged_vlans"] = props["tagged"]
+        data.append(req)
+    pprint(data)
+    #if data:
+    #  return self.query("/dcim/devices/", data)
+    #return
+
 
 def __load_encrypted_secrets():
   with open(VAULT_FILE) as v, open(VAULT_PASSWORD_FILE, "r") as p:
@@ -195,7 +235,6 @@ def main():
   sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
   tn3_interfaces = interface_load()
   tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
-  pprint(tn4_interfaces)
   
   #res = nb.create_vlans(vlans)
   #if res:
@@ -213,9 +252,9 @@ def main():
   #if res:
   #  pprint(res)
 
-  #res = nb.update_interfaces(tn4_interfaces)
-  #if res:
-  #  pprint(res)
+  res = nb.update_interfaces(tn4_interfaces)
+  if res:
+    pprint(res)
 
 
 if __name__ == "__main__":

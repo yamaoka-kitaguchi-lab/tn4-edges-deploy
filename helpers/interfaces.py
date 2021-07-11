@@ -41,12 +41,28 @@ def load(if_type="ge"):
         }
     }
 
+
+def enum_vlans(vlan_str):
+    vlans = []
+    if vlan_str in [None, "None", ""]:
+        return None
+    if type(vlan_str) == int:
+        return vlan_str
+    for vlan_range in vlan_str.split(","):
+        v = vlan_range.split("-")
+        if len(v) == 1:
+            vlans.append(int(v[0]))
+        if len(v) == 2:
+            vlans.extend(list(range(int(v[0]), int(v[1])+1)))
+    return vlans
+
+
 def load_interfaces(if_type="ge"):
     return {
         hostname: {
             ifname.split(".")[0]: {
-                "untagged": prop["Access_VLAN"],
-                "tagged": prop["Allowed_VLANs"],
+                "untagged": enum_vlans(prop["Access_VLAN"]),
+                "tagged": enum_vlans(prop["Allowed_VLANs"]),
                 "description": prop["Description"],
                 "mode": prop["Switchport_Mode"]  # "ACCESS" or "TRUNK" or "NONE"
             }
