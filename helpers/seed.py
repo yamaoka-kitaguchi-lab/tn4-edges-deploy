@@ -67,6 +67,15 @@ class NetBoxClient:
       hints[vlan["vid"]] = vlan["id"]
     return hints
   
+  def make_vlan_resolver(self):
+    hints = self.get_vlan_resolve_hints()
+    def resolver(vid):
+      try:
+        return hints[vid]
+      except KeyError:
+        return None
+    return resolver
+  
   def get_all_sitegroups(self):
     return self.query("/dcim/site-groups/")
   
@@ -178,7 +187,8 @@ class NetBoxClient:
 
   def update_interfaces(self, interfaces):
     interface_hints = self.get_interface_resolve_hint()
-    vlan_hints = self.get_vlan_resolve_hints()
+    vlan_resolver = self.make_vlan_resolver()
+    
     data = []
     for hostname, device_interfaces in interfaces.items():
       for interface, props in device_interfaces.items():
@@ -189,11 +199,11 @@ class NetBoxClient:
           "description": props["description"]
         }
         if props["mode"] == "ACCESS":
-          #req["mode"] = {"label": "Tagged", "value": "tagged"}
-          req["untagged_vlan"] = {"id": vlan_hints[props["untagged"]]}
+          req["mode"] = "access"
+          req["untagged_vlan"] = vlan_resolver(props["untagged"])
         if props["mode"] == "TRUNK":
-          #req["mode"] = {"label": "Access", "value": "access"}
-          req["tagged_vlans"] = [{"id": vlan_hints[vid] for vid in props["tagged"]}] 
+          req["mode"] = "tagged"
+          req["tagged_vlans"] = [vid for vid in [vlan_resolver(vid) for vid in props["tagged"]] if vid]
         data.append(req)
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
@@ -244,23 +254,22 @@ def main():
   tn3_interfaces = interface_load()
   tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
   
-  #res = nb.create_vlans(vlans)
-  #if res:
-  #  pprint(res)
+  res = nb.create_vlans(vlans)
+  if res:
+    pprint(res)
   
-  #res = nb.create_sitegroups(sitegroups)
-  #if res:
-  #  pprint(res)
+  res = nb.create_sitegroups(sitegroups)
+  if res:
+    pprint(res)
 
-  #res = nb.create_sites(sites)
-  #if res:
-  #  pprint(res)
+  res = nb.create_sites(sites)
+  if res:
+    pprint(res)
 
-  #res = nb.create_devices(devices)
-  #if res:
-  #  pprint(res)
+  res = nb.create_devices(devices)
+  if res:
+    pprint(res)
 
-  #pprint(nb.get_all_interfaces())
   res = nb.update_interfaces(tn4_interfaces)
   if res:
     pprint(res)
