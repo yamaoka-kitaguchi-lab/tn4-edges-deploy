@@ -8,9 +8,10 @@ def converter(rules):
         try:
             return rules[tn3_port]
         except KeyError:
-            if int(tn3_port.split("/")[-1]) >= 24:
-                return "m" + tn3_port
-            return tn3_port
+            #if int(tn3_port.split("/")[-1]) >= 24:
+            #    return "m" + tn3_port
+            #return tn3_port
+            return None
     return inner
 
 

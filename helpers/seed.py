@@ -253,7 +253,8 @@ def migrate_edge(tn4_hostname, tn3_interfaces):
   tn4_interfaces = {}
   for tn3_port, props in tn3_interfaces.items():
     tn4_port = port_converter(tn3_port)
-    if tn4_port:
+    #print(tn3_port, tn4_port, props["description"])
+    if tn4_port is not None:
       tn4_interfaces[tn4_port] = props
   return tn4_interfaces
 
