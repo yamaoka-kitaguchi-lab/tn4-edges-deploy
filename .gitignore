@@ -1,6 +1,7 @@
 *.log
 helpers/data
 helpers/tn3
+helpers/*.json
 .secrets/*
 !.secrets/*.example
 
