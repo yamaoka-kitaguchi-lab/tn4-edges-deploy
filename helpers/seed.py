@@ -203,6 +203,7 @@ class NetBoxClient:
     vlan_resolver = self.make_vlan_resolver()
     data = []
     for hostname, device_interfaces in interfaces.items():
+      orphan_vlans = []
       for interface, props in device_interfaces.items():
         if props["mode"] == "NONE":
           continue
@@ -212,12 +213,25 @@ class NetBoxClient:
           "description": props["description"]
         }
         if props["mode"] == "ACCESS":
+          vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
+          if vid is None:
+            orphan_vlans.append(props["untagged"])
           req["mode"] = "access"
-          req["untagged_vlan"] = vlan_resolver(props["untagged"])
+          req["untagged_vlan"] = vid
         if props["mode"] == "TRUNK":
+          vids = []
+          for vlanid in props["tagged"]:
+            vid = vlan_resolver(vlanid)
+            if vid is None:
+              orphan_vlans.append(vlanid)
+            else:
+              vids.append(vid)
           req["mode"] = "tagged"
-          req["tagged_vlans"] = [vid for vid in [vlan_resolver(vid) for vid in props["tagged"]] if vid]
+          req["tagged_vlans"] = vids
         data.append(req)
+      if orphan_vlans:
+        with open(f"orphan-vlans.json", "w") as fd:
+          json.dump({hostname: orphan_vlans}, fd, indent=2)
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
     return
@@ -267,21 +281,21 @@ def main():
   tn3_interfaces = interface_load()
   tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
   
-  #res = nb.create_vlans(vlans)
-  #if res:
-  #  pprint(res)
+  res = nb.create_vlans(vlans)
+  if res:
+    pprint(res)
   
-  #res = nb.create_sitegroups(sitegroups)
-  #if res:
-  #  pprint(res)
+  res = nb.create_sitegroups(sitegroups)
+  if res:
+    pprint(res)
 
-  #res = nb.create_sites(sites)
-  #if res:
-  #  pprint(res)
+  res = nb.create_sites(sites)
+  if res:
+    pprint(res)
 
-  #res = nb.create_devices(devices)
-  #if res:
-  #  pprint(res)
+  res = nb.create_devices(devices)
+  if res:
+    pprint(res)
   
   res = nb.disable_all_interfaces(devices)
   if res:
