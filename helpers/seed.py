@@ -185,10 +185,22 @@ class NetBoxClient:
       return self.query("/dcim/devices/", data)
     return
 
+  def disable_all_interfaces(self, devices):
+    interface_hints = self.get_interface_resolve_hint()
+    data = []
+    for hostname in [v["name"] for v in devices]:
+      for iid in interface_hints[hostname].values():
+        req = {
+          "id": iid,
+          "enabled": False,
+        }
+        data.append(req)
+    if data:
+      return self.query("/dcim/interfaces/", data, update=True)
+
   def update_interfaces(self, interfaces):
     interface_hints = self.get_interface_resolve_hint()
     vlan_resolver = self.make_vlan_resolver()
-    
     data = []
     for hostname, device_interfaces in interfaces.items():
       for interface, props in device_interfaces.items():
@@ -196,6 +208,7 @@ class NetBoxClient:
           continue
         req = {
           "id": interface_hints[hostname][interface],
+          "enabled": True,
           "description": props["description"]
         }
         if props["mode"] == "ACCESS":
@@ -254,19 +267,23 @@ def main():
   tn3_interfaces = interface_load()
   tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
   
-  res = nb.create_vlans(vlans)
-  if res:
-    pprint(res)
+  #res = nb.create_vlans(vlans)
+  #if res:
+  #  pprint(res)
   
-  res = nb.create_sitegroups(sitegroups)
-  if res:
-    pprint(res)
+  #res = nb.create_sitegroups(sitegroups)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_sites(sites)
-  if res:
-    pprint(res)
+  #res = nb.create_sites(sites)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_devices(devices)
+  #res = nb.create_devices(devices)
+  #if res:
+  #  pprint(res)
+  
+  res = nb.disable_all_interfaces(devices)
   if res:
     pprint(res)
 
