@@ -78,11 +78,12 @@ def interface_range_vlan(cf):
             for member in members:
                 interfaces[member] = {
                     "enabled": enabled,
-                    "description": description,
                     "mode": mode,
-                    "untagged": enum_vlans(vlan_str) if mode == "ACCESS" else None,
+                    "untagged": int(vlan_str) if mode == "ACCESS" else None,
                     "tagged": enum_vlans(vlan_str) if mode == "TRUNK" else None,
                 }
+                if description:
+                    interfaces[member]["description"] = description
         n += 1
     return interfaces
 
@@ -92,7 +93,12 @@ def interface_range_patch(loader):
         data = loader(*args, **kwargs)
         for hostname in data:
             with open(os.path.join(SNAPSHOT_PATH, f"./configs/{hostname}.cfg")) as fd:
-                data[hostname] |= interface_range_vlan(fd.read().split("\n"))
+                interfaces = interface_range_vlan(fd.read().split("\n"))
+                for interface, props in interfaces.items():
+                    try:
+                        data[hostname][interface].update(props)
+                    except KeyError:
+                        data[hostname][interface] = props
         return data
     return new_loader
 
@@ -101,17 +107,21 @@ def load(if_type="ge"):
     load_questions()
     bf_init_snapshot(SNAPSHOT_PATH)
     
-    q1 = bfq.interfaceProperties(
-            interfaces=f"/{if_type}-[0,1]\/0\/[0-9]*\.0/",
-            properties="Active,Switchport_Mode,Access_VLAN,Allowed_VLANs,Description")
-    q2 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0,1]\/0\/[0-9]*\.0/")
-    all_interfaces = q1.answer().rows
-    all_vlans = q2.answer().rows
-    
+    interface_props = "Active,Switchport_Mode,Access_VLAN,Allowed_VLANs,Description"
+    q1 = bfq.interfaceProperties(interfaces="/"+if_type+"-[0,1]\/0\/[0-9]{1,2}$/", properties=interface_props)
+    q2 = bfq.interfaceProperties(interfaces=f"/{if_type}-[0,1]\/0\/[0-9]*\.0/", properties=interface_props)
+    q3 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0,1]\/0\/[0-9]*\.0/")
+    all_phy_interfaces = q1.answer().rows
+    all_log_interfaces = q2.answer().rows
+    all_vlans = q3.answer().rows
     return {
-        "interfaces": {
+        "phy_interfaces": {
             node: {prop["Interface"]["interface"]: prop for prop in props}
-            for node, props in group_by_node(all_interfaces, key="Interface", subkey="hostname").items()
+            for node, props in group_by_node(all_phy_interfaces, key="Interface", subkey="hostname").items()
+        },
+        "log_interfaces": {
+            node: {prop["Interface"]["interface"]: prop for prop in props}
+            for node, props in group_by_node(all_log_interfaces, key="Interface", subkey="hostname").items()
         },
         "vlans": {
             node: [prop["VLAN_ID"] for prop in props] for node, props in group_by_node(all_vlans).items()
@@ -121,21 +131,26 @@ def load(if_type="ge"):
 
 @interface_range_patch
 def load_interfaces(if_type="ge"):
-    return {
-        hostname: {
-            ifname.split(".")[0]: {
+    data = load(if_type)
+    interfaces = {}
+    for hostname, props in data["phy_interfaces"].items():
+        interfaces[hostname] = {}
+        for ifname, p_prop in props.items():
+            prop = p_prop
+            try:
+                prop = data["log_interfaces"][hostname][f"{ifname}.0"]
+            except KeyError:
+                pass
+            interfaces[hostname][ifname] = {
                 "enabled": prop["Active"],
                 "description": prop["Description"],
-                "mode": prop["Switchport_Mode"],  # "ACCESS" or "TRUNK" or "NONE"
-                "untagged": enum_vlans(prop["Access_VLAN"]),
+                "mode": prop["Switchport_Mode"],
+                "untagged": prop["Access_VLAN"],
                 "tagged": enum_vlans(prop["Allowed_VLANs"]),
             }
-            for ifname, prop in props.items()
-        }
-        for hostname, props in load(if_type)["interfaces"].items()
-    }
+    return interfaces
 
 
 if __name__ == "__main__":
-    #pprint(load())
+    #pprint(load()["interfaces"])
     pprint(load_interfaces())
