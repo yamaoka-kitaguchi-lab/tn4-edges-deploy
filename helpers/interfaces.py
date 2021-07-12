@@ -26,7 +26,7 @@ def load(if_type="ge"):
     
     q1 = bfq.interfaceProperties(
             interfaces=f"/{if_type}-[0,1]\/0\/[0-9]*\.0/",
-            properties="Switchport_Mode,Access_VLAN,Allowed_VLANs,Description")
+            properties="Active,Switchport_Mode,Access_VLAN,Allowed_VLANs,Description")
     q2 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0,1]\/0\/[0-9]*\.0/")
     all_interfaces = q1.answer().rows
     all_vlans = q2.answer().rows
@@ -61,6 +61,7 @@ def load_interfaces(if_type="ge"):
     return {
         hostname: {
             ifname.split(".")[0]: {
+                "enabled": prop["Active"],
                 "untagged": enum_vlans(prop["Access_VLAN"]),
                 "tagged": enum_vlans(prop["Allowed_VLANs"]),
                 "description": prop["Description"],

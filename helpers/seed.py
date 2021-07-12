@@ -209,8 +209,8 @@ class NetBoxClient:
           continue
         req = {
           "id": interface_hints[hostname][interface],
-          "enabled": True,
-          "description": props["description"]
+          "description": props["description"],
+          "enabled": props["enabled"],
         }
         if props["mode"] == "ACCESS":
           vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
@@ -280,6 +280,7 @@ def main():
   sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
   tn3_interfaces = interface_load()
   tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
+  #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces)
   
   res = nb.create_vlans(vlans)
   if res:
