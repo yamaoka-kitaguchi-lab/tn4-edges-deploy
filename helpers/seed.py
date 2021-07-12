@@ -253,7 +253,8 @@ def migrate_edge(tn4_hostname, tn3_interfaces):
   tn4_interfaces = {}
   for tn3_port, props in tn3_interfaces.items():
     tn4_port = port_converter(tn3_port)
-    tn4_interfaces[tn4_port] = props
+    if tn4_port:
+      tn4_interfaces[tn4_port] = props
   return tn4_interfaces
 
 
@@ -281,25 +282,25 @@ def main():
   tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
   #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces)
   
-  res = nb.create_vlans(vlans)
-  if res:
-    pprint(res)
+  #res = nb.create_vlans(vlans)
+  #if res:
+  #  pprint(res)
   
-  res = nb.create_sitegroups(sitegroups)
-  if res:
-    pprint(res)
+  #res = nb.create_sitegroups(sitegroups)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_sites(sites)
-  if res:
-    pprint(res)
+  #res = nb.create_sites(sites)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_devices(devices)
-  if res:
-    pprint(res)
+  #res = nb.create_devices(devices)
+  #if res:
+  #  pprint(res)
   
-  res = nb.disable_all_interfaces(devices)
-  if res:
-    pprint(res)
+  #res = nb.disable_all_interfaces(devices)
+  #if res:
+  #  pprint(res)
 
   res = nb.update_interfaces(tn4_interfaces)
   if res:

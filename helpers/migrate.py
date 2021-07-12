@@ -22,6 +22,8 @@ def rule_minami3():
             if n == 0:
                 continue
             rule = line.split()
+            if len(rule) == 4:
+                rules[rule[0]] = None
             if len(rule) > 4:
                 rules[rule[0]] = rule[4]
     return rules
