@@ -117,7 +117,6 @@ class NetBoxClient:
   
   def get_all_vcnames(self):
     vcs = self.get_all_vcs()
-    pprint(vcs)
     return [vc["name"] for vc in vcs]
   
   def create_vlans(self, vlans):
@@ -245,7 +244,7 @@ def __load_encrypted_secrets():
       raw = vault.decrypt(v.read())
       return yaml.load(raw, Loader=yaml.CLoader)
     except AnsibleVaultError as e:
-      print("[E] Failed to decrypt the vault. Check your password and try again:", e, file=sys.stderr)
+      print("Failed to decrypt the vault. Check your password and try again:", e, file=sys.stderr)
       sys.exit(1)
 
 
