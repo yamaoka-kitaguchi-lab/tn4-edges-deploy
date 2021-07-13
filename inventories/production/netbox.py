@@ -88,6 +88,9 @@ class EdgeConfig:
           vlans.add(vlan["vid"])
     return list(vlans)
   
+  def get_all_devices(self):
+    return [d["name"] for d in self.all_devices]
+  
   def get_interfaces(self, hostname):
     interfaces = {}
     for ifname, prop in self.all_interfaces[hostname].items():
@@ -129,3 +132,13 @@ if __name__ == "__main__":
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
   cf = EdgeConfig(nb)
+  
+  print(json.dumps({
+    device: {
+      "vars": {
+        "vlans": cf.get_vlans(device),
+        "interfaces": cf.get_interfaces(device),
+      }
+    }
+    for device in cf.get_all_devices()
+  }))
