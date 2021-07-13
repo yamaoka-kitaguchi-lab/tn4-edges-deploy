@@ -5,6 +5,12 @@
   tags:
     - develop
 
+- name: Show version
+  junos_command:
+    commands: "show version"
+  tags:
+    - develop
+
 - name: Save current config
   junos_config:
     backup: yes

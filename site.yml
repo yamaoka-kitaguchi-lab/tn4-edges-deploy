@@ -1,7 +1,7 @@
 ---
 - name: Deploy Tn4 edges - port migration from Tn3 and password reset
   hosts: all
-  gather_facts: yes
+  gather_facts: no
 
   roles:
     - role: common

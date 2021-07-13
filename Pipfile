@@ -12,12 +12,14 @@ gspread      = "*"
 oauth2client = "*"
 pynetbox     = "*"
 paramiko     = "*"
+ncclient     = "*"
 
 [dev-packages]
 
 [requires]
 
 [scripts]
+#ping    = 'ansible -m ping -i inventories/staging/hosts.yml minami3'
 develop  = 'ansible-playbook -vvv site.yml'
 dryrun   = 'ansible-playbook -vvv --check site.yml'
 migrate  = 'ansible-playbook -v --tags "migration" --skip-tags "develop" site.yml'
