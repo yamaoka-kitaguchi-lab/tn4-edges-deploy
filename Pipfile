@@ -10,14 +10,15 @@ pyyaml       = "*"
 requests     = "*"
 gspread      = "*"
 oauth2client = "*"
-pynetbox = "*"
+pynetbox     = "*"
+paramiko     = "*"
 
 [dev-packages]
 
 [requires]
 
 [scripts]
-develop    = 'ansible-playbook -vvv site.yml'
-dryrun     = 'ansible-playbook -vvv --check site.yml'
-terraform  = 'ansible-playbook -v --skip-tags "develop" site.yml'
-boring     = 'ansible-playbook -v --tags "boring" --skip-tags "develop" site.yml'
+develop  = 'ansible-playbook -vvv site.yml'
+dryrun   = 'ansible-playbook -vvv --check site.yml'
+migrate  = 'ansible-playbook -v --tags "migration" --skip-tags "develop" site.yml'
+finalize = 'ansible-playbook -v --tags "finalization" --skip-tags "develop" site.yml'
