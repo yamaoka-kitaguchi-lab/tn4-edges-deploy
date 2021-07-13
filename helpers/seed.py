@@ -201,8 +201,9 @@ class NetBoxClient:
     interface_hints = self.get_interface_resolve_hint()
     vlan_resolver = self.make_vlan_resolver()
     data = []
+    orphan_vlans = {}
     for hostname, device_interfaces in interfaces.items():
-      orphan_vlans = []
+      orphan_vlans[hostname] = []
       for interface, props in device_interfaces.items():
         if props["mode"] == "NONE":
           continue
@@ -214,7 +215,7 @@ class NetBoxClient:
         if props["mode"] == "ACCESS":
           vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
           if vid is None:
-            orphan_vlans.append(props["untagged"])
+            orphan_vlans[hostname].append(props["untagged"])
           req["mode"] = "access"
           req["untagged_vlan"] = vid
         if props["mode"] == "TRUNK":
@@ -222,15 +223,15 @@ class NetBoxClient:
           for vlanid in props["tagged"]:
             vid = vlan_resolver(vlanid)
             if vid is None:
-              orphan_vlans.append(vlanid)
+              orphan_vlans[hostname].append(vlanid)
             else:
               vids.append(vid)
           req["mode"] = "tagged"
           req["tagged_vlans"] = vids
         data.append(req)
-      if orphan_vlans:
-        with open(f"orphan-vlans.json", "w") as fd:
-          json.dump({hostname: orphan_vlans}, fd, indent=2)
+    if orphan_vlans:
+      with open("orphan-vlans.json", "w") as fd:
+        json.dump(orphan_vlans, fd, indent=2)
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
     return
@@ -251,23 +252,30 @@ def __load_encrypted_secrets():
 def migrate_edge(tn4_hostname, tn3_interfaces):
   port_converter = make_port_converter(tn4_hostname)
   tn4_interfaces = {}
+  results = []
   for tn3_port, props in tn3_interfaces.items():
     tn4_port = port_converter(tn3_port)
-    #print(tn3_port, tn4_port, props["description"])
     if tn4_port is not None:
       tn4_interfaces[tn4_port] = props
-  return tn4_interfaces
+      results.append({"from": tn3_port, "to": tn4_port})
+  results.sort(key=lambda x: x["from"])
+  return tn4_interfaces, results
 
 
 def migrate_all_edges(devices, tn3_all_interfaces, hosts=[]):
   tn4_all_interfaces = {}
+  migration_results = {}
   for device in devices:
     tn4_hostname = device["name"]
     if hosts and tn4_hostname not in hosts:
       continue
     tn3_hostname = tn4_hostname + "-1"  # Hostname conversion rule
     tn3_interfaces = tn3_all_interfaces[tn3_hostname]
-    tn4_all_interfaces[tn4_hostname] = migrate_edge(tn4_hostname, tn3_interfaces)
+    tn4_interfaces, results = migrate_edge(tn4_hostname, tn3_interfaces)
+    tn4_all_interfaces[tn4_hostname] = tn4_interfaces
+    migration_results[tn4_hostname] = results
+  with open("port-migration.json", "w") as fd:
+    json.dump(migration_results, fd, indent=2)
   return tn4_all_interfaces
 
 
