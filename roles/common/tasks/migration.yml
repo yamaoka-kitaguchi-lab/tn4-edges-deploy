@@ -1,20 +1,27 @@
 ---
+- name: Display all variables and facts known for a host
+  debug:
+    var: hostvars[inventory_hostname]
+  tags:
+    - develop
+
 - name: Save current config
   junos_config:
     backup: yes
     backup_options:
-      filename: {{ hostname }}_before.cfg
+      filename: "{{ hostname }}_before.cfg"
       dir_path: ../../backup
 
 - name: Add interface settings
-  junos_template:
+  junos_config:
     src: config.j2
+    src_format: set
     comment: Action performed by ansible
-    action: merge
+    update: merge
 
 - name: Save current config again
   junos_config:
     backup: yes
     backup_options:
-      filename: {{ hostname }}_after.cfg
+      filename: "{{ hostname }}_after.cfg"
       dir_path: ../../backup
