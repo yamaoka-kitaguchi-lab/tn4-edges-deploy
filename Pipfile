@@ -10,6 +10,7 @@ pyyaml       = "*"
 requests     = "*"
 gspread      = "*"
 oauth2client = "*"
+pynetbox = "*"
 
 [dev-packages]
 
