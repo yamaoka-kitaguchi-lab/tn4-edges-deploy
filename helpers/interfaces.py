@@ -43,7 +43,8 @@ def enum_vlans(vlan_str):
 
 # CAUTION: Dirty hack
 def interface_range_vlan(cf):
-    interfaces = {}
+    interfaces = {}         # Dict of interface metadata
+    uplink_interfaces = []  # List of the uplink interface name
     n = 0
     while n < len(cf):
         if cf[n].lstrip()[:15] == "interface-range":
@@ -53,6 +54,10 @@ def interface_range_vlan(cf):
             description = ""
             mode = "NONE"
             vlan_str = ""
+            uplink = False
+            
+            if cf[n].lstrip()[15:].strip(" {")  == "uplink":
+                uplink = True
             
             while depth > 0:
                 n += 1
@@ -72,9 +77,13 @@ def interface_range_vlan(cf):
                     mode = tk[1].upper()
                 if tk[0] == "members":
                     vlan_str = " ".join(tk[1:]).strip("[]")
-                
+            
+            if uplink:
+                uplink_interfaces += members
+            
             if mode == "NONE":
-                break
+                continue
+            
             for member in members:
                 interfaces[member] = {
                     "enabled": enabled,
@@ -85,7 +94,7 @@ def interface_range_vlan(cf):
                 if description:
                     interfaces[member]["description"] = description
         n += 1
-    return interfaces
+    return interfaces, uplink_interfaces
 
 
 def interface_range_patch(loader):
@@ -93,24 +102,26 @@ def interface_range_patch(loader):
         data = loader(*args, **kwargs)
         for hostname in data:
             with open(os.path.join(SNAPSHOT_PATH, f"./configs/{hostname}.cfg")) as fd:
-                interfaces = interface_range_vlan(fd.read().split("\n"))
-                for interface, props in interfaces.items():
+                interfaces, uplinks = interface_range_vlan(fd.read().split("\n"))
+                for ifname, props in interfaces.items():
                     try:
-                        data[hostname][interface].update(props)
+                        data[hostname][ifname].update(props)
                     except KeyError:
-                        data[hostname][interface] = props
+                        data[hostname][ifname] = props
+                for ifname in uplinks:
+                    del(data[hostname][ifname])
         return data
     return new_loader
 
 
-def load(if_type="ge"):
+def load(if_type="[g,x]e"):
     load_questions()
     bf_init_snapshot(SNAPSHOT_PATH)
     
     interface_props = "Active,Switchport_Mode,Access_VLAN,Allowed_VLANs,Description"
-    q1 = bfq.interfaceProperties(interfaces="/"+if_type+"-[0,1]\/0\/[0-9]{1,2}$/", properties=interface_props)
-    q2 = bfq.interfaceProperties(interfaces=f"/{if_type}-[0,1]\/0\/[0-9]*\.0/", properties=interface_props)
-    q3 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0,1]\/0\/[0-9]*\.0/")
+    q1 = bfq.interfaceProperties(interfaces="/"+if_type+"-[0,1]\/[0,1]\/[0-9]{1,2}$/", properties=interface_props)
+    q2 = bfq.interfaceProperties(interfaces=f"/{if_type}-[0,1]\/[0,1]\/[0-9]*\.0/", properties=interface_props)
+    q3 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0,1]\/[0,1]\/[0-9]*\.0/")
     all_phy_interfaces = q1.answer().rows
     all_log_interfaces = q2.answer().rows
     all_vlans = q3.answer().rows
@@ -130,12 +141,16 @@ def load(if_type="ge"):
 
 
 @interface_range_patch
-def load_interfaces(if_type="ge"):
+def load_interfaces(if_type="[g,x]e", excludes=[]):
     data = load(if_type)
     interfaces = {}
     for hostname, props in data["phy_interfaces"].items():
         interfaces[hostname] = {}
+        if hostname in excludes:
+            continue
         for ifname, p_prop in props.items():
+            if ifname in excludes:
+                continue
             prop = p_prop
             try:
                 prop = data["log_interfaces"][hostname][f"{ifname}.0"]
@@ -153,4 +168,5 @@ def load_interfaces(if_type="ge"):
 
 if __name__ == "__main__":
     #pprint(load()["interfaces"])
-    pprint(load_interfaces())
+    #pprint(load_interfaces())
+    pprint(load_interfaces(if_type="[g,x]e"))
