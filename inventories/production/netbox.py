@@ -143,6 +143,7 @@ if __name__ == "__main__":
     hostname: {
       "hosts": [cf.get_device_ip_address(hostname)],
       "vars": {
+        "hostname": hostname,
         "vlans": cf.get_vlans(hostname),
         "interfaces": cf.get_interfaces(hostname),
       }

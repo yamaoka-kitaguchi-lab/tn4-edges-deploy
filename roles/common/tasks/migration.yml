@@ -1,0 +1,20 @@
+---
+- name: Save current config
+  junos_config:
+    backup: yes
+    backup_options:
+      filename: {{ hostname }}_before.cfg
+      dir_path: ../../backup
+
+- name: Add interface settings
+  junos_template:
+    src: config.j2
+    comment: Action performed by ansible
+    action: merge
+
+- name: Save current config again
+  junos_config:
+    backup: yes
+    backup_options:
+      filename: {{ hostname }}_after.cfg
+      dir_path: ../../backup

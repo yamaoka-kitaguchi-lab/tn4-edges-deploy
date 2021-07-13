@@ -1,0 +1,8 @@
+---
+- import_tasks: migration.yml
+  tags:
+    - migration
+
+#- import_tasks: finalization.yml
+#  tags:
+#    - finalization
