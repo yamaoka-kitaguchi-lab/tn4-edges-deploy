@@ -81,12 +81,20 @@ class EdgeConfig:
     return arranged
   
   def get_vlans(self, hostname):
-    vlans = set()
+    vlans, vids = [], set()
     for prop in self.all_interfaces[hostname].values():
       for vlan in [prop["untagged_vlan"], *prop["tagged_vlans"]]:
         if vlan:
-          vlans.add(vlan["vid"])
-    return list(vlans)
+          vids.add(vlan["vid"])
+    for vid in vids:
+      for vlan in self.all_vlans:
+        if vlan["vid"] == vid:
+          vlans.append({
+            "name": vlan["name"],
+            "vid": vlan["vid"],
+            "description": vlan["description"],
+          })
+    return vlans
   
   def get_all_devices(self):
     return [d["name"] for d in self.all_devices]
