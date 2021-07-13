@@ -26,7 +26,21 @@ def load(keyjson_path=KEYJSON_PATH):
     lines = sheet.get_all_values()
     for n, line in enumerate(lines):
         if n < 2: continue
-        _, region, group_name, group, site_name, site, device_type, vc, name = line
+        
+        register    = line[0]
+        region      = line[1]
+        group_name  = line[2]
+        group       = line[3]
+        site_name   = line[4]
+        site        = line[5]
+        device_type = line[6]
+        vc          = line[7]
+        name        = line[8]
+        ipv4        = line[9]
+        cidr        = line[10]
+        
+        if register is False:
+            continue
         if vc == "Stacked":
             device_type += "-stacked"
         devices.append({
@@ -37,6 +51,8 @@ def load(keyjson_path=KEYJSON_PATH):
             "sitegroup": group,
             "site_name": site_name,
             "site": site,
+            "ipv4": ipv4,
+            "cidr": cidr,
         })
     return devices
 

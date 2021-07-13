@@ -76,6 +76,19 @@ class NetBoxClient:
         return None
     return resolver
   
+  def get_all_ipaddresses(self):
+    return self.query("/ipam/ip-addresses/")
+  
+  def get_all_ips(self):
+    ipaddrs = self.get_all_ipaddresses()
+    return [ipaddr["address"] for ipaddr in ipaddrs]
+  
+  def get_ip_resolve_hint(self):
+    hints = {}
+    for ip in self.get_all_ipaddresses():
+      hints[ip["address"]] = ip["id"]
+    return hints
+  
   def get_all_sitegroups(self):
     return self.query("/dcim/site-groups/")
   
@@ -96,6 +109,12 @@ class NetBoxClient:
   def get_all_devicenames(self):
     devices = self.get_all_devices()
     return [device["name"] for device in devices]
+  
+  def get_device_resolve_hint(self):
+    hints = {}
+    for device in self.get_all_devices():
+      hints[device["name"]] = device["id"]
+    return hints
   
   def get_all_interfaces(self):
     return self.query("/dcim/interfaces/")
@@ -183,12 +202,48 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/devices/", data)
     return
+  
+  def create_and_assign_device_ips(self, devices):
+    existed_ips = self.get_all_ips()
+    interface_hints = self.get_interface_resolve_hint()
+    data = [
+      {
+        "address": "/".join([device["ipv4"], device["cidr"]]),
+        "status": "active",
+        "dns_name": ".".join([device["name"], "m.noc.titech.ac.jp"]),
+        "assigned_object_type": "dcim.interface",
+        "assigned_object_id": interface_hints[device["name"]]["irb"],
+        "assigned_object": {
+          "id": interface_hints[device["name"]]["irb"]
+        },
+      }
+      for device in devices if "/".join([device["ipv4"], device["cidr"]]) not in existed_ips
+    ]
+    if data:
+      return self.query("/ipam/ip-addresses/", data)
+    return
+  
+  def set_primary_device_ips(self, devices):
+    ip_hints = self.get_ip_resolve_hint()
+    device_hints = self.get_device_resolve_hint()
+    data = [
+      {
+        "id": device_hints[device["name"]],
+        "primary_ip4": ip_hints["/".join([device["ipv4"], device["cidr"]])],
+      }
+      for device in devices
+    ]
+    if data:
+      return self.query("/dcim/devices/", data, update=True)
+    return
 
   def disable_all_interfaces(self, devices):
     interface_hints = self.get_interface_resolve_hint()
     data = []
     for hostname in [v["name"] for v in devices]:
-      for iid in interface_hints[hostname].values():
+      for ifname, iid in interface_hints[hostname].items():
+        if ifname == "irb":
+          continue
         req = {
           "id": iid,
           "enabled": False,
@@ -197,7 +252,7 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
 
-  def update_interfaces(self, interfaces):
+  def assign_interface_vlans(self, interfaces):
     interface_hints = self.get_interface_resolve_hint()
     vlan_resolver = self.make_vlan_resolver()
     data = []
@@ -291,30 +346,37 @@ def main():
   tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
   #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces)
   
-  #res = nb.create_vlans(vlans)
-  #if res:
-  #  pprint(res)
+  res = nb.create_vlans(vlans)
+  if res:
+    pprint(res)
   
-  #res = nb.create_sitegroups(sitegroups)
-  #if res:
-  #  pprint(res)
-
-  #res = nb.create_sites(sites)
-  #if res:
-  #  pprint(res)
-
-  #res = nb.create_devices(devices)
-  #if res:
-  #  pprint(res)
-  
-  #res = nb.disable_all_interfaces(devices)
-  #if res:
-  #  pprint(res)
-
-  res = nb.update_interfaces(tn4_interfaces)
+  res = nb.create_sitegroups(sitegroups)
   if res:
     pprint(res)
 
+  res = nb.create_sites(sites)
+  if res:
+    pprint(res)
+
+  res = nb.create_devices(devices)
+  if res:
+    pprint(res)
+  
+  res = nb.create_and_assign_device_ips(devices)
+  if res:
+    pprint(res)
+  
+  res = nb.set_primary_device_ips(devices)
+  if res:
+    pprint(res)
+  
+  res = nb.disable_all_interfaces(devices)
+  if res:
+    pprint(res)
+
+  res = nb.assign_interface_vlans(tn4_interfaces)
+  if res:
+    pprint(res)
 
 if __name__ == "__main__":
     main()
