@@ -89,12 +89,43 @@ class EdgeConfig:
     return list(vlans)
   
   def get_interfaces(self, hostname):
-    return self.all_interfaces[hostname]
+    interfaces = {}
+    for ifname, prop in self.all_interfaces[hostname].items():
+      if ifname == "irb":
+        continue
+      
+      # Auto negotiate link speed on the interface whose description begins with "ap-" or "noc"
+      speed = "1g"
+      description = prop["description"]
+      if description[:3] in ["ap-", "noc"]:
+        speed = "auto"
+      
+      # Allow PoE for AP interface
+      poe = False
+      if description[:3] == "ap-":
+        poe = True
+      
+      vlans = []
+      mode = prop["mode"]  # "ACCESS" or "TAGGED", or None
+      if mode:
+        mode = mode["value"].upper()
+      if mode == "ACCESS":
+        vlans = [prop["untagged_vlan"]["vid"]]
+      if mode == "TAGGED":
+        vlans = [v["vid"] for v in prop["tagged_vlans"]]
+      
+      interfaces[ifname] = {
+        "enabled": prop["enabled"],
+        "description": description,
+        "speed": speed,
+        "poe": poe,
+        "mode": mode,
+        "vlans": vlans,
+      }
+    return interfaces
 
 
 if __name__ == "__main__":
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
   cf = EdgeConfig(nb)
-  
-  pprint(cf.get_vlans("minami3"))
