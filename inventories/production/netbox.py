@@ -91,6 +91,12 @@ class EdgeConfig:
   def get_all_devices(self):
     return [d["name"] for d in self.all_devices]
   
+  def get_device_ip_address(self, hostname):
+    for device in self.all_devices:
+      if device["name"] != hostname:
+        continue
+      return device["primary_ip"]["address"].split("/")[0]
+  
   def get_interfaces(self, hostname):
     interfaces = {}
     for ifname, prop in self.all_interfaces[hostname].items():
@@ -134,11 +140,12 @@ if __name__ == "__main__":
   cf = EdgeConfig(nb)
   
   print(json.dumps({
-    device: {
+    hostname: {
+      "hosts": [cf.get_device_ip_address(hostname)],
       "vars": {
-        "vlans": cf.get_vlans(device),
-        "interfaces": cf.get_interfaces(device),
+        "vlans": cf.get_vlans(hostname),
+        "interfaces": cf.get_interfaces(hostname),
       }
     }
-    for device in cf.get_all_devices()
+    for hostname in cf.get_all_devices()
   }))
