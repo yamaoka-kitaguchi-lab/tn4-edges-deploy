@@ -123,13 +123,14 @@ class EdgeConfig:
         poe = True
       
       vlans = []
-      mode = prop["mode"]  # "ACCESS" or "TAGGED", or None
+      mode = prop["mode"]
       if mode:
-        mode = mode["value"].upper()
-      if mode == "ACCESS":
-        vlans = [prop["untagged_vlan"]["vid"]]
-      if mode == "TAGGED":
-        vlans = [v["vid"] for v in prop["tagged_vlans"]]
+        mode = mode["value"].lower()
+        if mode == "access":
+          vlans = [prop["untagged_vlan"]["vid"]]
+        if mode == "tagged":
+          mode = "trunk"  # Format conversion: from netbox to junos
+          vlans = [v["vid"] for v in prop["tagged_vlans"]]
       
       interfaces[ifname] = {
         "enabled": prop["enabled"],
