@@ -2,6 +2,7 @@
 # This file is part of Ansible.
 
 from pprint import pprint
+from datetime import datetime
 import os
 import sys
 import json
@@ -28,6 +29,11 @@ def __load_encrypted_secrets():
     except AnsibleVaultError as e:
       print("Failed to decrypt the vault. Check your password and try again:", e, file=sys.stderr)
       sys.exit(1)
+
+
+def timestamp():
+  n = datetime.now()
+  return n.strftime("%Y-%m-%d@%H-%M-%S")
 
 
 class NetBoxClient:
@@ -146,6 +152,7 @@ class EdgeConfig:
 
 
 if __name__ == "__main__":
+  ts = timestamp()
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
   cf = EdgeConfig(nb)
@@ -155,6 +162,7 @@ if __name__ == "__main__":
       "hosts": [cf.get_device_ip_address(hostname)],
       "vars": {
         "hostname": hostname,
+        "datetime": ts,
         "vlans": cf.get_vlans(hostname),
         "interfaces": cf.get_interfaces(hostname),
       }

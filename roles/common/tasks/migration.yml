@@ -16,13 +16,13 @@
   connection: network_cli
   junos_netconf:
 
-- name: Save current config
+- name: Create pre snapshots
   connection: netconf
   junos_config:
     backup: yes
     backup_options:
       filename: "{{ hostname }}_before.cfg"
-      dir_path: ../../backup
+      dir_path: backup/config.{{ datetime }}
 
 - name: Check template rendering result
   debug:
@@ -30,7 +30,7 @@
   tags:
     - develop
 
-- name: Update interface config
+- name: Create VLANs and update interface settings
   connection: netconf
   junos_config:
     src: config.j2
@@ -38,10 +38,10 @@
     comment: Action performed by ansible
     update: merge
 
-- name: Save current config again
+- name: Create post snapshots
   connection: netconf
   junos_config:
     backup: yes
     backup_options:
       filename: "{{ hostname }}_after.cfg"
-      dir_path: ../../backup
+      dir_path: backup/config.{{ datetime }}
