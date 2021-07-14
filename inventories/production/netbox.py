@@ -112,10 +112,10 @@ class EdgeConfig:
         continue
       
       # Auto negotiate link speed on the interface whose description begins with "ap-" or "noc"
-      speed = "1g"
+      auto_speed = False
       description = prop["description"]
       if description[:3] in ["ap-", "noc"]:
-        speed = "auto"
+        auto_speed = True
       
       # Allow PoE for AP interface
       poe = False
@@ -124,18 +124,20 @@ class EdgeConfig:
       
       vlans = []
       mode = prop["mode"]
-      if mode:
-        mode = mode["value"].lower()
-        if mode == "access":
-          vlans = [prop["untagged_vlan"]["vid"]]
-        if mode == "tagged":
-          mode = "trunk"  # Format conversion: from netbox to junos
-          vlans = [v["vid"] for v in prop["tagged_vlans"]]
+      if not mode:
+        continue
+      
+      mode = mode["value"].lower()
+      if mode == "access":
+        vlans = [prop["untagged_vlan"]["vid"]]
+      if mode == "tagged":
+        mode = "trunk"  # Format conversion: from netbox to junos
+        vlans = [v["vid"] for v in prop["tagged_vlans"]]
       
       interfaces[ifname] = {
         "enabled": prop["enabled"],
         "description": description,
-        "speed": speed,
+        "auto_speed": auto_speed,
         "poe": poe,
         "mode": mode,
         "vlans": vlans,

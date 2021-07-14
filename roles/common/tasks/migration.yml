@@ -6,19 +6,32 @@
     - develop
 
 - name: Show version
+  connection: network_cli
   junos_command:
-    commands: "show version"
+    commands: show version
   tags:
     - develop
 
+- name: Enable NETCONF
+  connection: network_cli
+  junos_netconf:
+
 - name: Save current config
+  connection: netconf
   junos_config:
     backup: yes
     backup_options:
       filename: "{{ hostname }}_before.cfg"
       dir_path: ../../backup
 
-- name: Add interface settings
+- name: Check template rendering result
+  debug:
+    msg: "{{ lookup('template', 'config.j2') }}"
+  tags:
+    - develop
+
+- name: Update interface config
+  connection: netconf
   junos_config:
     src: config.j2
     src_format: set
@@ -26,6 +39,7 @@
     update: merge
 
 - name: Save current config again
+  connection: netconf
   junos_config:
     backup: yes
     backup_options:

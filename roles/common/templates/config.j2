@@ -1,17 +1,27 @@
 {% for vlan in vlans %}
-set vlans {{ vlan.name }} vlan-id {{ vlan.id }} description {{ vlan.description }}
+{% if vlan.description %}
+set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }} description "{{ vlan.description }}"
+{% else %}
+set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }}
+{% endif %}
 {% endfor %}
 {% for interface, prop in interfaces.items() %}
-set interfaces {{ interface }} description {{ prop.description }}
-set interfaces {{ interface }} {{ prop.speed }}
-{% if prop.enable %}
+{% if prop.description %}
+set interfaces {{ interface }} description "{{ prop.description }}"
+{% endif %}
+{% if prop.auto_speed %}
+set interfaces {{ interface }} ether-options auto-negotiation
+{% else %}
+set interfaces {{ interface }} speed 1g
+{% endif %}
+{% if prop.enabled %}
 set interfaces {{ interface }} enable
 {% else %}
 set interfaces {{ interface }} disable
-{% enif %}
+{% endif %}
 {% if prop.poe %}
 set poe interface {{ interface }}
-{% enif %}
+{% endif %}
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.mode }}
 {% for vlan in prop.vlans %}
 set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vlan }}
