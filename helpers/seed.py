@@ -343,8 +343,8 @@ def main():
   sitegroups = [{k: d[k] for k in ["sitegroup_name", "sitegroup"]} for d in devices]
   sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
   tn3_interfaces = interface_load()
-  tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
-  #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces)
+  #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
+  tn4_interfaces = migrate_all_edges(devices, tn3_interfaces)
   
   res = nb.create_vlans(vlans)
   if res:
