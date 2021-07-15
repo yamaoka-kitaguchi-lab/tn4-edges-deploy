@@ -3,6 +3,6 @@
   tags:
     - migration
 
-#- import_tasks: finalization.yml
-#  tags:
-#    - finalization
+- import_tasks: finalization.yml
+  tags:
+    - finalization

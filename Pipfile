@@ -19,8 +19,7 @@ ncclient     = "*"
 [requires]
 
 [scripts]
-#ping    = 'ansible -m ping -i inventories/staging/hosts.yml minami3'
-develop  = 'ansible-playbook -vvv site.yml'
-dryrun   = 'ansible-playbook -vvv --check site.yml'
+develop  = 'ansible-playbook -vvvv site.yml'
+dryrun   = 'ansible-playbook -vvvv --check site.yml'
 migrate  = 'ansible-playbook -v --tags "migration" --skip-tags "develop" site.yml'
 finalize = 'ansible-playbook -v --tags "finalization" --skip-tags "develop" site.yml'

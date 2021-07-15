@@ -1,5 +1,5 @@
 ---
-- name: Deploy Tn4 edges - port migration from Tn3 and setup strong password
+- name: Deploy Tn4 edges - port migration from Tn3 and strong/weak passwords setting
   hosts: all
   gather_facts: no
 
