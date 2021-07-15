@@ -252,7 +252,7 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
 
-  def assign_interface_vlans(self, interfaces):
+  def update_interface_configs(self, interfaces):
     interface_hints = self.get_interface_resolve_hint()
     vlan_resolver = self.make_vlan_resolver()
     data = []
@@ -266,13 +266,22 @@ class NetBoxClient:
           "id": interface_hints[hostname][interface],
           "description": props["description"],
           "enabled": props["enabled"],
+          "tags": [],
         }
+        
+        # Enable PoE and mGig features on specified interfaces
+        if req["description"][:3] == "ap-":
+          req["tags"].extend([{"slug": s} for s in ["poe", "mgig"]])
+        if "noc" in req["description"]:
+          req["tags"].append({"slug": "mgig"})
+        
         if props["mode"] == "ACCESS":
           vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
           if vid is None:
             orphan_vlans[hostname].append(props["untagged"])
           req["mode"] = "access"
           req["untagged_vlan"] = vid
+          
         if props["mode"] == "TRUNK":
           vids = []
           for vlanid in props["tagged"]:
@@ -283,6 +292,7 @@ class NetBoxClient:
               vids.append(vid)
           req["mode"] = "tagged"
           req["tagged_vlans"] = vids
+          
         data.append(req)
     if orphan_vlans:
       with open("orphan-vlans.json", "w") as fd:
@@ -374,7 +384,7 @@ def main():
   if res:
     pprint(res)
 
-  res = nb.assign_interface_vlans(tn4_interfaces)
+  res = nb.update_interface_configs(tn4_interfaces)
   if res:
     pprint(res)
 

@@ -103,7 +103,7 @@ class EdgeConfig:
     return vlans
   
   def get_all_devices(self):
-    return [d["name"] for d in self.all_devices]
+    return [d["name"] for d in self.all_devices if d["device_role"]["slug"] == "edge-sw"]
   
   def get_device_ip_address(self, hostname):
     for device in self.all_devices:
@@ -117,17 +117,6 @@ class EdgeConfig:
       if ifname == "irb":
         continue
       
-      # Auto negotiate link speed on the interface whose description begins with "ap-" or "noc"
-      auto_speed = False
-      description = prop["description"]
-      if description[:3] in ["ap-", "noc"]:
-        auto_speed = True
-      
-      # Allow PoE for AP interface
-      poe = False
-      if description[:3] == "ap-":
-        poe = True
-      
       vlans = []
       mode = prop["mode"]
       if not mode:
@@ -140,11 +129,12 @@ class EdgeConfig:
         mode = "trunk"  # Format conversion: from netbox to junos
         vlans = [v["vid"] for v in prop["tagged_vlans"]]
       
+      tags = [t["slug"] for t in prop["tags"]]
       interfaces[ifname] = {
         "enabled": prop["enabled"],
-        "description": description,
-        "auto_speed": auto_speed,
-        "poe": poe,
+        "description": prop["description"],
+        "auto_speed": "mgig" in tags,
+        "poe": "poe" in tags,
         "mode": mode,
         "vlans": vlans,
       }
