@@ -68,6 +68,14 @@ class NetBoxClient:
 
 
 class EdgeConfig:
+  """
+  Assumptions:
+    - Slug of device role:
+      - Edge Switch: "edge-sw"
+    - Slug of tags for advanced interface features:
+      - PoE:  "poe"
+      - mGig: "mgig"
+  """
   def __init__(self, netbox_cli):
     self.all_vlans = netbox_cli.get_all_vlans()
     self.all_devices = self.__grep_active_devices(netbox_cli.get_all_devices())
