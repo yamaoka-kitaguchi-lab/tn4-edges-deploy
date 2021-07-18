@@ -34,15 +34,12 @@ def load(keyjson_path=KEYJSON_PATH):
         site_name   = line[4]
         site        = line[5]
         device_type = line[6]
-        vc          = line[7]
-        name        = line[8]
-        ipv4        = line[9]
-        cidr        = line[10]
+        name        = line[7]
+        ipv4        = line[8]
+        cidr        = line[9]
         
-        if register is False:
+        if register == "FALSE":
             continue
-        if vc == "Stacked":
-            device_type += "-stacked"
         devices.append({
             "name": name,
             "device_type": device_type,

@@ -100,10 +100,10 @@ def interface_range_vlan(cf):
 
 def interface_range_patch(loader):
     def new_loader(*args, **kwargs):
-        data = loader(*args, **kwargs)
+        data, keep = loader(*args, **kwargs)
         for hostname in data:
             try:
-                with open(os.path.join(SNAPSHOT_PATH, f"./configs/{hostname}.cfg")) as fd:
+                with open(os.path.join(SNAPSHOT_PATH, f"./configs/{hostname}_juniper.conf")) as fd:
                     interfaces, uplinks = interface_range_vlan(fd.read().split("\n"))
                     for ifname, props in interfaces.items():
                         try:
@@ -112,10 +112,10 @@ def interface_range_patch(loader):
                             data[hostname][ifname] = props
                     for ifname in uplinks:
                         del(data[hostname][ifname])
-            except FileNotFoundError:
-                print("Skipped (interface-range):", hostname)
+            except FileNotFoundError as e:
+                print("Skipped to parse interface-range (not Juniper host?):", hostname)
                 continue
-        return data
+        return data, keep
     return new_loader
 
 
@@ -146,9 +146,10 @@ def load(if_type="[g,x]e"):
 
 
 @interface_range_patch
-def load_interfaces(if_type="[g,x]e", excludes=[]):
+def load_chassis_interfaces(if_type="[g,x]e", excludes=[]):
     data = load(if_type)
     interfaces = {}
+    n_stacked = {}
     for hostname, props in data["phy_interfaces"].items():
         interfaces[hostname] = {}
         chassis = set()
@@ -172,14 +173,15 @@ def load_interfaces(if_type="[g,x]e", excludes=[]):
                 "untagged": prop["Access_VLAN"],
                 "tagged": enum_vlans(prop["Allowed_VLANs"]),
             }
-        interfaces[hostname]["n_stacked"] = len(chassis)
-    return interfaces
+        n_stacked[hostname] = len(chassis)
+    return interfaces, n_stacked
 
 
 if __name__ == "__main__":
     #pprint(load()["interfaces"])
     #pprint(load_interfaces())
     
-    pprint(load_interfaces(if_type="[g,x]e"))
-    #for hostname, props in load_interfaces(if_type="[g,x]e").items():
-    #    print(hostname, props["n_stacked"])
+    #pprint(load_interfaces(if_type="[g,x]e"))
+    interfaces, n_stacked = load_chassis_interfaces(if_type="[g,x]e")
+    for hostname, n in n_stacked.items():
+        print(n, "\t", hostname)

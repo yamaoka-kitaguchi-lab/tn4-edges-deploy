@@ -16,7 +16,7 @@ from ansible.parsing.vault import AnsibleVaultError
 from migrate import make_port_converter
 from devices import load as device_load
 from vlans import load as vlan_load
-from interfaces import load_interfaces as interface_load
+from interfaces import load_chassis_interfaces as chassis_interface_load
 
 VAULT_FILE = os.path.join(os.path.dirname(__file__), "../inventories/production/group_vars/all/vault.yml")
 VAULT_PASSWORD_FILE = os.path.join(os.path.dirname(__file__), "../.secrets/vault-pass.txt")
@@ -185,23 +185,29 @@ class NetBoxClient:
       return self.query("/dcim/sites/", data)
     return
 
-  def create_devices(self, devices):
+  def create_devices(self, devices, n_stacked):
     existed_devices = self.get_all_devicenames()
-    data = [
-      {
-        "name": device["name"],
+    data = []
+    for device in devices:
+      if device["name"] in existed_devices:
+        continue
+      device_name = device["name"]
+      device_type = device["device_type"]
+      if n_stacked[device_name] > 1:
+        device_type += "-st" + str(n_stacked[device_name])
+      data.append({
+        "name": device_name,
         "device_role": {"slug": "edge-sw"},
-        "device_type": {"slug": device["device_type"]},
+        "device_type": {"slug": device_type},
         "region": {"slug": device["region"]},
         "site": {"slug": device["site"]},
         "status": "active"
-      }
-      for device in devices if device["name"] not in existed_devices
-    ]
+      })
     data = list({v["name"]:v for v in data}.values())
-    if data:
-      return self.query("/dcim/devices/", data)
-    return
+    pprint(data)
+    #if data:
+    #  return self.query("/dcim/devices/", data)
+    #return
 
   def create_and_assign_device_ips(self, devices):
     existed_ips = self.get_all_ips()
@@ -327,21 +333,30 @@ def migrate_edge(tn4_hostname, tn3_interfaces):
   return tn4_interfaces, results
 
 
-def migrate_all_edges(devices, tn3_all_interfaces, hosts=[]):
+def make_tn3_hostname(tn4_hostname):
+  if tn4_hostname[-2:] != "-1":
+    return tn4_hostname + "-1"
+  return tn4_hostname
+
+
+def migrate_all_edges(devices, tn3_all_interfaces, tn3_all_n_stacked, hosts=[]):
   tn4_all_interfaces = {}
+  tn4_all_n_stacked = {}
   migration_results = {}
   for device in devices:
     tn4_hostname = device["name"]
     if hosts and tn4_hostname not in hosts:
       continue
-    tn3_hostname = tn4_hostname + "-1"  # Hostname conversion rule
+    tn3_hostname = make_tn3_hostname(tn4_hostname)
     tn3_interfaces = tn3_all_interfaces[tn3_hostname]
+    tn3_n_stacked = tn3_all_n_stacked[tn3_hostname]
     tn4_interfaces, results = migrate_edge(tn4_hostname, tn3_interfaces)
     tn4_all_interfaces[tn4_hostname] = tn4_interfaces
+    tn4_all_n_stacked[tn4_hostname] = tn3_n_stacked
     migration_results[tn4_hostname] = results
   with open("port-migration.json", "w") as fd:
     json.dump(migration_results, fd, indent=2)
-  return tn4_all_interfaces
+  return tn4_all_interfaces, tn4_all_n_stacked
 
 
 def main():
@@ -352,41 +367,41 @@ def main():
   devices = device_load()
   sitegroups = [{k: d[k] for k in ["sitegroup_name", "sitegroup"]} for d in devices]
   sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
-  tn3_interfaces = interface_load()
+  tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
-  tn4_interfaces = migrate_all_edges(devices, tn3_interfaces)
+  tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked)
 
-  res = nb.create_vlans(vlans)
+  #res = nb.create_vlans(vlans)
+  #if res:
+  #  pprint(res)
+
+  #res = nb.create_sitegroups(sitegroups)
+  #if res:
+  #  pprint(res)
+
+  #res = nb.create_sites(sites)
+  #if res:
+  #  pprint(res)
+
+  res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
-  res = nb.create_sitegroups(sitegroups)
-  if res:
-    pprint(res)
+  #res = nb.create_and_assign_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_sites(sites)
-  if res:
-    pprint(res)
+  #res = nb.set_primary_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_devices(devices)
-  if res:
-    pprint(res)
+  #res = nb.disable_all_interfaces(devices)
+  #if res:
+  #  pprint(res)
 
-  res = nb.create_and_assign_device_ips(devices)
-  if res:
-    pprint(res)
-
-  res = nb.set_primary_device_ips(devices)
-  if res:
-    pprint(res)
-
-  res = nb.disable_all_interfaces(devices)
-  if res:
-    pprint(res)
-
-  res = nb.update_interface_configs(tn4_interfaces)
-  if res:
-    pprint(res)
+  #res = nb.update_interface_configs(tn4_interfaces)
+  #if res:
+  #  pprint(res)
 
 if __name__ == "__main__":
     main()
