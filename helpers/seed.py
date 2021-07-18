@@ -204,10 +204,10 @@ class NetBoxClient:
         "status": "active"
       })
     data = list({v["name"]:v for v in data}.values())
-    pprint(data)
-    #if data:
-    #  return self.query("/dcim/devices/", data)
-    #return
+    #pprint(data)
+    if data:
+      return self.query("/dcim/devices/", data)
+    return
 
   def create_and_assign_device_ips(self, devices):
     existed_ips = self.get_all_ips()
@@ -371,37 +371,37 @@ def main():
   #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked)
 
-  #res = nb.create_vlans(vlans)
-  #if res:
-  #  pprint(res)
+  res = nb.create_vlans(vlans)
+  if res:
+    pprint(res)
 
-  #res = nb.create_sitegroups(sitegroups)
-  #if res:
-  #  pprint(res)
+  res = nb.create_sitegroups(sitegroups)
+  if res:
+    pprint(res)
 
-  #res = nb.create_sites(sites)
-  #if res:
-  #  pprint(res)
+  res = nb.create_sites(sites)
+  if res:
+    pprint(res)
 
   res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
-  #res = nb.create_and_assign_device_ips(devices)
-  #if res:
-  #  pprint(res)
+  res = nb.create_and_assign_device_ips(devices)
+  if res:
+    pprint(res)
 
-  #res = nb.set_primary_device_ips(devices)
-  #if res:
-  #  pprint(res)
+  res = nb.set_primary_device_ips(devices)
+  if res:
+    pprint(res)
 
-  #res = nb.disable_all_interfaces(devices)
-  #if res:
-  #  pprint(res)
+  res = nb.disable_all_interfaces(devices)
+  if res:
+    pprint(res)
 
-  #res = nb.update_interface_configs(tn4_interfaces)
-  #if res:
-  #  pprint(res)
+  res = nb.update_interface_configs(tn4_interfaces)
+  if res:
+    pprint(res)
 
 if __name__ == "__main__":
     main()
