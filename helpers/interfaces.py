@@ -127,9 +127,11 @@ def load(if_type="[g,x]e"):
     q1 = bfq.interfaceProperties(interfaces="/"+if_type+"-[0-9]*\/[0,1]\/[0-9]{1,2}$/", properties=interface_props)
     q2 = bfq.interfaceProperties(interfaces=f"/{if_type}-[0-9]*\/[0,1]\/[0-9]*\.0/", properties=interface_props)
     q3 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0-9]*\/[0,1]\/[0-9]*\.0/")
+    
     all_phy_interfaces = q1.answer().rows
     all_log_interfaces = q2.answer().rows
     all_vlans = q3.answer().rows
+    
     return {
         "phy_interfaces": {
             node: {prop["Interface"]["interface"]: prop for prop in props}
@@ -158,17 +160,24 @@ def load_chassis_interfaces(if_type="[g,x]e", excludes=[]):
         for ifname, p_prop in props.items():
             if ifname in excludes:
                 continue
+            
             prop = p_prop
             try:
                 prop = data["log_interfaces"][hostname][f"{ifname}.0"]
             except KeyError:
                 pass
+            
             chassis_number = re.match(if_type+"-(\d+)/\d+/\d+", ifname)  # Juniper format
             if chassis_number:
                 chassis.add(chassis_number[1])
+            
+            desc = prop["Description"]
+            if desc is None:
+                desc = ""
+            
             interfaces[hostname][ifname] = {
                 "enabled": prop["Active"],
-                "description": prop["Description"],
+                "description": desc,
                 "mode": prop["Switchport_Mode"],
                 "untagged": prop["Access_VLAN"],
                 "tagged": enum_vlans(prop["Allowed_VLANs"]),

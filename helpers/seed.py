@@ -371,34 +371,42 @@ def main():
   #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked)
 
+  print("STEP 1 of 8: Create VLANs")
   res = nb.create_vlans(vlans)
   if res:
     pprint(res)
 
+  print("STEP 2 of 8: Create Site Groups")
   res = nb.create_sitegroups(sitegroups)
   if res:
     pprint(res)
 
+  print("STEP 3 of 8: Create Sites")
   res = nb.create_sites(sites)
   if res:
     pprint(res)
 
+  print("STEP 4 of 8: Create Devices")
   res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
+  print("STEP 5 of 8: Create IP Addresses")
   res = nb.create_and_assign_device_ips(devices)
   if res:
     pprint(res)
 
+  print("STEP 6 of 8: Update device addresses")
   res = nb.set_primary_device_ips(devices)
   if res:
     pprint(res)
 
+  print("STEP 7 of 8: Disable all interfaces")
   res = nb.disable_all_interfaces(devices)
   if res:
     pprint(res)
 
+  print("STEP 8 of 8: Update interface configurations")
   res = nb.update_interface_configs(tn4_interfaces)
   if res:
     pprint(res)
