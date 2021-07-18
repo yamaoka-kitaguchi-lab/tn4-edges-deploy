@@ -3,6 +3,7 @@ from pybatfish.client.commands import *
 from pybatfish.question import bfq
 from pybatfish.question.question import load_questions
 from pprint import pprint
+import re
 import os
 
 SNAPSHOT_PATH = os.path.join(os.path.dirname(__file__), "./tn3")
@@ -101,15 +102,19 @@ def interface_range_patch(loader):
     def new_loader(*args, **kwargs):
         data = loader(*args, **kwargs)
         for hostname in data:
-            with open(os.path.join(SNAPSHOT_PATH, f"./configs/{hostname}.cfg")) as fd:
-                interfaces, uplinks = interface_range_vlan(fd.read().split("\n"))
-                for ifname, props in interfaces.items():
-                    try:
-                        data[hostname][ifname].update(props)
-                    except KeyError:
-                        data[hostname][ifname] = props
-                for ifname in uplinks:
-                    del(data[hostname][ifname])
+            try:
+                with open(os.path.join(SNAPSHOT_PATH, f"./configs/{hostname}.cfg")) as fd:
+                    interfaces, uplinks = interface_range_vlan(fd.read().split("\n"))
+                    for ifname, props in interfaces.items():
+                        try:
+                            data[hostname][ifname].update(props)
+                        except KeyError:
+                            data[hostname][ifname] = props
+                    for ifname in uplinks:
+                        del(data[hostname][ifname])
+            except FileNotFoundError:
+                print("Skipped (interface-range):", hostname)
+                continue
         return data
     return new_loader
 
@@ -119,9 +124,9 @@ def load(if_type="[g,x]e"):
     bf_init_snapshot(SNAPSHOT_PATH)
     
     interface_props = "Active,Switchport_Mode,Access_VLAN,Allowed_VLANs,Description"
-    q1 = bfq.interfaceProperties(interfaces="/"+if_type+"-[0,1]\/[0,1]\/[0-9]{1,2}$/", properties=interface_props)
-    q2 = bfq.interfaceProperties(interfaces=f"/{if_type}-[0,1]\/[0,1]\/[0-9]*\.0/", properties=interface_props)
-    q3 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0,1]\/[0,1]\/[0-9]*\.0/")
+    q1 = bfq.interfaceProperties(interfaces="/"+if_type+"-[0-9]*\/[0,1]\/[0-9]{1,2}$/", properties=interface_props)
+    q2 = bfq.interfaceProperties(interfaces=f"/{if_type}-[0-9]*\/[0,1]\/[0-9]*\.0/", properties=interface_props)
+    q3 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0-9]*\/[0,1]\/[0-9]*\.0/")
     all_phy_interfaces = q1.answer().rows
     all_log_interfaces = q2.answer().rows
     all_vlans = q3.answer().rows
@@ -146,6 +151,7 @@ def load_interfaces(if_type="[g,x]e", excludes=[]):
     interfaces = {}
     for hostname, props in data["phy_interfaces"].items():
         interfaces[hostname] = {}
+        chassis = set()
         if hostname in excludes:
             continue
         for ifname, p_prop in props.items():
@@ -156,6 +162,9 @@ def load_interfaces(if_type="[g,x]e", excludes=[]):
                 prop = data["log_interfaces"][hostname][f"{ifname}.0"]
             except KeyError:
                 pass
+            chassis_number = re.match(if_type+"-(\d+)/\d+/\d+", ifname)  # Juniper format
+            if chassis_number:
+                chassis.add(chassis_number[1])
             interfaces[hostname][ifname] = {
                 "enabled": prop["Active"],
                 "description": prop["Description"],
@@ -163,10 +172,14 @@ def load_interfaces(if_type="[g,x]e", excludes=[]):
                 "untagged": prop["Access_VLAN"],
                 "tagged": enum_vlans(prop["Allowed_VLANs"]),
             }
+        interfaces[hostname]["n_stacked"] = len(chassis)
     return interfaces
 
 
 if __name__ == "__main__":
     #pprint(load()["interfaces"])
     #pprint(load_interfaces())
+    
     pprint(load_interfaces(if_type="[g,x]e"))
+    #for hostname, props in load_interfaces(if_type="[g,x]e").items():
+    #    print(hostname, props["n_stacked"])
