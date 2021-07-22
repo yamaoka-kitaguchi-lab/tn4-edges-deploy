@@ -2,7 +2,6 @@
 """
 Load VLANs from the output of `show configuration vlans | display set`
 """
-
 from pprint import pprint
 import os
 import re

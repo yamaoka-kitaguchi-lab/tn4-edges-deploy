@@ -25,8 +25,9 @@ def load(keyjson_path=KEYJSON_PATH):
     sheet = open_sheet(keyjson_path, SPREADSHEET_KEY).sheet1
     lines = sheet.get_all_values()
     for n, line in enumerate(lines):
-        if n < 2: continue
-        
+        if n < 2:
+            continue
+
         register    = line[0]
         region      = line[1]
         group_name  = line[2]
@@ -37,7 +38,7 @@ def load(keyjson_path=KEYJSON_PATH):
         name        = line[7]
         ipv4        = line[8]
         cidr        = line[9]
-        
+
         if register == "FALSE":
             continue
         devices.append({
