@@ -2,6 +2,7 @@
 """
 Load VLANs from the output of `show configuration vlans | display set`
 """
+
 from pprint import pprint
 import os
 import re
@@ -23,7 +24,10 @@ def load(path=VLANTXT_PATH):
                 vlans[name] = {"description": ""}
                 vlans[name][key] = value
     return {
-        int(v["vlan-id"]): {"name": k, "description": v["description"]}
+        int(v["vlan-id"]): {
+            "name": k,
+            "description": v["description"]
+        }
         for k, v in vlans.items()
     }
 
