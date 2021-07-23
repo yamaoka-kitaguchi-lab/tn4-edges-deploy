@@ -36,7 +36,7 @@ def kitaguchi_rule(host):
 
 def kitaguchi_rules():
     rulebook = []
-    for n in [1,2,3,4,6,7,9]:
+    for n in range(2,9+1):
         host = f"minami{n}"
         rulebook.append({
             "hostname": host,
