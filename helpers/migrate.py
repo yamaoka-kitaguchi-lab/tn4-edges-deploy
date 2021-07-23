@@ -12,50 +12,59 @@ def converter(rules):
     return inner
 
 
-# Source: https://labo301.slack.com/archives/DCCNU4AA2/p1625829587152400
-def rule_minami3():
-    rules = {}
-    with open(os.path.join(os.path.dirname(__file__), "./tn3/migration/minami3.txt")) as fd:
+def kitaguchi_rule(host):
+    port_rules = {}
+    desc_rules = {}
+    cfg = os.path.join(os.path.dirname(__file__), f"./tn3/migration/rules/{host}.txt")
+    with open(cfg) as fd:
         for n, line in enumerate(fd):
             if n == 0:
                 continue
             rule = line.split()
-            if len(rule) == 4:
-                rules[rule[0]] = None
-            if len(rule) > 4:
-                rules[rule[0]] = rule[4]
-    return rules
-
-
-def rule_common(all_sfp=False):
-    rules = {}
-    for chassis in range(2):
-        for port in range(48):
-            tn3_port = f"ge-{chassis}/0/{port}"
-            tn4_port = tn3_port
-            if not all_sfp and port >= 24:
-                tn4_port = "m" + tn3_port
-            rules[tn3_port] = tn4_port
-    return rules
-
-
-def make_port_converter(tn4_hostname):
-    rulebook = {
-        "minami3": rule_minami3(),
-        "nishi8e": rule_common(all_sfp=True),  # Dummy
-        "nishi8w": rule_common(all_sfp=True),  # Dummy
-        "b1": rule_common(all_sfp=True),       # Dummy
-        "b2": rule_common(all_sfp=True),       # Dummy
-        "j2": rule_common(all_sfp=True),       # Dummy
-        "*": rule_common(),
+            if len(rule) < 8:
+                continue
+            tn3_port, tn4_port, tn4_desc = rule[0], rule[6], rule[7]
+            if tn4_port == "-":
+                continue
+            port_rules[tn3_port] = tn4_port
+            desc_rules[tn3_port] = tn4_desc
+    return {
+        "port": port_rules,
+        "description": desc_rules,
     }
-    try:
-        return converter(rulebook[tn4_hostname])
+
+
+def kitaguchi_rules():
+    rulebook = []
+    for n in range(2, 9+1):
+        host = f"minami{n}"
+        rulebook.append({
+            "hostname": host,
+            "rules": kitaguchi_rule(host)
+        })
+    return rulebook
+
+
+def make_port_desc_converter(tn4_hostname):
+    port_rulebook = {
+        **{
+            k_rule["hostname"]: k_rule["rules"]["port"] for k_rule in kitaguchi_rules()
+        },
+    }
+    desc_rulebook = {
+        **{
+            k_rule["hostname"]: k_rule["rules"]["description"] for k_rule in kitaguchi_rules()
+        },
+    }
+    try: 
+        return converter(port_rulebook[tn4_hostname]), converter(desc_rulebook[tn4_hostname])
     except KeyError:
-        return converter(rulebook["*"])
+        return None, None
 
 
 if __name__ == "__main__":
-    f = make_port_converter("minami3")
+    f = make_port_desc_converter("minami3")
+    pc, dc = f
     for old in ["ge-0/0/0", "ge-0/0/47", "ge-1/0/0", "ge-1/0/47"]:
-        pprint(f(old))
+        pprint(pc(old))
+        pprint(dc(old))

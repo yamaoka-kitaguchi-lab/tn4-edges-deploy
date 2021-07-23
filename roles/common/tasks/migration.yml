@@ -23,6 +23,8 @@
     backup_options:
       filename: "{{ hostname }}_before.cfg"
       dir_path: backup/config.{{ datetime }}
+  tags:
+    - nondry
 
 - name: Check template rendering result
   debug:
@@ -45,3 +47,5 @@
     backup_options:
       filename: "{{ hostname }}_after.cfg"
       dir_path: backup/config.{{ datetime }}
+  tags:
+    - nondry

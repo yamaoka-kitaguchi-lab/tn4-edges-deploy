@@ -13,7 +13,7 @@ from ansible.parsing.vault import VaultLib
 from ansible.parsing.vault import VaultSecret
 from ansible.parsing.vault import AnsibleVaultError
 
-from migrate import make_port_converter
+from migrate import make_port_desc_converter
 from devices import load as device_load
 from vlans import load as vlan_load
 from interfaces import load_chassis_interfaces as chassis_interface_load
@@ -321,16 +321,20 @@ def __load_encrypted_secrets():
 
 
 def migrate_edge(tn4_hostname, tn3_interfaces):
-  port_converter = make_port_converter(tn4_hostname)
+  pc, dc = make_port_desc_converter(tn4_hostname)
+  if pc is None and dc is None:
+    return False, None, None
   tn4_interfaces = {}
   results = []
   for tn3_port, props in tn3_interfaces.items():
-    tn4_port = port_converter(tn3_port)
+    tn4_port = pc(tn3_port)
+    tn4_desc = dc(tn3_port)
     if tn4_port is not None:
       tn4_interfaces[tn4_port] = props
+      tn4_interfaces[tn4_port]["description"] = tn4_desc
       results.append({"from": tn3_port, "to": tn4_port})
   results.sort(key=lambda x: x["from"])
-  return tn4_interfaces, results
+  return True, tn4_interfaces, results
 
 
 def make_tn3_hostname(tn4_hostname):
@@ -350,10 +354,11 @@ def migrate_all_edges(devices, tn3_all_interfaces, tn3_all_n_stacked, hosts=[]):
     tn3_hostname = make_tn3_hostname(tn4_hostname)
     tn3_interfaces = tn3_all_interfaces[tn3_hostname]
     tn3_n_stacked = tn3_all_n_stacked[tn3_hostname]
-    tn4_interfaces, results = migrate_edge(tn4_hostname, tn3_interfaces)
-    tn4_all_interfaces[tn4_hostname] = tn4_interfaces
-    tn4_all_n_stacked[tn4_hostname] = tn3_n_stacked
-    migration_results[tn4_hostname] = results
+    ok, tn4_interfaces, results = migrate_edge(tn4_hostname, tn3_interfaces)
+    if ok:
+      tn4_all_interfaces[tn4_hostname] = tn4_interfaces
+      tn4_all_n_stacked[tn4_hostname] = tn3_n_stacked
+      migration_results[tn4_hostname] = results
   with open("port-migration.json", "w") as fd:
     json.dump(migration_results, fd, indent=2)
   return tn4_all_interfaces, tn4_all_n_stacked
