@@ -276,7 +276,7 @@ class NetBoxClient:
         }
 
         # Enable PoE and mGig features on specified interfaces
-        if req["description"][:3] == "ap-":
+        if req["description"][:2] == "o-":
           req["tags"].extend([{"slug": s} for s in ["poe", "mgig"]])
         if "noc" in req["description"]:
           req["tags"].append({"slug": "mgig"})
