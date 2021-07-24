@@ -141,7 +141,8 @@ class EdgeConfig:
       interfaces[ifname] = {
         "enabled": prop["enabled"],
         "description": prop["description"],
-        "auto_speed": "mgig" in tags,
+        #"auto_speed": "mgig" in tags,
+        "auto_speed": True,   # Always use link speed auto negotiation (since 2021.07.24)
         "poe": "poe" in tags,
         "mode": mode,
         "vlans": vlans,

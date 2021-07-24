@@ -28,14 +28,14 @@
 
 - name: Check template rendering result
   debug:
-    msg: "{{ lookup('template', 'config.j2') }}"
+    msg: "{{ lookup('template', 'juniper.j2') }}"
   tags:
     - develop
 
 - name: Create VLANs and update interface settings
   connection: netconf
   junos_config:
-    src: config.j2
+    src: juniper.j2
     src_format: set
     comment: Action performed by ansible
     update: merge
