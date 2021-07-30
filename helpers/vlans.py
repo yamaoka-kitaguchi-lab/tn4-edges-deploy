@@ -6,7 +6,8 @@ from pprint import pprint
 import os
 import re
 
-VLANTXT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vlans/core-o1.vlan.txt")
+# `cat * | sort | uniq > vlans.txt`
+VLANTXT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vlans/vlans.txt")
 
 
 def load(path=VLANTXT_PATH):

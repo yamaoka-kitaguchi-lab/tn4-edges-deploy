@@ -375,7 +375,6 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked)
-  #pprint(tn4_interfaces)
 
   print("STEP 1 of 8: Create VLANs")
   res = nb.create_vlans(vlans)
