@@ -27,6 +27,7 @@ class NetBoxClient:
     self.api_endpoint = netbox_url.rstrip("/") + "/api"
     self.token = netbox_api_token
 
+
   def query(self, request_path, data=None, update=False):
     headers = {
       "Authorization": f"Token {self.token}",
@@ -35,6 +36,7 @@ class NetBoxClient:
     }
     responses = []
     url = self.api_endpoint + request_path
+
     if data:
       cnt, limit = 0, 100
       while cnt < len(data):
@@ -46,26 +48,31 @@ class NetBoxClient:
           raw = requests.post(url, json.dumps(d), headers=headers, verify=True)
         responses += json.loads(raw.text)
         cnt += limit
+
     else:
       while url:
         raw = requests.get(url, headers=headers, verify=True)
         res = json.loads(raw.text)
         responses += res["results"]
         url = res["next"]
+
     return responses
 
   def get_all_vlans(self):
     return self.query("/ipam/vlans/")
 
+
   def get_all_vids(self):
     vlans = self.get_all_vlans()
     return [vlan["vid"] for vlan in vlans]
+
 
   def get_vlan_resolve_hints(self):
     hints = {}
     for vlan in self.get_all_vlans():
       hints[vlan["vid"]] = vlan["id"]
     return hints
+
 
   def make_vlan_resolver(self):
     hints = self.get_vlan_resolve_hints()
@@ -76,12 +83,15 @@ class NetBoxClient:
         return None
     return resolver
 
+
   def get_all_ipaddresses(self):
     return self.query("/ipam/ip-addresses/")
+
 
   def get_all_ips(self):
     ipaddrs = self.get_all_ipaddresses()
     return [ipaddr["address"] for ipaddr in ipaddrs]
+
 
   def get_ip_resolve_hint(self):
     hints = {}
@@ -89,26 +99,33 @@ class NetBoxClient:
       hints[ip["address"]] = ip["id"]
     return hints
 
+
   def get_all_sitegroups(self):
     return self.query("/dcim/site-groups/")
+
 
   def get_all_sitegroupslugs(self):
     sitegroups = self.get_all_sitegroups()
     return [sitegroup["slug"] for sitegroup in sitegroups]
 
+
   def get_all_sites(self):
     return self.query("/dcim/sites/")
+
 
   def get_all_siteslugs(self):
     sites = self.get_all_sites()
     return [site["slug"] for site in sites]
 
+
   def get_all_devices(self):
     return self.query("/dcim/devices/")
+
 
   def get_all_devicenames(self):
     devices = self.get_all_devices()
     return [device["name"] for device in devices]
+
 
   def get_device_resolve_hint(self):
     hints = {}
@@ -116,8 +133,10 @@ class NetBoxClient:
       hints[device["name"]] = device["id"]
     return hints
 
+
   def get_all_interfaces(self):
     return self.query("/dcim/interfaces/")
+
 
   def get_interface_resolve_hint(self):
     hints = {}
@@ -131,12 +150,15 @@ class NetBoxClient:
         hints[key] = {subkey: iid}
     return hints
 
+
   def get_all_vcs(self):
     return self.query("/dcim/virtual-chassis/")
+
 
   def get_all_vcnames(self):
     vcs = self.get_all_vcs()
     return [vc["name"] for vc in vcs]
+
 
   def create_vlans(self, vlans):
     existed_vids = self.get_all_vids()
@@ -154,6 +176,7 @@ class NetBoxClient:
       return self.query("/ipam/vlans/", data)
     return
 
+
   def create_sitegroups(self, sitegroups):
     existed_sitegroups = self.get_all_sitegroupslugs()
     data = [
@@ -167,6 +190,7 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/site-groups/", data)
     return
+
 
   def create_sites(self, sites):
     existed_sites = self.get_all_siteslugs()
@@ -184,6 +208,7 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/sites/", data)
     return
+
 
   def create_devices(self, devices, n_stacked):
     existed_devices = self.get_all_devicenames()
@@ -209,6 +234,7 @@ class NetBoxClient:
       return self.query("/dcim/devices/", data)
     return
 
+
   def create_and_assign_device_ips(self, devices):
     existed_ips = self.get_all_ips()
     interface_hints = self.get_interface_resolve_hint()
@@ -229,6 +255,7 @@ class NetBoxClient:
       return self.query("/ipam/ip-addresses/", data)
     return
 
+
   def set_primary_device_ips(self, devices):
     ip_hints = self.get_ip_resolve_hint()
     device_hints = self.get_device_resolve_hint()
@@ -242,6 +269,7 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/devices/", data, update=True)
     return
+
 
   def disable_all_interfaces(self, devices):
     interface_hints = self.get_interface_resolve_hint()
@@ -258,11 +286,13 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
 
+
   def update_interface_configs(self, interfaces):
     interface_hints = self.get_interface_resolve_hint()
     vlan_resolver = self.make_vlan_resolver()
     data = []
     orphan_vlans = {}
+
     for hostname, device_interfaces in interfaces.items():
       orphan_vlans[hostname] = []
       for interface, props in device_interfaces.items():
@@ -300,6 +330,7 @@ class NetBoxClient:
           req["tagged_vlans"] = vids
 
         data.append(req)
+
     if orphan_vlans:
       with open("orphan-vlans.json", "w") as fd:
         json.dump(orphan_vlans, fd, indent=2)
@@ -326,6 +357,7 @@ def migrate_edge(tn4_hostname, tn3_interfaces):
     return False, None, None
   tn4_interfaces = {}
   results = []
+
   for tn3_port, props in tn3_interfaces.items():
     tn4_port = pc(tn3_port)
     tn4_desc = dc(tn3_port)
@@ -333,6 +365,7 @@ def migrate_edge(tn4_hostname, tn3_interfaces):
       tn4_interfaces[tn4_port] = props
       tn4_interfaces[tn4_port]["description"] = tn4_desc
       results.append({"from": tn3_port, "to": tn4_port})
+
   results.sort(key=lambda x: x["from"])
   return True, tn4_interfaces, results
 
@@ -347,6 +380,7 @@ def migrate_all_edges(devices, tn3_all_interfaces, tn3_all_n_stacked, hosts=[]):
   tn4_all_interfaces = {}
   tn4_all_n_stacked = {}
   migration_results = {}
+
   for device in devices:
     tn4_hostname = device["name"]
     if hosts and tn4_hostname not in hosts:
@@ -355,10 +389,12 @@ def migrate_all_edges(devices, tn3_all_interfaces, tn3_all_n_stacked, hosts=[]):
     tn3_interfaces = tn3_all_interfaces[tn3_hostname]
     tn3_n_stacked = tn3_all_n_stacked[tn3_hostname]
     ok, tn4_interfaces, results = migrate_edge(tn4_hostname, tn3_interfaces)
+
     if ok:
       tn4_all_interfaces[tn4_hostname] = tn4_interfaces
       tn4_all_n_stacked[tn4_hostname] = tn3_n_stacked
       migration_results[tn4_hostname] = results
+
   with open("port-migration.json", "w") as fd:
     json.dump(migration_results, fd, indent=2)
   return tn4_all_interfaces, tn4_all_n_stacked
