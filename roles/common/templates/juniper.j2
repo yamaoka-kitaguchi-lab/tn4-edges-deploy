@@ -13,6 +13,9 @@ set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }}
   Setup interfaces
 #}
 {% for interface, prop in interfaces.items() %}
+delete interfaces {{ interface }}
+delete poe interface {{ interface }}
+
 {% if prop.description %}
 set interfaces {{ interface }} description "{{ prop.description }}"
 {% endif %}
@@ -33,6 +36,7 @@ set interfaces {{ interface }} disable
 set poe interface {{ interface }}
 {% endif %}
 
+set interfaces {{ interface }} unit 0 family ethernet-switching storm-control default
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.mode }}
 {% for vlan in prop.vlans %}
 set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vlan }}
