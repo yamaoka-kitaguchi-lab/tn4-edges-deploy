@@ -134,6 +134,12 @@ class NetBoxClient:
     return hints
 
 
+  def get_interface(self, iid):
+    for interface in self.get_all_interfaces():
+      if interface["id"] == iid:
+        return interface
+
+
   def get_all_interfaces(self):
     return self.query("/dcim/interfaces/")
 
@@ -452,5 +458,15 @@ def main():
   if res:
     pprint(res)
 
+
+def develop():
+  secrets = __load_encrypted_secrets()
+  nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
+  pprint(nb.get_interface(490))
+  pprint(nb.get_interface(36))
+  pprint(nb.get_interface(37))
+
+
 if __name__ == "__main__":
-    main()
+    #main()
+    develop()
