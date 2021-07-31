@@ -151,10 +151,7 @@ class EdgeConfig:
       # Configure VLANs
       native, vlans = None, []
       mode = prop["mode"]
-      if mode is None:
-        if prop["lag"] is None:
-          continue
-      else:
+      if mode is not None:
         mode = mode["value"].lower()
         if mode == "access":
           vlans = [prop["untagged_vlan"]["vid"]]
