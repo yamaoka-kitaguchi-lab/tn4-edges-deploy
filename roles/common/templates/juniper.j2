@@ -9,8 +9,9 @@ set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }}
 {% endif %}
 {% endfor %}
 
+
 {#
-  Setup interfaces
+  Configure interfaces: description, speed, shutdown, PoE, and VLANs
 #}
 {% for interface, prop in interfaces.items() %}
 delete interfaces {{ interface }}
@@ -23,7 +24,7 @@ set interfaces {{ interface }} description "{{ prop.description }}"
 {% if prop.auto_speed %}
 set interfaces {{ interface }} ether-options auto-negotiation
 {% else %}
-set interfaces {{ interface }} speed 1g
+set interfaces {{ interface }} speed {{ prop.speed }}
 {% endif %}
 
 {% if prop.enabled %}
@@ -37,8 +38,23 @@ set poe interface {{ interface }}
 {% endif %}
 
 set interfaces {{ interface }} unit 0 family ethernet-switching storm-control default
+
+{% if prop.native %}
+set interfaces {{ interface }} native-vlan-id {{ native }}
+{% endif %}
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.mode }}
 {% for vlan in prop.vlans %}
 set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vlan }}
+{% endfor %}
+{% endfor %}
+
+
+{#
+  Enable LAG feature and append the childlen to the parent
+#}
+{% for parent, childlen in lag_members.items() %}
+set interfaces {{ parent }} aggregated-ether-options lacp active
+{% for child in childlen %}
+set interfaces {{ childlen }} ether-options 802.3ad {{ parent }}
 {% endfor %}
 {% endfor %}

@@ -167,6 +167,7 @@ class EdgeConfig:
         "enabled":     prop["enabled"],
         "description": prop["description"],
         "poe":         "poe" in tags,
+        "auto_speed":  True,
         "mode":        mode,
         "vlans":       vlans,
         "native":      native,
