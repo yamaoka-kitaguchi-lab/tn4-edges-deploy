@@ -17,7 +17,7 @@ from ansible.parsing.vault import AnsibleVaultError
 
 VAULT_FILE = os.path.join(os.path.dirname(__file__), "./group_vars/all/vault.yml")
 VAULT_PASSWORD_FILE = os.path.join(os.path.dirname(__file__), "../../.secrets/vault-pass.txt")
-  
+
 
 def __load_encrypted_secrets():
   with open(VAULT_FILE) as v, open(VAULT_PASSWORD_FILE, "r") as p:
@@ -41,6 +41,7 @@ class NetBoxClient:
     self.api_endpoint = netbox_url.rstrip("/") + "/api"
     self.token = netbox_api_token
 
+
   def query(self, request_path):
     responses = []
     url = self.api_endpoint + request_path
@@ -57,33 +58,30 @@ class NetBoxClient:
       url = res["next"]
     return responses
   
+
   def get_all_vlans(self):
     return self.query("/ipam/vlans/")
   
+
   def get_all_devices(self):
     return self.query("/dcim/devices/")
   
+
   def get_all_interfaces(self):
     return self.query("/dcim/interfaces/")
 
 
 class EdgeConfig:
-  """
-  Assumptions:
-    - Slug of device role:
-      - Edge Switch: "edge-sw"
-    - Slug of tags for advanced interface features:
-      - PoE:  "poe"
-      - mGig: "mgig"
-  """
   def __init__(self, netbox_cli):
     self.all_vlans = netbox_cli.get_all_vlans()
     self.all_devices = self.__grep_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
   
+
   def __grep_active_devices(self, devices):
     return [dev for dev in devices if dev["status"]["value"] == "active"]
   
+
   def __group_by_device(self, interfaces):
     arranged = {}
     for interface in interfaces:
@@ -94,6 +92,7 @@ class EdgeConfig:
         arranged[key] = {interface["name"]: interface}
     return arranged
   
+
   def get_vlans(self, hostname):
     vlans, vids = [], set()
     for prop in self.all_interfaces[hostname].values():
@@ -110,24 +109,48 @@ class EdgeConfig:
           })
     return vlans
   
+
   def get_all_devices(self):
     return [d["name"] for d in self.all_devices if d["device_role"]["slug"] == "edge-sw"]
   
+
   def get_device_ip_address(self, hostname):
     for device in self.all_devices:
       if device["name"] != hostname:
         continue
       return device["primary_ip"]["address"].split("/")[0]
   
+  
+  def get_lag_members(self, hostname):
+    lag_members = {}
+    for ifname, prop in self.all_interfaces[hostname].items():
+      # Skip management and uplink interfaces
+      if ifname in ["irb", "ae0"] or ifname[:3] == "et-":
+        continue
+      
+      if ifname[:2] == "ae":
+        if ifname not in lag_members.keys():
+          lag_members[ifname] = []
+      else:
+        if prop["lag"] is not None:
+          try:
+            lag_members[prop["lag"]["name"]].append(ifname)
+          except KeyError:
+            lag_members[prop["lag"]["name"]] = [ifname]
+      
+    return lag_members
+  
+
   def get_interfaces(self, hostname):
     interfaces = {}
     for ifname, prop in self.all_interfaces[hostname].items():
-      if ifname == "irb":
+      # Skip management and uplink interfaces
+      if ifname in ["irb", "ae0"] or ifname[:3] == "et-":
         continue
       
-      vlans = []
+      native, vlans = "", []
       mode = prop["mode"]
-      if not mode:
+      if mode is None:
         continue
       
       mode = mode["value"].lower()
@@ -136,17 +159,19 @@ class EdgeConfig:
       if mode == "tagged":
         mode = "trunk"  # Format conversion: from netbox to junos
         vlans = [v["vid"] for v in prop["tagged_vlans"]]
+        if prop["untagged_vlan"] is not None:
+          native = prop["untagged_vlan"]["vid"]
       
       tags = [t["slug"] for t in prop["tags"]]
       interfaces[ifname] = {
-        "enabled": prop["enabled"],
+        "enabled":     prop["enabled"],
         "description": prop["description"],
-        #"auto_speed": "mgig" in tags,
-        "auto_speed": True,   # Always use link speed auto negotiation (since 2021.07.24)
-        "poe": "poe" in tags,
-        "mode": mode,
-        "vlans": vlans,
+        "poe":         "poe" in tags,
+        "mode":        mode,
+        "vlans":       vlans,
+        "native":      native,
       }
+    
     return interfaces
 
 
@@ -160,10 +185,11 @@ if __name__ == "__main__":
     hostname: {
       "hosts": [cf.get_device_ip_address(hostname)],
       "vars": {
-        "hostname": hostname,
-        "datetime": ts,
-        "vlans": cf.get_vlans(hostname),
-        "interfaces": cf.get_interfaces(hostname),
+        "hostname":    hostname,
+        "datetime":    ts,
+        "vlans":       cf.get_vlans(hostname),
+        "interfaces":  cf.get_interfaces(hostname),
+        "lag_members": cf.get_lag_members(hostname),
       }
     }
     for hostname in cf.get_all_devices()
