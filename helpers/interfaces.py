@@ -119,14 +119,18 @@ def interface_range_patch(loader):
     return new_loader
 
 
-def load(if_type="[g,x]e"):
+def load():
     load_questions()
     bf_init_snapshot(SNAPSHOT_PATH)
     
     interface_props = "Active,Switchport_Mode,Access_VLAN,Allowed_VLANs,Description"
-    q1 = bfq.interfaceProperties(interfaces="/"+if_type+"-[0-9]*\/[0,1]\/[0-9]{1,2}$/", properties=interface_props)
-    q2 = bfq.interfaceProperties(interfaces=f"/{if_type}-[0-9]*\/[0,1]\/[0-9]*\.0/", properties=interface_props)
-    q3 = bfq.switchedVlanProperties(interfaces=f"/{if_type}-[0-9]*\/[0,1]\/[0-9]*\.0/")
+    alala_phy_regex = "(Fast|Gigabit)Ethernet0\/[0-9]{1,2}"
+    juniper_phy_regex = "[g,x]e-[0-9]+\/[0,1]\/[0-9]{1,2}"
+    juniper_log_regex = f"{juniper_phy_regex}\.0"
+    
+    q1 = bfq.interfaceProperties(interfaces=f"/{alala_phy_regex}|{juniper_phy_regex}/", properties=interface_props)
+    q2 = bfq.interfaceProperties(interfaces=f"/{juniper_log_regex}/", properties=interface_props)
+    q3 = bfq.switchedVlanProperties(interfaces=f"/{juniper_log_regex}/")
     
     all_phy_interfaces = q1.answer().rows
     all_log_interfaces = q2.answer().rows
@@ -148,8 +152,8 @@ def load(if_type="[g,x]e"):
 
 
 @interface_range_patch
-def load_chassis_interfaces(if_type="[g,x]e", excludes=[]):
-    data = load(if_type)
+def load_chassis_interfaces(excludes=[]):
+    data = load()
     interfaces = {}
     n_stacked = {}
     for hostname, props in data["phy_interfaces"].items():
@@ -167,13 +171,18 @@ def load_chassis_interfaces(if_type="[g,x]e", excludes=[]):
             except KeyError:
                 pass
             
-            chassis_number = re.match(if_type+"-(\d+)/\d+/\d+", ifname)  # Juniper format
+            chassis_number = re.match("[g,x]e-(\d+)/\d+/\d+", ifname)  # Juniper format
             if chassis_number:
                 chassis.add(chassis_number[1])
             
             desc = prop["Description"]
             if desc is None:
                 desc = ""
+            
+            # Interface name conversion rule for Alaxala (2021.07.31)
+            # ex) from FastEthernet0/21 to 0/21
+            ifname = ifname.lstrip("FastEthernet")
+            ifname = ifname.lstrip("GigabitEthernet")
             
             interfaces[hostname][ifname] = {
                 "enabled": prop["Active"],
@@ -196,10 +205,7 @@ def load_chassis_interfaces(if_type="[g,x]e", excludes=[]):
 
 
 if __name__ == "__main__":
-    #pprint(load()["interfaces"])
-    #pprint(load_interfaces())
-    
-    #pprint(load_interfaces(if_type="[g,x]e"))
-    interfaces, n_stacked = load_chassis_interfaces(if_type="[g,x]e")
+    interfaces, n_stacked = load_chassis_interfaces()
+    pprint(interfaces)
     for hostname, n in n_stacked.items():
         print(n, "\t", hostname)
