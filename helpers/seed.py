@@ -352,8 +352,9 @@ class NetBoxClient:
           vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
           if vid is None:
             orphan_vlans[hostname].append(props["untagged"])
-          req["mode"] = "access"
-          req["untagged_vlan"] = vid
+          else:
+            req["mode"] = "access"
+            req["untagged_vlan"] = vid
 
         # Configure tagged VLAN based on the properties (mode: TRUNK)
         if props["mode"] == "TRUNK":
@@ -364,8 +365,9 @@ class NetBoxClient:
               orphan_vlans[hostname].append(vlanid)
             else:
               vids.append(vid)
-          req["mode"] = "tagged"
-          req["tagged_vlans"] = vids
+          if vids:
+            req["mode"] = "tagged"
+            req["tagged_vlans"] = vids
           
         # Configure Wi-Fi (mode: WIFI)
         if props["mode"] == "WIFI":

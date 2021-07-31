@@ -42,7 +42,7 @@ def parse_migration_rule(lines):
         
         # Mark if this port connects to AP or Meraki switch
         wifi_mode = False
-        if tn4_desc[:2] in ["o-", "s-"] or tn4_lag[2:] != "0" or tn4_port[:2] == "ae":
+        if tn4_desc[:2] in ["o-", "s-"] or tn4_lag[2:] not in ["", "0"] or tn4_port[:2] == "ae":
             wifi_mode = True
             tn3_port = ""
         
