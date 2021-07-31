@@ -10,19 +10,20 @@ import gspread
 
 # See: https://docs.google.com/spreadsheets/d/19ZUxcU-pdpwuNDDOA8u9IaQyuXxwpZh1X7uRygeo7Hw
 SPREADSHEET_KEY = "19ZUxcU-pdpwuNDDOA8u9IaQyuXxwpZh1X7uRygeo7Hw"
-KEYJSON_PATH = os.path.join(os.path.dirname(__file__), "../.secrets/googleapi.json")
+JSON_KEYFILE_PATH = os.path.join(os.path.dirname(__file__), "../.secrets/googleapi.json")
 
-def open_sheet(keyjson_path, sheetkey):
-    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(keyjson_path, scope)
+
+def open_worksheets(keyfile, sheetkey):
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(keyfile, scope)
     gc = gspread.authorize(credentials)
-    sheets = gc.open_by_key(sheetkey)
-    return sheets
+    workbook = gc.open_by_key(sheetkey)
+    return workbook.worksheets()
 
 
-def load(keyjson_path=KEYJSON_PATH):
+def load():
     devices =[]
-    sheet = open_sheet(keyjson_path, SPREADSHEET_KEY).sheet1
+    sheet = open_worksheets(JSON_KEYFILE_PATH, SPREADSHEET_KEY)[0]
     lines = sheet.get_all_values()
     for n, line in enumerate(lines):
         if n < 2:
@@ -56,5 +57,4 @@ def load(keyjson_path=KEYJSON_PATH):
 
 
 if __name__ == "__main__":
-    keypath = sys.argv[1]
-    pprint(load(keypath))
+    pprint(load())

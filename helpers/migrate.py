@@ -1,70 +1,73 @@
 #!/usr/bin/env python3
+"""
+Load migration rule from Google Spreadsheet
+"""
+from oauth2client.service_account import ServiceAccountCredentials
 from pprint import pprint
 import os
+import sys
+import gspread
+
+# See: https://docs.google.com/spreadsheets/d/11M9m7-C7Ogvuow7F5OG4U--TBk4gwETUcWTZWEJGCOY
+SPREADSHEET_KEY = "11M9m7-C7Ogvuow7F5OG4U--TBk4gwETUcWTZWEJGCOY"
+JSON_KEYFILE_PATH = os.path.join(os.path.dirname(__file__), "../.secrets/googleapi.json")
 
 
-def converter(rules):
-    def inner(tn3_port):
-        try:
-            return rules[tn3_port]
-        except KeyError:
-            return None
-    return inner
+def open_worksheets(keyfile, sheetkey):
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(keyfile, scope)
+    gc = gspread.authorize(credentials)
+    workbook = gc.open_by_key(sheetkey)
+    return workbook.worksheets()
 
 
-def kitaguchi_rule(host):
-    port_rules = {}
-    desc_rules = {}
-    cfg = os.path.join(os.path.dirname(__file__), f"./tn3/migration/rules/{host}.txt")
-    with open(cfg) as fd:
-        for n, line in enumerate(fd):
-            if n == 0:
-                continue
-            rule = line.split()
-            if len(rule) < 8:
-                continue
-            tn3_port, tn4_port, tn4_desc = rule[0], rule[6], rule[7]
-            if tn4_port == "-":
-                continue
-            port_rules[tn3_port] = tn4_port
-            desc_rules[tn3_port] = tn4_desc
-    return {
-        "port": port_rules,
-        "description": desc_rules,
-    }
+def parse_migration_rule(lines):
+    rule = {}
+    for n, l in enumerate(lines):
+        tn4_port   = l[0]                   # Column A
+        tn3_port   = l[2]                   # Column C
+        tn4_desc   = l[3].replace(" ", "")  # Column D
+        tn4_noshut = l[5] != "down"         # Column F
+        tn4_poe    = l[7] == "TRUE"         # Column H
+        tn4_lag    = l[8]                   # Column I
+        
+        # Header
+        if n < 1: continue
+        
+        # Skip uplink and LAG interfaces as well as incomplete lines
+        if tn4_port == "": continue
+        if tn3_port == "" and tn4_desc == "": continue
+        if tn4_port[:2] == "et": continue
+        if tn4_port[:2] == "ae": continue
+        
+        # Mark if this port connects to AP or Meraki switch
+        wifi_mode = False
+        if tn4_desc[:2] in ["o-", "s-"] or tn4_lag[2:] != "0":
+            wifi_mode = True
+            tn3_port = ""
+        
+        rule[tn4_port] = {
+            "wifi_mode": wifi_mode,
+            "tn3_port":  tn3_port,
+            "desc":      tn4_desc,
+            "noshut":    tn4_noshut,
+            "poe":       tn4_poe,
+            "lag":       tn4_lag,
+        }
+    return rule
 
 
-def kitaguchi_rules():
-    rulebook = []
-    for n in range(2,9+1):
-        host = f"minami{n}"
-        rulebook.append({
-            "hostname": host,
-            "rules": kitaguchi_rule(host)
-        })
-    return rulebook
-
-
-def make_port_desc_converter(tn4_hostname):
-    port_rulebook = {
-        **{
-            k_rule["hostname"]: k_rule["rules"]["port"] for k_rule in kitaguchi_rules()
-        },
-    }
-    desc_rulebook = {
-        **{
-            k_rule["hostname"]: k_rule["rules"]["description"] for k_rule in kitaguchi_rules()
-        },
-    }
-    try: 
-        return converter(port_rulebook[tn4_hostname]), converter(desc_rulebook[tn4_hostname])
-    except KeyError:
-        return None, None
+def load_migration_rules(hosts=[]):
+    sheets = open_worksheets(JSON_KEYFILE_PATH, SPREADSHEET_KEY)
+    rules = {}
+    for sheet in sheets:
+        tn4_hostname = sheet.title
+        if hosts and tn4_hostname not in hosts:
+            continue
+        lines = sheet.get_all_values()
+        rules[tn4_hostname] = parse_migration_rule(lines)
+    return rules
 
 
 if __name__ == "__main__":
-    f = make_port_desc_converter("minami3")
-    pc, dc = f
-    for old in ["ge-0/0/0", "ge-0/0/47", "ge-1/0/0", "ge-1/0/47"]:
-        pprint(pc(old))
-        pprint(dc(old))
+    pprint(load_migration_rules(hosts=["minami2"]))
