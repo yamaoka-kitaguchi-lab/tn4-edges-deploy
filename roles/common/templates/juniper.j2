@@ -40,7 +40,7 @@ set poe interface {{ interface }}
 set interfaces {{ interface }} unit 0 family ethernet-switching storm-control default
 
 {% if prop.native %}
-set interfaces {{ interface }} native-vlan-id {{ native }}
+set interfaces {{ interface }} native-vlan-id {{ prop.native }}
 {% endif %}
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.mode }}
 {% for vlan in prop.vlans %}
@@ -55,6 +55,6 @@ set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ 
 {% for parent, childlen in lag_members.items() %}
 set interfaces {{ parent }} aggregated-ether-options lacp active
 {% for child in childlen %}
-set interfaces {{ childlen }} ether-options 802.3ad {{ parent }}
+set interfaces {{ child }} ether-options 802.3ad {{ parent }}
 {% endfor %}
 {% endfor %}

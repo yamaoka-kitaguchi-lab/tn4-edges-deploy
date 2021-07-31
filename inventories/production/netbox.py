@@ -148,7 +148,7 @@ class EdgeConfig:
       if ifname in ["irb", "ae0"] or ifname[:3] == "et-":
         continue
       
-      native, vlans = "", []
+      native, vlans = None, []
       mode = prop["mode"]
       if mode is None:
         continue
