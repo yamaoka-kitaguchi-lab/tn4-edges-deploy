@@ -21,7 +21,7 @@ def open_worksheets(keyfile, sheetkey):
     return workbook.worksheets()
 
 
-def load():
+def load(hosts=[]):
     devices =[]
     sheet = open_worksheets(JSON_KEYFILE_PATH, SPREADSHEET_KEY)[0]
     lines = sheet.get_all_values()
@@ -37,8 +37,11 @@ def load():
         tn3_name    = l[6]
         name        = l[7]
         device_type = l[8]
-        ipv4        = l[8]
-        cidr        = l[9]
+        ipv4        = l[9]
+        cidr        = l[10]
+        
+        if hosts and name not in hosts:
+            continue
 
         if register != "FALSE":
             devices.append({

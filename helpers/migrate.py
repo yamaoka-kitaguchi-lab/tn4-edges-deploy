@@ -60,14 +60,16 @@ def parse_migration_rule(lines):
 def load(hosts=[]):
     sheets = open_worksheets(JSON_KEYFILE_PATH, SPREADSHEET_KEY)
     rules = {}
-    for sheet in sheets:
+    for i, sheet in enumerate(sheets):
         tn4_hostname = sheet.title
         if hosts and tn4_hostname not in hosts:
             continue
+        print(f"Loading migration rule: {tn4_hostname} (id:{i})")
         lines = sheet.get_all_values()
         rules[tn4_hostname] = parse_migration_rule(lines)
     return rules
 
 
 if __name__ == "__main__":
-    pprint(load(hosts=["minami1", "minami2"]))
+    #pprint(load(hosts=["minami1", "minami2"]))
+    pprint(load())

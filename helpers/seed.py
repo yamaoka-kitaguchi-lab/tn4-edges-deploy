@@ -155,7 +155,19 @@ class NetBoxClient:
       except KeyError:
         hints[key] = {subkey: iid}
     return hints
-
+  
+  def get_mgmt_vlanid_resolve_hint(self):
+    hints = {}
+    for device in self.get_all_devices():
+      if device["device_role"]["slug"] != "edge-sw":
+        continue
+      if device["site"]["slug"] in ["ookayama-n", "ookayama-w", "midorigaoka"]:
+        hints[device["name"]] = 360
+      elif device["site"]["slug"] in ["ookayama-e", "ookayama-s", "ishikawadai", "tamachi"]:
+        hints[device["name"]] = 361
+      else:
+        hints[device["name"]] = 362
+    return hints
 
   def get_all_vcs(self):
     return self.query("/dcim/virtual-chassis/")
@@ -317,9 +329,6 @@ class NetBoxClient:
     for hostname, device_interfaces in interfaces.items():
       orphan_vlans[hostname] = []
       for interface, props in device_interfaces.items():
-        if props["mode"] == "NONE":
-          continue
-        
         req = {
           "id": interface_hints[hostname][interface],
           "description": props["description"],
@@ -333,8 +342,11 @@ class NetBoxClient:
         
         # LAG
         if props["lag"]:
-          req["lag"] = {"name": props["lag"]}
-
+          req["lag"] = {
+            "device": {"name": hostname},
+            "name": props["lag"]
+          }
+        
         # Configure untagged VLAN based on the properties (mode: ACCESS)
         if props["mode"] == "ACCESS":
           vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
@@ -359,7 +371,7 @@ class NetBoxClient:
         if props["mode"] == "WIFI":
           dynamic_vlan_range = [v for v in range(1000,1001+1)]
           req["mode"] = "tagged"
-          req["untagged_vlan"] = mgmt_vlanid_hints[hostname]
+          req["untagged_vlan"] = vlan_resolver(mgmt_vlanid_hints[hostname])
           req["tagged_vlans"] = [vlan_resolver(v) for v in dynamic_vlan_range]
 
         data.append(req)
@@ -387,7 +399,7 @@ def __load_encrypted_secrets():
 def migrate_edge(rule, tn3_interfaces):
   tn4_interfaces = {}
   tn4_lag_interfaces = {}
-  summary = {}
+  summary = []
   ok = True
   for tn4_port, rule_props in rule.items():
     if rule_props["wifi_mode"]:
@@ -395,21 +407,26 @@ def migrate_edge(rule, tn3_interfaces):
       # To Meraki switch: create LAG interface
       if tn4_port[:2] == "ae":
         if tn4_port not in tn4_lag_interfaces.keys():
-          tn4_lag_interfaces[tn4_port] = {
+          cf = {
             "enabled":     rule_props["enable"],
             "description": rule_props["description"],
             "mode":        "WIFI",
             "poe":         False,
+            "lag":         None,
           }
+          tn4_interfaces[tn4_port] = cf
+          tn4_lag_interfaces[tn4_port] = cf
         continue
       
       # To Meraki switch: append child interfaces to the LAG
       parent = rule_props["lag"]
       if parent:
         tn4_interfaces[tn4_port] = {
-          "enabled": True,
-          "poe":     False,
-          "lag":     parent,
+          "enabled":     True,
+          "description": rule_props["description"],
+          "mode":        "NONE",
+          "poe":         False,
+          "lag":         parent,
         }
       
       # To AP
@@ -449,7 +466,7 @@ def migrate_all_edges(devices, tn3_interface_info, tn3_stack_info, hosts=[]):
   tn4_all_lag_interfaces = {}
   tn4_all_n_stacked = {}
   migration_results = {}
-  migration_rules = migration_rule_load()
+  migration_rules = migration_rule_load(hosts=hosts)
 
   for device in devices:
     tn4_hostname = device["name"]
@@ -477,11 +494,12 @@ def main():
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
 
   vlans = vlan_load()
-  devices = device_load()
+  devices = device_load(hosts=[])
+  hosts = [d["name"] for d in devices]
   sitegroups = [{k: d[k] for k in ["sitegroup_name", "sitegroup"]} for d in devices]
   sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
-  tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked)
+  tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
   print("STEP 1 of 9: Create VLANs")
   res = nb.create_vlans(vlans)
@@ -532,18 +550,8 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  tn4_lags = {
-    "minami2": {
-      "ae2": {
-        "enabled":     True,
-        "description": "test",
-      }
-    },
-    "minami3": {}
-  }
-  pprint(nb.create_lag_interfaces(tn4_lags))
 
 
 if __name__ == "__main__":
-    #main()
-    develop()
+    main()
+    #develop()
