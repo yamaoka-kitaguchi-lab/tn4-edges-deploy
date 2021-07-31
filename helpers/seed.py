@@ -13,7 +13,7 @@ from ansible.parsing.vault import VaultLib
 from ansible.parsing.vault import VaultSecret
 from ansible.parsing.vault import AnsibleVaultError
 
-from migrate import make_port_desc_converter
+from migrate import load as migration_rule_load
 from devices import load as device_load
 from vlans import load as vlan_load
 from interfaces import load_chassis_interfaces as chassis_interface_load
@@ -296,6 +296,7 @@ class NetBoxClient:
   def update_interface_configs(self, interfaces):
     interface_hints = self.get_interface_resolve_hint()
     vlan_resolver = self.make_vlan_resolver()
+    mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint()
     data = []
     orphan_vlans = {}
 
@@ -304,19 +305,23 @@ class NetBoxClient:
       for interface, props in device_interfaces.items():
         if props["mode"] == "NONE":
           continue
+        
         req = {
           "id": interface_hints[hostname][interface],
           "description": props["description"],
           "enabled": props["enabled"],
           "tags": [],
         }
+        
+        # Enable PoE feature on specified interfaces
+        if props["poe"]:
+          req["tags"].append({"slug": "poe"})
+        
+        # LAG
+        if props["lag"]:
+          req["lag"] = {"name": props["lag"]}
 
-        # Enable PoE and mGig features on specified interfaces
-        if req["description"][:2] == "o-":
-          req["tags"].extend([{"slug": s} for s in ["poe", "mgig"]])
-        if "noc" in req["description"]:
-          req["tags"].append({"slug": "mgig"})
-
+        # Configure untagged VLAN based on the properties (mode: ACCESS)
         if props["mode"] == "ACCESS":
           vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
           if vid is None:
@@ -324,6 +329,7 @@ class NetBoxClient:
           req["mode"] = "access"
           req["untagged_vlan"] = vid
 
+        # Configure tagged VLAN based on the properties (mode: TRUNK)
         if props["mode"] == "TRUNK":
           vids = []
           for vlanid in props["tagged"]:
@@ -334,6 +340,13 @@ class NetBoxClient:
               vids.append(vid)
           req["mode"] = "tagged"
           req["tagged_vlans"] = vids
+          
+        # Configure Wi-Fi (mode: WIFI)
+        if props["mode"] == "WIFI":
+          dynamic_vlan_range = [v for v in range(1000,1001+1)]
+          req["mode"] = "tagged"
+          req["untagged_vlan"] = mgmt_vlanid_hints[hostname]
+          req["tagged_vlans"] = [vlan_resolver(v) for v in dynamic_vlan_range]
 
         data.append(req)
 
@@ -357,53 +370,92 @@ def __load_encrypted_secrets():
       sys.exit(1)
 
 
-def migrate_edge(tn4_hostname, tn3_interfaces):
-  pc, dc = make_port_desc_converter(tn4_hostname)
-  if pc is None and dc is None:
-    return False, None, None
+def migrate_edge(rule, tn3_interfaces):
   tn4_interfaces = {}
-  results = []
+  tn4_lag_interfaces = {}
+  summary = {}
+  ok = True
+  for tn4_port, rule_props in rule.items():
+    if rule_props["wifi_mode"]:
+      
+      # To Meraki switch: create LAG interface
+      if tn4_port[:2] == "ae":
+        if tn4_port not in tn4_lag_interfaces.keys():
+          tn4_lag_interfaces[tn4_port] = {
+            "enabled":     rule_props["enable"],
+            "description": rule_props["description"],
+            "mode":        "WIFI",
+            "poe":         False,
+          }
+        continue
+      
+      # To Meraki switch: append child interfaces to the LAG
+      parent = rule_props["lag"]
+      if parent:
+        tn4_interfaces[tn4_port] = {
+          "enabled": True,
+          "poe":     False,
+          "lag":     parent,
+        }
+      
+      # To AP
+      else:
+        tn4_interfaces[tn4_port] = {
+          "enabled":     rule_props["enable"],
+          "description": rule_props["description"],
+          "mode":        "WIFI",
+          "poe":         rule_props["poe"],
+          "lag":         None,
+        }
+    
+    else:
+      tn3_port = rule_props["tn3_port"]
+      try:
+        tn4_interfaces[tn4_port] = tn3_interfaces[tn3_port]
+      except KeyError as e:
+        ok = False
+        print(f"No interface found ({tn3_port}):", e)
+        continue
+      
+      for override in ["description", "enable", "poe", "lag"]:
+        tn4_interfaces[tn4_port][override] = rule_props[override]
+      
+      summary.append({
+        "from": tn3_port,
+        "to": tn4_port,
+        "description": rule_props["description"],
+      })
+  
+  summary.sort(key=lambda x: x["from"])
+  return ok, tn4_interfaces, tn4_lag_interfaces, summary
 
-  for tn3_port, props in tn3_interfaces.items():
-    tn4_port = pc(tn3_port)
-    tn4_desc = dc(tn3_port)
-    if tn4_port is not None:
-      tn4_interfaces[tn4_port] = props
-      tn4_interfaces[tn4_port]["description"] = tn4_desc
-      results.append({"from": tn3_port, "to": tn4_port})
 
-  results.sort(key=lambda x: x["from"])
-  return True, tn4_interfaces, results
-
-
-def make_tn3_hostname(tn4_hostname):
-  if tn4_hostname[-2:] != "-1":
-    return tn4_hostname + "-1"
-  return tn4_hostname
-
-
-def migrate_all_edges(devices, tn3_all_interfaces, tn3_all_n_stacked, hosts=[]):
+def migrate_all_edges(devices, tn3_interface_info, tn3_stack_info, hosts=[]):
   tn4_all_interfaces = {}
+  tn4_all_lag_interfaces = {}
   tn4_all_n_stacked = {}
   migration_results = {}
+  migration_rules = migration_rule_load()
 
   for device in devices:
     tn4_hostname = device["name"]
     if hosts and tn4_hostname not in hosts:
       continue
-    tn3_hostname = make_tn3_hostname(tn4_hostname)
-    tn3_interfaces = tn3_all_interfaces[tn3_hostname]
-    tn3_n_stacked = tn3_all_n_stacked[tn3_hostname]
-    ok, tn4_interfaces, results = migrate_edge(tn4_hostname, tn3_interfaces)
-
+    tn3_hostname = device["tn3_name"]
+    tn3_interfaces = tn3_interface_info[tn3_hostname]
+    tn3_n_stacked = tn3_stack_info[tn3_hostname]
+    rule = migration_rules[tn4_hostname]
+    
+    ok, tn4_interfaces, tn4_lag_interfaces, summary = migrate_edge(rule, tn3_interfaces)
     if ok:
       tn4_all_interfaces[tn4_hostname] = tn4_interfaces
+      tn4_all_lag_interfaces[tn4_hostname] = tn4_lag_interfaces
       tn4_all_n_stacked[tn4_hostname] = tn3_n_stacked
-      migration_results[tn4_hostname] = results
+      migration_results[tn4_hostname] = summary
 
   with open("port-migration.json", "w") as fd:
     json.dump(migration_results, fd, indent=2)
-  return tn4_all_interfaces, tn4_all_n_stacked
+  return tn4_all_interfaces, tn4_all_lag_interfaces, tn4_all_n_stacked
 
 
 def main():
@@ -415,8 +467,7 @@ def main():
   sitegroups = [{k: d[k] for k in ["sitegroup_name", "sitegroup"]} for d in devices]
   sites = [{k: d[k] for k in ["region", "sitegroup", "site_name", "site"]} for d in devices]
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
-  #tn4_interfaces = migrate_all_edges(devices, tn3_interfaces, hosts=["minami3"])
-  tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked)
+  tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked)
 
   print("STEP 1 of 8: Create VLANs")
   res = nb.create_vlans(vlans)

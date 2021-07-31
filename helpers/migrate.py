@@ -34,30 +34,30 @@ def parse_migration_rule(lines):
         # Header
         if n < 1: continue
         
-        # Skip uplink and LAG interfaces as well as incomplete lines
+        # Skip uplink LAG interfaces as well as incomplete lines
         if tn4_port == "": continue
         if tn3_port == "" and tn4_desc == "": continue
+        if tn4_port == "ae0": continue
         if tn4_port[:2] == "et": continue
-        if tn4_port[:2] == "ae": continue
         
         # Mark if this port connects to AP or Meraki switch
         wifi_mode = False
-        if tn4_desc[:2] in ["o-", "s-"] or tn4_lag[2:] != "0":
+        if tn4_desc[:2] in ["o-", "s-"] or tn4_lag[2:] != "0" or tn4_port[:2] == "ae":
             wifi_mode = True
             tn3_port = ""
         
         rule[tn4_port] = {
-            "wifi_mode": wifi_mode,
-            "tn3_port":  tn3_port,
-            "desc":      tn4_desc,
-            "noshut":    tn4_noshut,
-            "poe":       tn4_poe,
-            "lag":       tn4_lag,
+            "wifi_mode":   wifi_mode,
+            "tn3_port":    tn3_port,
+            "description": tn4_desc,
+            "enable":      tn4_noshut,
+            "poe":         tn4_poe,
+            "lag":         tn4_lag,
         }
     return rule
 
 
-def load_migration_rules(hosts=[]):
+def load(hosts=[]):
     sheets = open_worksheets(JSON_KEYFILE_PATH, SPREADSHEET_KEY)
     rules = {}
     for sheet in sheets:
@@ -70,4 +70,4 @@ def load_migration_rules(hosts=[]):
 
 
 if __name__ == "__main__":
-    pprint(load_migration_rules(hosts=["minami2"]))
+    pprint(load(hosts=["minami1", "minami2"]))

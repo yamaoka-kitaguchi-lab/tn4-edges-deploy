@@ -180,7 +180,10 @@ def load_chassis_interfaces(if_type="[g,x]e", excludes=[]):
                 "description": desc,
                 "mode": prop["Switchport_Mode"],
                 "untagged": prop["Access_VLAN"],
+                "native": None,
                 "tagged": enum_vlans(prop["Allowed_VLANs"]),
+                "lag": None,
+                "poe": None,
             }
         n_stacked[hostname] = len(chassis)
     return interfaces, n_stacked
