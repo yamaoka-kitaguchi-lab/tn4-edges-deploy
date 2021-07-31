@@ -29,7 +29,7 @@ set interfaces {{ interface }} disable
 
 {% if prop.physical and prop.auto_speed %}
 set interfaces {{ interface }} ether-options auto-negotiation
-{% else %}
+{% elif prop.physical %}
 set interfaces {{ interface }} speed {{ prop.speed }}
 {% endif %}
 
