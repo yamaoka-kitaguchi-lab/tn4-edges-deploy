@@ -275,6 +275,20 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/devices/", data, update=True)
     return
+  
+  
+  def create_lag_interfaces(self, lags):
+    data = []
+    for hostname, device_lags in lags.items():
+      for ifname, _ in device_lags.items():
+        req = {
+          "device": {"name": hostname},
+          "name": ifname,
+          "type": "lag"
+        }
+        data.append(req)
+    if data:
+      return self.query("/dcim/interfaces/", data)
 
 
   def disable_all_interfaces(self, devices):
@@ -469,42 +483,47 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked)
 
-  print("STEP 1 of 8: Create VLANs")
+  print("STEP 1 of 9: Create VLANs")
   res = nb.create_vlans(vlans)
   if res:
     pprint(res)
 
-  print("STEP 2 of 8: Create Site Groups")
+  print("STEP 2 of 9: Create Site Groups")
   res = nb.create_sitegroups(sitegroups)
   if res:
     pprint(res)
 
-  print("STEP 3 of 8: Create Sites")
+  print("STEP 3 of 9: Create Sites")
   res = nb.create_sites(sites)
   if res:
     pprint(res)
 
-  print("STEP 4 of 8: Create Devices")
+  print("STEP 4 of 9: Create Devices")
   res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
-  print("STEP 5 of 8: Create IP Addresses")
+  print("STEP 5 of 9: Create IP Addresses")
   res = nb.create_and_assign_device_ips(devices)
   if res:
     pprint(res)
 
-  print("STEP 6 of 8: Update device addresses")
+  print("STEP 6 of 9: Update device addresses")
   res = nb.set_primary_device_ips(devices)
   if res:
     pprint(res)
+  
+  print("STEP 7 of 9: Create LAG interfaces")
+  res = nb.create_lag_interfaces(tn4_lags)
+  if res:
+    pprint(res)
 
-  print("STEP 7 of 8: Disable all interfaces")
+  print("STEP 8 of 9: Disable all interfaces")
   res = nb.disable_all_interfaces(devices)
   if res:
     pprint(res)
 
-  print("STEP 8 of 8: Update interface configurations")
+  print("STEP 9 of 9: Update interface configurations")
   res = nb.update_interface_configs(tn4_interfaces)
   if res:
     pprint(res)
@@ -513,9 +532,16 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  pprint(nb.get_interface(490))
-  pprint(nb.get_interface(36))
-  pprint(nb.get_interface(37))
+  tn4_lags = {
+    "minami2": {
+      "ae2": {
+        "enabled":     True,
+        "description": "test",
+      }
+    },
+    "minami3": {}
+  }
+  pprint(nb.create_lag_interfaces(tn4_lags))
 
 
 if __name__ == "__main__":
