@@ -42,10 +42,13 @@ set interfaces {{ interface }} unit 0 family ethernet-switching storm-control de
 {% if prop.native %}
 set interfaces {{ interface }} native-vlan-id {{ prop.native }}
 {% endif %}
+
+{% if prop.mode %}
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.mode }}
 {% for vlan in prop.vlans %}
 set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vlan }}
 {% endfor %}
+{% endif %}
 {% endfor %}
 
 

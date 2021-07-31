@@ -148,19 +148,18 @@ class EdgeConfig:
       if ifname in ["irb", "ae0"] or ifname[:3] == "et-":
         continue
       
+      # Configure VLANs
       native, vlans = None, []
       mode = prop["mode"]
-      if mode is None:
-        continue
-      
-      mode = mode["value"].lower()
-      if mode == "access":
-        vlans = [prop["untagged_vlan"]["vid"]]
-      if mode == "tagged":
-        mode = "trunk"  # Format conversion: from netbox to junos
-        vlans = [v["vid"] for v in prop["tagged_vlans"]]
-        if prop["untagged_vlan"] is not None:
-          native = prop["untagged_vlan"]["vid"]
+      if mode is not None:
+        mode = mode["value"].lower()
+        if mode == "access":
+          vlans = [prop["untagged_vlan"]["vid"]]
+        if mode == "tagged":
+          mode = "trunk"  # Format conversion: from netbox to junos
+          vlans = [v["vid"] for v in prop["tagged_vlans"]]
+          if prop["untagged_vlan"] is not None:
+            native = prop["untagged_vlan"]["vid"]
       
       tags = [t["slug"] for t in prop["tags"]]
       interfaces[ifname] = {
