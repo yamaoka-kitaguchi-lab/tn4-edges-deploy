@@ -163,6 +163,7 @@ class EdgeConfig:
       
       tags = [t["slug"] for t in prop["tags"]]
       interfaces[ifname] = {
+        "physical":    ifname[:2] != "ae",
         "enabled":     prop["enabled"],
         "description": prop["description"],
         "poe":         "poe" in tags,
