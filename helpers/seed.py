@@ -290,9 +290,12 @@ class NetBoxClient:
   
   
   def create_lag_interfaces(self, lags):
+    interface_hints = self.get_interface_resolve_hint()
     data = []
     for hostname, device_lags in lags.items():
       for ifname, _ in device_lags.items():
+        if ifname in interface_hints[hostname].keys():
+          continue
         req = {
           "device": {"name": hostname},
           "name": ifname,

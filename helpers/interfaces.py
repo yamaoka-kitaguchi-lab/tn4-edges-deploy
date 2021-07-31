@@ -184,7 +184,14 @@ def load_chassis_interfaces(if_type="[g,x]e", excludes=[]):
                 "lag": None,
                 "poe": None,
             }
+        
         n_stacked[hostname] = len(chassis)
+    
+    # Override with exception rule (Tn3 hostnames)
+    n_stacked["green1-1"] = 2
+    n_stacked["gsic-1"] = 1
+    n_stacked["minami1-1"] = 1
+    
     return interfaces, n_stacked
 
 
