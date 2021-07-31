@@ -25,34 +25,34 @@ def load():
     devices =[]
     sheet = open_worksheets(JSON_KEYFILE_PATH, SPREADSHEET_KEY)[0]
     lines = sheet.get_all_values()
-    for n, line in enumerate(lines):
-        if n < 2:
-            continue
+    for n, l in enumerate(lines):
+        if n < 2: continue
 
-        register    = line[0]
-        region      = line[1]
-        group_name  = line[2]
-        group       = line[3]
-        site_name   = line[4]
-        site        = line[5]
-        device_type = line[6]
-        name        = line[7]
-        ipv4        = line[8]
-        cidr        = line[9]
+        register    = l[0]
+        region      = l[1]
+        group_name  = l[2]
+        group       = l[3]
+        site_name   = l[4]
+        site        = l[5]
+        tn3_name    = l[6]
+        name        = l[7]
+        device_type = l[8]
+        ipv4        = l[8]
+        cidr        = l[9]
 
-        if register == "FALSE":
-            continue
-        devices.append({
-            "name": name,
-            "device_type": device_type,
-            "region": region,
-            "sitegroup_name": group_name,
-            "sitegroup": group,
-            "site_name": site_name,
-            "site": site,
-            "ipv4": ipv4,
-            "cidr": cidr,
-        })
+        if register != "FALSE":
+            devices.append({
+                "name": name,
+                "tn3_name": tn3_name,
+                "device_type": device_type,
+                "region": region,
+                "sitegroup_name": group_name,
+                "sitegroup": group,
+                "site_name": site_name,
+                "site": site,
+                "ipv4": ipv4,
+                "cidr": cidr,
+            })
     return devices
 
 
