@@ -19,7 +19,8 @@ ncclient     = "*"
 [requires]
 
 [scripts]
-develop  = 'ansible-playbook -vvvv site.yml'
+seed     = 'python3 ./helpers/seed.py'
+develop  = 'ansible-playbook -vvvv --skip-tags "finalization" site.yml'
 dryrun   = 'ansible-playbook -vvvv --check --skip-tags "nondry" site.yml'
 migrate  = 'ansible-playbook -v --tags "migration" --skip-tags "develop" site.yml'
 finalize = 'ansible-playbook -v --tags "finalization" --skip-tags "develop" site.yml'
