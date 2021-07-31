@@ -1,0 +1,21 @@
+name: minami
+root: ~/tn4-edges-deploy
+
+windows:
+  - edges:
+      synchronize: after
+      panes:
+        - ssh 172.30.2.66 -l titanoc # minami1
+        - ssh 172.30.2.67 -l titanoc # minami2
+        - ssh 172.30.2.68 -l titanoc # minami3
+        - ssh 172.30.2.69 -l titanoc # minami4
+        - ssh 172.30.2.71 -l titanoc # minami5
+        - ssh 172.30.2.72 -l titanoc # minami6
+        - ssh 172.30.2.73 -l titanoc # minami7
+        - ssh 172.30.2.74 -l titanoc # minami8
+        - ssh 172.30.2.75 -l titanoc # minami9
+        # - ssh 172.30.2.76 -l titanoc # minamiji1
+        # - ssh 172.30.2.77 -l titanoc # minamiji2
+        # - ssh 172.30.2.78 -l titanoc # minamiji3
+        # - ssh 172.30.2.79 -l titanoc # minamiji4
+        # - ssh 172.30.2.94 -l titanoc # circle1
