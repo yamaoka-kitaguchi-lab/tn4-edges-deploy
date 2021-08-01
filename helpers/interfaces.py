@@ -124,17 +124,18 @@ def load():
   bf_init_snapshot(SNAPSHOT_PATH)
 
   interface_props = "Active,Switchport_Mode,Access_VLAN,Allowed_VLANs,Description"
-  alala_phy_regex = "(Fast|Gigabit)Ethernet0\/[0-9]{1,2}"
-  juniper_phy_regex = "[g,x]e-[0-9]+\/[0,1]\/[0-9]{1,2}"
-  juniper_log_regex = f"{juniper_phy_regex}\.0"
+  alala_phy_regex = "(Fast|Gigabit)Ethernet0\/[0-9]{1,2}$"
+  juniper_phy_regex = "[g,x]e-[0-9]+\/[0,1]\/[0-9]{1,2}$"
+  juniper_log_regex = f"{juniper_phy_regex}\.0$"
 
-  q1 = bfq.interfaceProperties(interfaces=f"/{alala_phy_regex}|{juniper_phy_regex}/", properties=interface_props)
+  q1 = bfq.interfaceProperties(interfaces=f"/({alala_phy_regex}|{juniper_phy_regex})/", properties=interface_props)
   q2 = bfq.interfaceProperties(interfaces=f"/{juniper_log_regex}/", properties=interface_props)
   q3 = bfq.switchedVlanProperties(interfaces=f"/{juniper_log_regex}/")
 
   all_phy_interfaces = q1.answer().rows
   all_log_interfaces = q2.answer().rows
   all_vlans = q3.answer().rows
+  #pprint(all_phy_interfaces)
 
   return {
     "phy_interfaces": {
@@ -181,8 +182,10 @@ def load_chassis_interfaces(excludes=[]):
 
       # Interface name conversion rule for Alaxala (2021.07.31)
       # ex) from FastEthernet0/21 to 0/21
-      ifname = ifname.lstrip("FastEthernet")
-      ifname = ifname.lstrip("GigabitEthernet")
+      if ifname[:12] == "FastEthernet":
+        ifname = ifname[12:]
+      if ifname[:15] == "GigabitEthernet":
+        ifname = ifname[15:]
 
       interfaces[hostname][ifname] = {
         "enabled": prop["Active"],

@@ -401,7 +401,7 @@ def __load_encrypted_secrets():
       sys.exit(1)
 
 
-def migrate_edge(rule, tn3_interfaces):
+def migrate_edge(rule, tn3_interfaces, tn4_hostname):
   tn4_interfaces = {}
   tn4_lag_interfaces = {}
   summary = []
@@ -450,7 +450,7 @@ def migrate_edge(rule, tn3_interfaces):
         tn4_interfaces[tn4_port] = tn3_interfaces[tn3_port]
       except KeyError as e:
         ok = False
-        print(f"No interface found ({tn3_port}):", e)
+        print(f"No interface found on Tn3 ({tn4_hostname}): from {tn3_port} to {tn4_port})")
         continue
 
       for override in ["description", "enable", "poe", "lag"]:
@@ -482,7 +482,7 @@ def migrate_all_edges(devices, tn3_interface_info, tn3_stack_info, hosts=[]):
     tn3_n_stacked = tn3_stack_info[tn3_hostname]
     rule = migration_rules[tn4_hostname]
 
-    ok, tn4_interfaces, tn4_lag_interfaces, summary = migrate_edge(rule, tn3_interfaces)
+    ok, tn4_interfaces, tn4_lag_interfaces, summary = migrate_edge(rule, tn3_interfaces, tn4_hostname)
     if ok:
       tn4_all_interfaces[tn4_hostname] = tn4_interfaces
       tn4_all_lag_interfaces[tn4_hostname] = tn4_lag_interfaces
