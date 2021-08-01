@@ -382,7 +382,7 @@ class NetBoxClient:
         data.append(req)
 
     if orphan_vlans:
-      with open("orphan-vlans.json", "w") as fd:
+      with open(os.path.join(os.path.dirname(__file__), "./orphan-vlans.json"), "w") as fd:
         json.dump(orphan_vlans, fd, indent=2)
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
@@ -489,7 +489,7 @@ def migrate_all_edges(devices, tn3_interface_info, tn3_stack_info, hosts=[]):
       tn4_all_n_stacked[tn4_hostname] = tn3_n_stacked
       migration_results[tn4_hostname] = summary
 
-  with open("port-migration.json", "w") as fd:
+  with open(os.path.join(os.path.dirname(__file__), "./port-migration.json"), "w") as fd:
     json.dump(migration_results, fd, indent=2)
   return tn4_all_interfaces, tn4_all_lag_interfaces, tn4_all_n_stacked
 
