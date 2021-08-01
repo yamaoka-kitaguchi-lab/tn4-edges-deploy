@@ -1,7 +1,7 @@
 *.log
-helpers/data
-helpers/tn3
 helpers/*.json
+helpers/tn3/*
+!helpers/tn3/*.enc
 .secrets/*
 !.secrets/*.example
 backup
