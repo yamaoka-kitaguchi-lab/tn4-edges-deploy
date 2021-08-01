@@ -1,12 +1,12 @@
 # tn4-edges-deploy
 [![](https://img.shields.io/github/issues/yamaoka-kitaguchi-lab/tn4-edges-deploy)](https://github.com/yamaoka-kitaguchi-lab/tn4-edges-deploy/issues) [![](https://img.shields.io/github/last-commit/yamaoka-kitaguchi-lab/tn4-edges-deploy)](https://github.com/yamaoka-kitaguchi-lab/tn4-edges-deploy/commits/main) [![](https://img.shields.io/github/license/yamaoka-kitaguchi-lab/tn4-edges-deploy)](LICENSE)
 
-[![asciicast](https://asciinema.org/a/mthfyktmWhtAYrzyvysIvZ5qn.svg)](https://asciinema.org/a/mthfyktmWhtAYrzyvysIvZ5qn?autoplay=1)
+[![asciicast](https://asciinema.org/a/7nwNQFVqFkWYiwyw1JX1upCW6.svg)](https://asciinema.org/a/7nwNQFVqFkWYiwyw1JX1upCW6?autoplay=1)
 
-Playbook and helper utilities to deploy Tn4 edges using NetBox as IPAM/DCIM. This toolset is designed to support the following:
+Playbook and helper utilities to deploy Tn4 edges using the NetBox as IPAM/DCIM. This toolset is designed to support the following:
 
-- Seeding the NetBox for reducing the cost of browser-based registration operations
-- Provisioning edges according to registered information of the NetBox
+- Seeding the NetBox for reducing the cost of browser-based registration
+- Provisioning edges according to the NetBox
 
 **CAUTION:** *The author doesn't intend to reuse the helpers*. These are provided only to improve the efficiency of the Tn4 edges deployment.
 
@@ -45,7 +45,7 @@ Following items must be manually created prior to the seeding.
 - **Device Roles:** Add a new device role named *Edge Switch* with slugged *edge-sw*.
 - **Tags:** Add a new tag named *PoE* with slugged *poe*.
 
-Check the following two spreadsheets storing DCIM and IPAM initial records. Both two require authentication.
+Check the following two spreadsheets storing IPAM and DCIM initial records. Both two require authentication.
 
 - [NetBox Seeds for Tn4 Edge Deployment](https://docs.google.com/spreadsheets/d/19ZUxcU-pdpwuNDDOA8u9IaQyuXxwpZh1X7uRygeo7Hw)
 - [NetBox Seeds for Tn4 Edge Migration](https://docs.google.com/spreadsheets/d/11M9m7-C7Ogvuow7F5OG4U--TBk4gwETUcWTZWEJGCOY)
@@ -71,7 +71,7 @@ If the seeding is successful, following two files will be output.
 ```
 
 ### Step 2: Provisioning edges according to the NetBox
-Provisioning is performed only for devices whose *Status* is *Active*. The following information is gathered from the NetBox:
+Provisioning is performed only for devices whose *Status* are *Active*. The following information is gathered from the NetBox:
 
 - **Management IP address:** Use device's primary IPv4 address to login.
 - **VLANs:** Create VLANs with registered names and descriptions.
@@ -90,7 +90,7 @@ Playbook will carry out the following tasks sequentially. Note that the uplink i
 1. Configure interfaces according to the NetBox registration
 1. Backup the current config, e.g., minami7_after.cfg
 
-Kick Ansible and pray for provisioning. The larger the number of target hosts, the longer it takes to build the dynamic inventory - approximately 10 hosts/minute.
+Kick Ansible and pray for provisioning. The larger the number of target hosts, the longer it takes to build the dynamic inventory - approximately 10 hosts/minute.  Take care that the provisioning will fail if candidate config exists in the switch.
 
 ```
 % pipenv run migrate
@@ -173,16 +173,16 @@ As of August 1st, 2021.
 │       │       └── ansible.yml
 │       └── hosts.yml
 ├── LICENSE
-├── Pipfile
+├── Pipfile                           # Ignite everything from here
 ├── Pipfile.lock                      # Auto-generated, ignored by Git
 ├── playbook.log                      # Auto-generated, ignored by Git
 ├── README.md
 ├── roles
-│   └── juniper                       # For JUNOS (EX-series, QFS-series edges)
+│   └── juniper                       # For JUNOS (EX-series, QFX-series edges)
 │       ├── tasks
 │       │   ├── finalization.yml      # Playbook for password reset
 │       │   ├── main.yml
-│       │   └── migration.yml         # Playbook for the edge deploy
+│       │   └── migration.yml         # Playbook for the edge deployment
 │       └── templates
 │           └── config.j2             # Configuration template
 ├── .secrets
