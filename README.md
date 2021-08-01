@@ -3,7 +3,7 @@
 
 [![asciicast](https://asciinema.org/a/mthfyktmWhtAYrzyvysIvZ5qn.svg)](https://asciinema.org/a/mthfyktmWhtAYrzyvysIvZ5qn?autoplay=1)
 
-Playbook and helper utilities to deploy Tn4 edges using NetBox as IPAM/DCIM. This tool set is designed to support the following:
+Playbook and helper utilities to deploy Tn4 edges using NetBox as IPAM/DCIM. This toolset is designed to support the following:
 
 - aa
 - bb
@@ -11,9 +11,28 @@ Playbook and helper utilities to deploy Tn4 edges using NetBox as IPAM/DCIM. Thi
 
 **CAUTION:** *The author does not intend to reuse the helpers*. These are provided only to improve the efficiency of the Tn4 edges deployment.
 
-## Usage: Seed NetBox for initial setup
+## Usage
+### STEP0: Clone repository and setup secrets
 
-## Usage: Provisioning edges according to NetBox
+```
+% git clone --depth 1 https://github.com/yamaoka-kitaguchi-lab/tn4-edges-deploy
+% cd tn4-edged-deploy
+% echo -n "SECRET_PASSWORD_OF_THIS_REPOSITORY" | sha256sum | cut -d " " -f 1 > .secrets/vault-pass.txt
+% openssl aes-256-cbc -d -in helpers/tn3/vault.tar.gz.enc -pass file:.secrets/vault-pass.txt |\
+  tar xz --overwrite -C helpers/tn3
+```
+
+### STEP1: Seeding the NetBox for initial setup
+
+```
+% pipenv run seed
+```
+
+### STEP2: Provisioning edges according to the NetBox
+
+```
+% pipenv run migrate
+```
 
 ## Developer's hints
 When you are stuck in Ansible, commands `pipenv run dryrun` and `pipenv run develop` may help.
@@ -26,7 +45,8 @@ When you are stuck in Ansible, commands `pipenv run dryrun` and `pipenv run deve
 Install `openssl` command to create AES256-CBC encrypted vault. All files under `helpers/tn3` are ignored by Git, but `*.enc` is not. Push it to GitHub and share the content for the consistency.
 
 ```
-% tar cz vault | openssl enc -aes-256-cbc -e > vault.tar.gz.enc
+% cd tn3/helpers
+% tar cz vault | openssl aes-256-cbc -e -pass file:../../.secrets/vault-pass.txt > vault.tar.gz.enc
 ```
 
 ### Structures
@@ -119,7 +139,9 @@ Processed 82740 bytes, 0.083 megabytes (SI)
 ───────────────────────────────────────────────────────────────────────────────
 ```
 
-## Authors
+## Authors and responsibilities
+The initial work is as a part of the RA position at the request of Prof. Kitaguchi. The original author maintains this repository only during the RA employment period and will not be responsible for any troubles after the period.
+
 - **MIYA, Taichi** - *Initial work* - [@mi2428](https://github.com/mi2428)
 
 ## License
