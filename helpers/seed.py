@@ -287,8 +287,8 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/devices/", data, update=True)
     return
-  
-  
+
+
   def create_lag_interfaces(self, lags):
     interface_hints = self.get_interface_resolve_hint()
     data = []
@@ -338,18 +338,18 @@ class NetBoxClient:
           "enabled": props["enabled"],
           "tags": [],
         }
-        
+
         # Enable PoE feature on specified interfaces
         if props["poe"]:
           req["tags"].append({"slug": "poe"})
-        
+
         # LAG
         if props["lag"]:
           req["lag"] = {
             "device": {"name": hostname},
             "name": props["lag"]
           }
-        
+
         # Configure untagged VLAN based on the properties (mode: ACCESS)
         if props["mode"] == "ACCESS":
           vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
@@ -371,7 +371,7 @@ class NetBoxClient:
           if vids:
             req["mode"] = "tagged"
             req["tagged_vlans"] = vids
-          
+
         # Configure Wi-Fi (mode: WIFI)
         if props["mode"] == "WIFI":
           dynamic_vlan_range = [v for v in range(1000,1001+1)]
@@ -408,7 +408,7 @@ def migrate_edge(rule, tn3_interfaces):
   ok = True
   for tn4_port, rule_props in rule.items():
     if rule_props["wifi_mode"]:
-      
+
       # To Meraki switch: create LAG interface
       if tn4_port[:2] == "ae":
         if tn4_port not in tn4_lag_interfaces.keys():
@@ -422,7 +422,7 @@ def migrate_edge(rule, tn3_interfaces):
           tn4_interfaces[tn4_port] = cf
           tn4_lag_interfaces[tn4_port] = cf
         continue
-      
+
       # To Meraki switch: append child interfaces to the LAG
       parent = rule_props["lag"]
       if parent:
@@ -433,7 +433,7 @@ def migrate_edge(rule, tn3_interfaces):
           "poe":         False,
           "lag":         parent,
         }
-      
+
       # To AP
       else:
         tn4_interfaces[tn4_port] = {
@@ -443,7 +443,7 @@ def migrate_edge(rule, tn3_interfaces):
           "poe":         rule_props["poe"],
           "lag":         None,
         }
-    
+
     else:
       tn3_port = rule_props["tn3_port"]
       try:
@@ -452,16 +452,16 @@ def migrate_edge(rule, tn3_interfaces):
         ok = False
         print(f"No interface found ({tn3_port}):", e)
         continue
-      
+
       for override in ["description", "enable", "poe", "lag"]:
         tn4_interfaces[tn4_port][override] = rule_props[override]
-      
+
       summary.append({
         "from": tn3_port,
         "to": tn4_port,
         "description": rule_props["description"],
       })
-  
+
   summary.sort(key=lambda x: x["from"])
   return ok, tn4_interfaces, tn4_lag_interfaces, summary
 
@@ -481,7 +481,7 @@ def migrate_all_edges(devices, tn3_interface_info, tn3_stack_info, hosts=[]):
     tn3_interfaces = tn3_interface_info[tn3_hostname]
     tn3_n_stacked = tn3_stack_info[tn3_hostname]
     rule = migration_rules[tn4_hostname]
-    
+
     ok, tn4_interfaces, tn4_lag_interfaces, summary = migrate_edge(rule, tn3_interfaces)
     if ok:
       tn4_all_interfaces[tn4_hostname] = tn4_interfaces
@@ -535,7 +535,7 @@ def main():
   res = nb.set_primary_device_ips(devices)
   if res:
     pprint(res)
-  
+
   print("STEP 7 of 9: Create LAG interfaces")
   res = nb.create_lag_interfaces(tn4_lags)
   if res:

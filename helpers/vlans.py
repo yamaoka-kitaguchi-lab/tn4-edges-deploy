@@ -7,30 +7,30 @@ import os
 import re
 
 # `cat * | sort | uniq > vlans.txt`
-VLANTXT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vlans/vlans.txt")
+VLANTXT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vault/vlans/vlans.txt")
 
 
 def load(path=VLANTXT_PATH):
-    vlans = {}
-    with open(path) as fd:
-        hits = re.findall("set vlans (\S+) (\S+) (\S+)", fd.read(), re.S)
-        for r in hits:
-            name, key, value = r
-            if key not in ["vlan-id", "description"]:
-                continue
-            try:
-                vlans[name][key] = value
-            except KeyError:
-                vlans[name] = {"description": ""}
-                vlans[name][key] = value
-    return {
-        int(v["vlan-id"]): {
-            "name": k,
-            "description": v["description"]
-        }
-        for k, v in vlans.items()
+  vlans = {}
+  with open(path) as fd:
+    hits = re.findall("set vlans (\S+) (\S+) (\S+)", fd.read(), re.S)
+    for r in hits:
+      name, key, value = r
+      if key not in ["vlan-id", "description"]:
+        continue
+      try:
+        vlans[name][key] = value
+      except KeyError:
+        vlans[name] = {"description": ""}
+        vlans[name][key] = value
+  return {
+    int(v["vlan-id"]): {
+      "name": k,
+      "description": v["description"]
     }
+    for k, v in vlans.items()
+  }
 
 
 if __name__ == "__main__":
-    pprint(load())
+  pprint(load())

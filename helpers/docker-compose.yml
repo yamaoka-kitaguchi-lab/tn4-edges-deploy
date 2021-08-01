@@ -3,6 +3,8 @@ services:
   batfish:
     image: batfish/batfish:latest
     container_name: batfish
-    volumes:
-      - ./data:/data
     network_mode: host
+    volumes:
+      - batfish:/data
+volumes:
+  batfish:
