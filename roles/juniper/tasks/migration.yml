@@ -16,7 +16,7 @@
   connection: network_cli
   junos_netconf:
 
-- name: Create pre snapshots
+- name: Create pre-snapshots
   connection: netconf
   junos_config:
     backup: yes
@@ -40,7 +40,7 @@
     comment: Action performed by ansible
     update: merge
 
-- name: Create post snapshots
+- name: Create post-snapshots
   connection: netconf
   junos_config:
     backup: yes
