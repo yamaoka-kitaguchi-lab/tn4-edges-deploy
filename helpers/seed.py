@@ -483,7 +483,7 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
         tn4_interfaces[tn4_port] = tn3_interfaces[tn3_port]
       except KeyError as e:
         ok = False
-        print(f"No interface found on Tn3 ({tn4_hostname}): from {tn3_port} to {tn4_port})")
+        print(f"No interface found on Tn3 ({tn4_hostname}): from {tn3_port} to {tn4_port}")
         continue
 
       for override in ["description", "enable", "poe", "lag"]:
@@ -539,35 +539,35 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  print("STEP 1 of 9: Create VLANs")
-  res = nb.create_vlans(vlans)
-  if res:
-    pprint(res)
-
-  print("STEP 2 of 9: Create Site Groups")
-  res = nb.create_sitegroups(sitegroups)
-  if res:
-    pprint(res)
-
-  print("STEP 3 of 9: Create Sites")
-  res = nb.create_sites(sites)
-  if res:
-    pprint(res)
-
-  #print("STEP 4 of 9: Create Devices")
-  #res = nb.create_devices(devices, tn4_n_stacked)
+  #print("STEP 1 of 9: Create VLANs")
+  #res = nb.create_vlans(vlans)
   #if res:
   #  pprint(res)
 
-  #print("STEP 5 of 9: Create IP Addresses")
-  #res = nb.create_and_assign_device_ips(devices)
+  #print("STEP 2 of 9: Create Site Groups")
+  #res = nb.create_sitegroups(sitegroups)
   #if res:
   #  pprint(res)
 
-  #print("STEP 6 of 9: Update device addresses")
-  #res = nb.set_primary_device_ips(devices)
+  #print("STEP 3 of 9: Create Sites")
+  #res = nb.create_sites(sites)
   #if res:
   #  pprint(res)
+
+  print("STEP 4 of 9: Create Devices")
+  res = nb.create_devices(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
+
+  print("STEP 5 of 9: Create IP Addresses")
+  res = nb.create_and_assign_device_ips(devices)
+  if res:
+    pprint(res)
+
+  print("STEP 6 of 9: Update device addresses")
+  res = nb.set_primary_device_ips(devices)
+  if res:
+    pprint(res)
 
   #print("STEP 7 of 9: Create LAG interfaces")
   #res = nb.create_lag_interfaces(tn4_lags)

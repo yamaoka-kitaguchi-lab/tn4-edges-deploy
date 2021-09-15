@@ -211,6 +211,7 @@ def load_chassis_interfaces(excludes=[]):
 
 if __name__ == "__main__":
   interfaces, n_stacked = load_chassis_interfaces()
+  pprint(n_stacked)
   pprint(interfaces)
   for hostname, n in n_stacked.items():
     print(n, "\t", hostname)
