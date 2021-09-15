@@ -1208,122 +1208,122 @@ interfaces:
   label: ''
   description: ''
 - name: mge-0/0/24
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/25
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/26
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/27
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/28
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/29
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/30
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/31
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/32
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/33
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/34
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/35
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/36
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/37
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/38
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/39
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/40
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/41
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/42
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/43
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/44
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/45
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/46
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-0/0/47
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
@@ -1448,122 +1448,122 @@ interfaces:
   label: ''
   description: ''
 - name: mge-1/0/24
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/25
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/26
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/27
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/28
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/29
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/30
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/31
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/32
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/33
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/34
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/35
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/36
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/37
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/38
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/39
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/40
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/41
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/42
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/43
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/44
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/45
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/46
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''
 - name: mge-1/0/47
-  type: 10gbase-cx4
+  type: 10gbase-t
   mgmt_only: false
   label: ''
   description: ''

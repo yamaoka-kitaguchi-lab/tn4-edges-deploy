@@ -126,7 +126,7 @@ class NetBoxClient:
 
 
   def get_all_devicenames(self):
-    if self.all_devices is None:
+    if not self.all_devices:
       self.get_all_devices()
     devices = self.all_devices
     return [device["name"] for device in devices]
@@ -134,7 +134,7 @@ class NetBoxClient:
 
   def get_device_resolve_hint(self):
     hints = {}
-    if self.all_devices is None:
+    if not self.all_devices:
       self.get_all_devices()
     for device in self.all_devices:
       hints[device["name"]] = device["id"]
@@ -142,7 +142,7 @@ class NetBoxClient:
 
 
   def get_interface(self, iid):
-    if self.all_interfaces is None:
+    if not self.all_interfaces:
       self.get_all_interfaces()
     for interface in self.all_interfaces:
       if interface["id"] == iid:
@@ -168,7 +168,7 @@ class NetBoxClient:
   
   def get_mgmt_vlanid_resolve_hint(self):
     hints = {}
-    if self.all_devices is None:
+    if not self.all_devices:
       self.get_all_devices()
     for device in self.all_devices:
       if device["device_role"]["slug"] != "edge-sw":
@@ -183,7 +183,7 @@ class NetBoxClient:
   
   def get_tokyotech_vlanid_resolve_hint(self):
     hints = {}
-    if self.all_devices is None:
+    if not self.all_devices:
       self.get_all_devices()
     for device in self.all_devices:
       if device["device_role"]["slug"] != "edge-sw":
