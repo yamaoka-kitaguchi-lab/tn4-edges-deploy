@@ -24,12 +24,12 @@ def open_worksheets(keyfile, sheetkey):
 def parse_migration_rule(lines):
   rule = {}
   for n, l in enumerate(lines):
-    tn4_port   = l[0]         # Column A
-    tn3_port   = l[2]         # Column C
+    tn4_port   = l[0]                   # Column A
+    tn3_port   = l[2]                   # Column C
     tn4_desc   = l[3].replace(" ", "")  # Column D
-    tn4_noshut = l[5] != "down"     # Column F
-    tn4_poe    = l[7] == "TRUE"     # Column H
-    tn4_lag    = l[8]         # Column I
+    tn4_noshut = l[5] != "down"         # Column F
+    tn4_poe    = l[7] == "TRUE"         # Column H
+    tn4_lag    = l[8]                   # Column I (name of LAG parent)
 
     # Header
     if n < 1: continue
@@ -41,8 +41,12 @@ def parse_migration_rule(lines):
     if tn4_port[:2] == "et": continue
 
     # Mark if this port connects to AP or Meraki switch
+    # Submit specified VLAN settings instead of migrating from Tn3
     wifi_mode = False
-    if tn4_desc[:2] in ["o-", "s-"] or tn4_lag[2:] not in ["", "0"] or tn4_port[:2] == "ae":
+    to_ap = tn4_desc[:2] in ["o-", "s-"]
+    is_lag_parent = tn4_port[:2] == "ae"
+    to_meraki = tn4_desc[-2:] == "-p"
+    if to_ap or is_lag_parent and to_meraki:
       wifi_mode = True
       tn3_port = ""
 
@@ -50,9 +54,9 @@ def parse_migration_rule(lines):
       "wifi_mode":   wifi_mode,
       "tn3_port":    tn3_port,
       "description": tn4_desc,
-      "enable":    tn4_noshut,
-      "poe":       tn4_poe,
-      "lag":       tn4_lag,
+      "enable":      tn4_noshut,
+      "poe":         tn4_poe,
+      "lag":         tn4_lag,
     }
   return rule
 
