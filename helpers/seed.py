@@ -26,9 +26,6 @@ class NetBoxClient:
   def __init__(self, netbox_url, netbox_api_token):
     self.api_endpoint = netbox_url.rstrip("/") + "/api"
     self.token = netbox_api_token
-    self.all_devices = None
-    self.all_interfaces = None
-    self.all_sites = None
 
 
   def query(self, request_path, data=None, update=False):
@@ -123,8 +120,7 @@ class NetBoxClient:
 
 
   def get_all_sites(self):
-    if not self.all_sites:
-      self.all_sites = self.query("/dcim/sites/")
+    self.all_sites = self.query("/dcim/sites/")
     return self.all_sites
 
 
@@ -134,8 +130,7 @@ class NetBoxClient:
 
 
   def get_all_devices(self):
-    if not self.all_devices:
-      self.all_devices = self.query("/dcim/devices/")
+    self.all_devices = self.query("/dcim/devices/")
     return self.all_devices
   
   
@@ -167,8 +162,7 @@ class NetBoxClient:
 
 
   def get_all_interfaces(self):
-    if not self.all_interfaces:
-      self.all_interfaces = self.query("/dcim/interfaces/")
+    self.all_interfaces = self.query("/dcim/interfaces/")
     return self.all_interfaces
 
 
@@ -569,20 +563,20 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  #print("STEP 1 of 9: Create VLANs")
-  #res = nb.create_vlans(vlans)
-  #if res:
-  #  pprint(res)
+  print("STEP 1 of 9: Create VLANs")
+  res = nb.create_vlans(vlans)
+  if res:
+    pprint(res)
 
-  #print("STEP 2 of 9: Create Site Groups")
-  #res = nb.create_sitegroups(sitegroups)
-  #if res:
-  #  pprint(res)
+  print("STEP 2 of 9: Create Site Groups")
+  res = nb.create_sitegroups(sitegroups)
+  if res:
+    pprint(res)
 
-  #print("STEP 3 of 9: Create Sites")
-  #res = nb.create_sites(sites)
-  #if res:
-  #  pprint(res)
+  print("STEP 3 of 9: Create Sites")
+  res = nb.create_sites(sites)
+  if res:
+    pprint(res)
 
   print("STEP 4 of 9: Create Devices")
   res = nb.create_devices(devices, tn4_n_stacked)
