@@ -199,10 +199,12 @@ def load_chassis_interfaces(excludes=[]):
 
     n_stacked[hostname] = len(chassis)
 
-  # Override with exception rule (Tn3 hostnames)
+  # Override with exception rule (Tn3 hostnames -> Tn4 stack size)
   n_stacked["green1-1"] = 2
   n_stacked["gsic-1"] = 1
   n_stacked["minami1-1"] = 1
+  n_stacked["g1-1"] = 2
+  n_stacked["j3-1"] = 7
 
   return interfaces, n_stacked
 
