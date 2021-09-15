@@ -456,8 +456,9 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
           tn4_lag_interfaces[tn4_port] = cf
         continue
 
-      # To Meraki switch: append child interfaces to the LAG
       parent = rule_props["lag"]
+      
+      # To Meraki switch: append child interfaces to the LAG
       if parent:
         tn4_interfaces[tn4_port] = {
           "enabled":     True,
@@ -477,13 +478,17 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
           "lag":         None,
         }
 
+    # other than Wi-Fi ports
     else:
       tn3_port = rule_props["tn3_port"]
       try:
         tn4_interfaces[tn4_port] = tn3_interfaces[tn3_port]
       except KeyError as e:
         ok = False
-        print(f"No interface found on Tn3 ({tn4_hostname}): from {tn3_port} to {tn4_port}")
+        if rule_props["lag"]:
+          ok = True
+        if not ok:
+          print(f"No interface found on Tn3 ({tn4_hostname}): from {tn3_port} to {tn4_port}")
         continue
 
       for override in ["description", "enable", "poe", "lag"]:

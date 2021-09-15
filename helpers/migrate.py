@@ -6,6 +6,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pprint import pprint
 import os
 import sys
+import re
 import gspread
 import openpyxl
 
@@ -54,15 +55,16 @@ def parse_migration_rule(lines):
     if tn4_port == "": continue
     if tn3_port == "" and tn4_desc == "": continue
     if tn4_port == "ae0": continue
+    if tn4_port == "ae1": continue  # added temporally (2021.09.15)
     if tn4_port[:2] == "et": continue
 
-    # Mark if this port connects to AP or Meraki switch
+    # Mark if this port connects to AP or Meraki switch (LAG parent and children)
     # Submit specified VLAN settings instead of migrating from Tn3
     wifi_mode = False
     to_ap = tn4_desc[:2] in ["o-", "s-"]
-    is_lag_parent = tn4_port[:2] == "ae"
-    to_meraki = tn4_desc[-2:] == "-p"
-    if to_ap or is_lag_parent and to_meraki:
+    is_lag_child = re.match('.*-p\(.*\)', tn4_desc) is not None
+    is_lag_parent = tn4_port[:2] == "ae" and tn4_desc[-2:] == "-p"
+    if to_ap or is_lag_parent or is_lag_child:
       wifi_mode = True
       tn3_port = ""
 
