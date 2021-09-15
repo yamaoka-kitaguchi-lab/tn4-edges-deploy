@@ -188,7 +188,7 @@ class NetBoxClient:
     for device in self.all_devices:
       if device["device_role"]["slug"] != "edge-sw":
         continue
-      if device["site"]["slug"] in ["ookayama-n", "ookayama-s", "ookayama-e", "ookayama-e", "midorigaoka", "ishikawadai", "tamachi"]:
+      if device["site"]["slug"] in ["ookayama-n", "ookayama-e", "ookayama-w", "ookayama-s", "midorigaoka", "ishikawadai", "tamachi"]:
         hints[device["name"]] = 112
       else:
         hints[device["name"]] = 113
