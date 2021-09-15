@@ -97,6 +97,6 @@ if __name__ == "__main__":
   #pprint(load(sheets))
   
   sheets = open_xlsx(XLSX_PATH)
-  pprint(load(sheets, hosts=["minami1", "minami2"]))
-  #pprint(load(sheets))
+  #pprint(load(sheets, hosts=["minami1", "minami2"]))
+  pprint(load(sheets))
   
