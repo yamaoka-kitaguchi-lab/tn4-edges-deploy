@@ -26,6 +26,8 @@ class NetBoxClient:
   def __init__(self, netbox_url, netbox_api_token):
     self.api_endpoint = netbox_url.rstrip("/") + "/api"
     self.token = netbox_api_token
+    self.all_devices = None
+    self.all_interfaces = None
 
 
   def query(self, request_path, data=None, update=False):
@@ -119,29 +121,37 @@ class NetBoxClient:
 
 
   def get_all_devices(self):
-    return self.query("/dcim/devices/")
+    self.all_devices = self.query("/dcim/devices/")
+    return self.all_devices
 
 
   def get_all_devicenames(self):
-    devices = self.get_all_devices()
+    if self.all_devices is None:
+      self.get_all_devices()
+    devices = self.all_devices
     return [device["name"] for device in devices]
 
 
   def get_device_resolve_hint(self):
     hints = {}
-    for device in self.get_all_devices():
+    if self.all_devices is None:
+      self.get_all_devices()
+    for device in self.all_devices:
       hints[device["name"]] = device["id"]
     return hints
 
 
   def get_interface(self, iid):
-    for interface in self.get_all_interfaces():
+    if self.all_interfaces is None:
+      self.get_all_interfaces()
+    for interface in self.all_interfaces:
       if interface["id"] == iid:
         return interface
 
 
   def get_all_interfaces(self):
-    return self.query("/dcim/interfaces/")
+    self.all_interfaces = self.query("/dcim/interfaces/")
+    return self.all_interfaces
 
 
   def get_interface_resolve_hint(self):
@@ -158,7 +168,9 @@ class NetBoxClient:
   
   def get_mgmt_vlanid_resolve_hint(self):
     hints = {}
-    for device in self.get_all_devices():
+    if self.all_devices is None:
+      self.get_all_devices()
+    for device in self.all_devices:
       if device["device_role"]["slug"] != "edge-sw":
         continue
       if device["site"]["slug"] in ["ookayama-n", "ookayama-w", "midorigaoka"]:
@@ -167,6 +179,19 @@ class NetBoxClient:
         hints[device["name"]] = 361
       else:
         hints[device["name"]] = 362
+    return hints
+  
+  def get_tokyotech_vlanid_resolve_hint(self):
+    hints = {}
+    if self.all_devices is None:
+      self.get_all_devices()
+    for device in self.all_devices:
+      if device["device_role"]["slug"] != "edge-sw":
+        continue
+      if device["site"]["slug"] in ["ookayama-n", "ookayama-s", "ookayama-e", "ookayama-e", "midorigaoka", "ishikawadai", "tamachi"]:
+        hints[device["name"]] = 112
+      else:
+        hints[device["name"]] = 113
     return hints
 
   def get_all_vcs(self):
@@ -326,6 +351,7 @@ class NetBoxClient:
     interface_hints = self.get_interface_resolve_hint()
     vlan_resolver = self.make_vlan_resolver()
     mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint()
+    tokyotech_vlanid_hints = self.get_tokyotech_vlanid_resolve_hint()
     data = []
     orphan_vlans = {}
 
@@ -374,10 +400,12 @@ class NetBoxClient:
 
         # Configure Wi-Fi (mode: WIFI)
         if props["mode"] == "WIFI":
-          dynamic_vlan_range = [v for v in range(1000,1001+1)]
           req["mode"] = "tagged"
           req["untagged_vlan"] = vlan_resolver(mgmt_vlanid_hints[hostname])
-          req["tagged_vlans"] = [vlan_resolver(v) for v in dynamic_vlan_range]
+          req["tagged_vlans"] = [
+            vlan_resolver(tokyotech_vlanid_hints[hostname])
+          ]
+          req["tags"].append({"slug": "wifi"})
 
         data.append(req)
 
