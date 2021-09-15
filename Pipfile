@@ -13,6 +13,7 @@ oauth2client = "*"
 pynetbox     = "*"
 paramiko     = "*"
 ncclient     = "*"
+openpyxl = "*"
 
 [dev-packages]
 
