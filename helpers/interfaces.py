@@ -87,10 +87,10 @@ def interface_range_vlan(cf):
 
       for member in members:
         interfaces[member] = {
-          "enabled": enabled,
-          "mode": mode,
+          "enabled":  enabled,
+          "mode":     mode,
           "untagged": int(vlan_str) if mode == "ACCESS" else None,
-          "tagged": enum_vlans(vlan_str) if mode == "TRUNK" else None,
+          "tagged":   enum_vlans(vlan_str) if mode == "TRUNK" else None,
         }
         if description:
           interfaces[member]["description"] = description
@@ -188,13 +188,13 @@ def load_chassis_interfaces(excludes=[]):
         ifname = ifname[15:]
 
       interfaces[hostname][ifname] = {
-        "enabled": prop["Active"],
+        "enabled":     prop["Active"],
         "description": desc,
-        "mode": prop["Switchport_Mode"],
-        "untagged": prop["Access_VLAN"],
-        "tagged": enum_vlans(prop["Allowed_VLANs"]),
-        "lag": None,
-        "poe": None,
+        "mode":        prop["Switchport_Mode"],
+        "untagged":    prop["Access_VLAN"],
+        "tagged":      enum_vlans(prop["Allowed_VLANs"]),
+        "lag":         None,
+        "poe":         None,
       }
 
     n_stacked[hostname] = len(chassis)

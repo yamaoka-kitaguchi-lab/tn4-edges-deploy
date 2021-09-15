@@ -28,17 +28,17 @@ def load(hosts=[]):
   for n, l in enumerate(lines):
     if n < 2: continue
 
-    register  = l[0]
-    region    = l[1]
+    register    = l[0]
+    region      = l[1]
     group_name  = l[2]
-    group   = l[3]
-    site_name = l[4]
-    site    = l[5]
-    tn3_name  = l[6]
-    name    = l[7]
+    group       = l[3]
+    site_name   = l[4]
+    site        = l[5]
+    tn3_name    = l[6]
+    name        = l[7]
     device_type = l[8]
-    ipv4    = l[9]
-    cidr    = l[10]
+    ipv4        = l[9]
+    cidr        = l[10]
 
     if hosts and name not in hosts:
       continue

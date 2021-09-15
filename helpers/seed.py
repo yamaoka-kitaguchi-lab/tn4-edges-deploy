@@ -261,7 +261,8 @@ class NetBoxClient:
         continue
       device_name = device["name"]
       device_type = device["device_type"]
-      if n_stacked[device_name] > 1:
+      exceptions = ["nishi8w", "nishi8e", "r1", "b2"]
+      if n_stacked[device_name] > 1 and device_name not in exceptions:
         device_type += "-st" + str(n_stacked[device_name])
       data.append({
         "name": device_name,
