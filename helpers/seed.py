@@ -273,12 +273,12 @@ class NetBoxClient:
 
 
   def create_devices(self, devices, n_stacked):
-    existed_devices = self.get_all_devicenames()
+    exist_devices = self.get_all_devicenames()
     data = []
     for device in devices:
-      if device["name"] in existed_devices:
-        continue
       device_name = device["name"]
+      if device_name in exist_devices:
+        continue
       device_type = device["device_type"]
       exceptions = ["nishi8w", "nishi8e", "r1", "b2"]
       if n_stacked[device_name] > 1 and device_name not in exceptions:

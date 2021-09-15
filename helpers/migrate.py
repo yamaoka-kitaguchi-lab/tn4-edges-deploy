@@ -62,8 +62,8 @@ def parse_migration_rule(lines):
     # Submit specified VLAN settings instead of migrating from Tn3
     wifi_mode = False
     to_ap = tn4_desc[:2] in ["o-", "s-"]
-    is_lag_child = re.match('.*-p\(.*\)', tn4_desc) is not None
-    is_lag_parent = tn4_port[:2] == "ae" and tn4_desc[-2:] == "-p"
+    is_lag_child = re.match('.*-p[2-9]*\(.*\)', tn4_desc) is not None
+    is_lag_parent = tn4_port[:2] == "ae" and re.match('.*-p[2-9]*', tn4_desc) is not None
     if to_ap or is_lag_parent or is_lag_child:
       wifi_mode = True
       tn3_port = ""
