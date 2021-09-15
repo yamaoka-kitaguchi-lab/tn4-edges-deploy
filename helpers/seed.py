@@ -28,6 +28,7 @@ class NetBoxClient:
     self.token = netbox_api_token
     self.all_devices = None
     self.all_interfaces = None
+    self.all_sites = None
 
 
   def query(self, request_path, data=None, update=False):
@@ -111,8 +112,19 @@ class NetBoxClient:
     return [sitegroup["slug"] for sitegroup in sitegroups]
 
 
+  def get_all_regions(self):
+    return self.query("/dcim/regions/")
+
+
+  def get_all_regionsslug(self):
+    regions = self.get_all_regions()
+    return [region["slug"] for region in regions]
+
+
   def get_all_sites(self):
-    return self.query("/dcim/sites/")
+    if not self.all_sites:
+      self.all_sites = self.query("/dcim/sites/")
+    return self.all_sites
 
 
   def get_all_siteslugs(self):
@@ -123,6 +135,22 @@ class NetBoxClient:
   def get_all_devices(self):
     self.all_devices = self.query("/dcim/devices/")
     return self.all_devices
+  
+  
+  def lookup_sitegroup(self, site_slug):
+    for site in self.all_sites:
+      if site["slug"] == site_slug:
+        return site["group"]["slug"]
+    print(f"Unknown site: {site_slug}")
+    return None
+  
+  
+  def lookup_region(self, site_slug):
+    for site in self.all_sites:
+      if site["slug"] == site_slug:
+        return site["region"]["slug"]
+    print(f"Unknown site: {site_slug}")
+    return None
 
 
   def get_all_devicenames(self):
@@ -173,9 +201,10 @@ class NetBoxClient:
     for device in self.all_devices:
       if device["device_role"]["slug"] != "edge-sw":
         continue
-      if device["site"]["slug"] in ["ookayama-n", "ookayama-w", "midorigaoka"]:
+      area = self.lookup_sitegroup(device["site"]["slug"])
+      if area in ["ookayama-n", "ookayama-w", "midorigaoka"]:
         hints[device["name"]] = 360
-      elif device["site"]["slug"] in ["ookayama-e", "ookayama-s", "ishikawadai", "tamachi"]:
+      elif area in ["ookayama-e", "ookayama-s", "ishikawadai", "tamachi"]:
         hints[device["name"]] = 361
       else:
         hints[device["name"]] = 362
@@ -188,7 +217,8 @@ class NetBoxClient:
     for device in self.all_devices:
       if device["device_role"]["slug"] != "edge-sw":
         continue
-      if device["site"]["slug"] in ["ookayama-n", "ookayama-e", "ookayama-w", "ookayama-s", "midorigaoka", "ishikawadai", "tamachi"]:
+      region = self.lookup_region(device["site"]["slug"])
+      if region in ["ookayama", "tamachi"]:
         hints[device["name"]] = 112
       else:
         hints[device["name"]] = 113
@@ -535,7 +565,7 @@ def migrate_all_edges(devices, tn3_interface_info, tn3_stack_info, hosts=[]):
 def main():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-
+  
   vlans = vlan_load()
   devices = device_load(hosts=[])
   hosts = [d["name"] for d in devices]
@@ -574,20 +604,20 @@ def main():
   if res:
     pprint(res)
 
-  #print("STEP 7 of 9: Create LAG interfaces")
-  #res = nb.create_lag_interfaces(tn4_lags)
-  #if res:
-  #  pprint(res)
+  print("STEP 7 of 9: Create LAG interfaces")
+  res = nb.create_lag_interfaces(tn4_lags)
+  if res:
+    pprint(res)
 
-  #print("STEP 8 of 9: Disable all interfaces")
-  #res = nb.disable_all_interfaces(devices)
-  #if res:
-  #  pprint(res)
+  print("STEP 8 of 9: Disable all interfaces")
+  res = nb.disable_all_interfaces(devices)
+  if res:
+    pprint(res)
 
-  #print("STEP 9 of 9: Update interface configurations")
-  #res = nb.update_interface_configs(tn4_interfaces)
-  #if res:
-  #  pprint(res)
+  print("STEP 9 of 9: Update interface configurations")
+  res = nb.update_interface_configs(tn4_interfaces)
+  if res:
+    pprint(res)
 
 
 def develop():
