@@ -13,7 +13,7 @@ import openpyxl
 SPREADSHEET_KEY = "11M9m7-C7Ogvuow7F5OG4U--TBk4gwETUcWTZWEJGCOY"
 JSON_KEYFILE_PATH = os.path.join(os.path.dirname(__file__), "../.secrets/googleapi.json")
 
-XLSX_PATH = "./port_migration_rules.xlsx"
+XLSX_PATH = os.path.join(os.path.dirname(__file__), "./port_migration_rules.xlsx")
 
 
 def open_worksheets(keyfile, sheetkey):
@@ -25,6 +25,7 @@ def open_worksheets(keyfile, sheetkey):
 
 
 def open_xlsx(xlsx_path):
+  print("Loading migration rules from Excel...")
   book = openpyxl.load_workbook(xlsx_path)
   return book.worksheets
 
@@ -76,8 +77,10 @@ def parse_migration_rule(lines):
   return rule
 
 
-def load(sheets, hosts=[]):
+def load(sheets=None, hosts=[]):
   rules = {}
+  if sheets is None:
+    sheets = open_xlsx(XLSX_PATH)
   for i, sheet in enumerate(sheets):
     tn4_hostname = sheet.title
     if hosts and tn4_hostname not in hosts:

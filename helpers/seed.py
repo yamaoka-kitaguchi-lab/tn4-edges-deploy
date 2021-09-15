@@ -554,35 +554,35 @@ def main():
   if res:
     pprint(res)
 
-  print("STEP 4 of 9: Create Devices")
-  res = nb.create_devices(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 4 of 9: Create Devices")
+  #res = nb.create_devices(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 5 of 9: Create IP Addresses")
-  res = nb.create_and_assign_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 5 of 9: Create IP Addresses")
+  #res = nb.create_and_assign_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 6 of 9: Update device addresses")
-  res = nb.set_primary_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 6 of 9: Update device addresses")
+  #res = nb.set_primary_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 7 of 9: Create LAG interfaces")
-  res = nb.create_lag_interfaces(tn4_lags)
-  if res:
-    pprint(res)
+  #print("STEP 7 of 9: Create LAG interfaces")
+  #res = nb.create_lag_interfaces(tn4_lags)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 8 of 9: Disable all interfaces")
-  res = nb.disable_all_interfaces(devices)
-  if res:
-    pprint(res)
+  #print("STEP 8 of 9: Disable all interfaces")
+  #res = nb.disable_all_interfaces(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 9 of 9: Update interface configurations")
-  res = nb.update_interface_configs(tn4_interfaces)
-  if res:
-    pprint(res)
+  #print("STEP 9 of 9: Update interface configurations")
+  #res = nb.update_interface_configs(tn4_interfaces)
+  #if res:
+  #  pprint(res)
 
 
 def develop():
