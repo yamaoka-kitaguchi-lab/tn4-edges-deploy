@@ -400,10 +400,14 @@ class NetBoxClient:
 
         # Configure Wi-Fi (mode: WIFI)
         if props["mode"] == "WIFI":
+          tokyotech = tokyotech_vlanid_hints[hostname]
+          eduroam = 169
+          event_net = [161, 162, 163, 164, 171, 173]
+          wi2 = [341, 342]
           req["mode"] = "tagged"
           req["untagged_vlan"] = vlan_resolver(mgmt_vlanid_hints[hostname])
           req["tagged_vlans"] = [
-            vlan_resolver(tokyotech_vlanid_hints[hostname])
+            vlan_resolver(vid) for vid in [tokyotech, eduroam, *event_net, *wi2]
           ]
           req["tags"].append({"slug": "wifi"})
 
