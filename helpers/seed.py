@@ -61,6 +61,7 @@ class NetBoxClient:
 
     return responses
 
+
   def get_all_vlans(self):
     return self.query("/ipam/vlans/")
 
@@ -133,12 +134,13 @@ class NetBoxClient:
 
 
   def get_all_devices(self):
-    self.all_devices = self.query("/dcim/devices/")
+    if not self.all_devices:
+      self.all_devices = self.query("/dcim/devices/")
     return self.all_devices
   
   
   def lookup_sitegroup(self, site_slug):
-    for site in self.all_sites:
+    for site in self.get_all_sites():
       if site["slug"] == site_slug:
         return site["group"]["slug"]
     print(f"Unknown site: {site_slug}")
@@ -146,7 +148,7 @@ class NetBoxClient:
   
   
   def lookup_region(self, site_slug):
-    for site in self.all_sites:
+    for site in self.get_all_sites():
       if site["slug"] == site_slug:
         return site["region"]["slug"]
     print(f"Unknown site: {site_slug}")
@@ -154,32 +156,26 @@ class NetBoxClient:
 
 
   def get_all_devicenames(self):
-    if not self.all_devices:
-      self.get_all_devices()
-    devices = self.all_devices
-    return [device["name"] for device in devices]
+    return [device["name"] for device in self.get_all_devices()]
 
 
   def get_device_resolve_hint(self):
     hints = {}
-    if not self.all_devices:
-      self.get_all_devices()
-    for device in self.all_devices:
+    for device in self.get_all_devices():
       hints[device["name"]] = device["id"]
     return hints
 
 
-  def get_interface(self, iid):
+  def get_all_interfaces(self):
     if not self.all_interfaces:
-      self.get_all_interfaces()
-    for interface in self.all_interfaces:
+      self.all_interfaces = self.query("/dcim/interfaces/")
+    return self.all_interfaces
+
+
+  def get_interface(self, iid):
+    for interface in self.get_all_interfaces():
       if interface["id"] == iid:
         return interface
-
-
-  def get_all_interfaces(self):
-    self.all_interfaces = self.query("/dcim/interfaces/")
-    return self.all_interfaces
 
 
   def get_interface_resolve_hint(self):
@@ -194,11 +190,10 @@ class NetBoxClient:
         hints[key] = {subkey: iid}
     return hints
   
+
   def get_mgmt_vlanid_resolve_hint(self):
     hints = {}
-    if not self.all_devices:
-      self.get_all_devices()
-    for device in self.all_devices:
+    for device in self.get_all_devices():
       if device["device_role"]["slug"] != "edge-sw":
         continue
       area = self.lookup_sitegroup(device["site"]["slug"])
@@ -210,11 +205,10 @@ class NetBoxClient:
         hints[device["name"]] = 362
     return hints
   
+
   def get_tokyotech_vlanid_resolve_hint(self):
     hints = {}
-    if not self.all_devices:
-      self.get_all_devices()
-    for device in self.all_devices:
+    for device in self.get_all_devices():
       if device["device_role"]["slug"] != "edge-sw":
         continue
       region = self.lookup_region(device["site"]["slug"])
@@ -223,6 +217,7 @@ class NetBoxClient:
       else:
         hints[device["name"]] = 113
     return hints
+
 
   def get_all_vcs(self):
     return self.query("/dcim/virtual-chassis/")
