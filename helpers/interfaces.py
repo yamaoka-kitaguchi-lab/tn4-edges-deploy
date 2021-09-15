@@ -44,7 +44,7 @@ def enum_vlans(vlan_str):
 
 # CAUTION: Dirty hack
 def interface_range_vlan(cf):
-  interfaces = {}     # Dict of interface metadata
+  interfaces = {}         # Dict of interface metadata
   uplink_interfaces = []  # List of the uplink interface name
   n = 0
   while n < len(cf):
@@ -211,7 +211,7 @@ def load_chassis_interfaces(excludes=[]):
 
 if __name__ == "__main__":
   interfaces, n_stacked = load_chassis_interfaces()
-  pprint(n_stacked)
   pprint(interfaces)
-  for hostname, n in n_stacked.items():
-    print(n, "\t", hostname)
+  #pprint(n_stacked)
+  #for hostname, n in n_stacked.items():
+  #  print(n, "\t", hostname)
