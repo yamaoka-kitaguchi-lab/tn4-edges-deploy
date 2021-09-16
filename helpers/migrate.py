@@ -53,7 +53,7 @@ def parse_migration_rule(lines):
 
     # Skip incomplete lines
     if tn4_port == "": continue
-    
+
     # Uplink interfaces
     uplink_mode = False
     is_uplink_lag = tn4_port in ["ae0", "ae1"]
@@ -61,7 +61,7 @@ def parse_migration_rule(lines):
     if is_uplink_lag or is_uplink_et:
       uplink_mode = True
       tn3_port = ""
-      
+
       # Replace ae1 to ae0
       tn4_desc = tn4_desc.replace("ae1", "ae0")
       if tn4_port == "ae1":
@@ -72,7 +72,7 @@ def parse_migration_rule(lines):
     # Skip incomplete lines
     if tn3_port == "" and tn4_desc == "" and not uplink_mode:
       continue
-    
+
     # Mark if this port connects to AP or Meraki switch (LAG parent and children)
     # Submit specified VLAN settings instead of migrating from Tn3
     wifi_mode = False
@@ -117,8 +117,7 @@ if __name__ == "__main__":
   #sheets = open_worksheets(JSON_KEYFILE_PATH, SPREADSHEET_KEY)
   #pprint(load(sheets, hosts=["minami1", "minami2"]))
   #pprint(load(sheets))
-  
+
   sheets = open_xlsx(XLSX_PATH)
   #pprint(load(sheets, hosts=["minami1", "minami2"]))
   pprint(load(sheets))
-  

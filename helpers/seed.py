@@ -132,16 +132,16 @@ class NetBoxClient:
   def get_all_devices(self):
     self.all_devices = self.query("/dcim/devices/")
     return self.all_devices
-  
-  
+
+
   def lookup_sitegroup(self, site_slug):
     for site in self.get_all_sites():
       if site["slug"] == site_slug:
         return site["group"]["slug"]
     print(f"Unknown site: {site_slug}")
     return None
-  
-  
+
+
   def lookup_region(self, site_slug):
     for site in self.get_all_sites():
       if site["slug"] == site_slug:
@@ -183,7 +183,7 @@ class NetBoxClient:
       except KeyError:
         hints[key] = {subkey: iid}
     return hints
-  
+
 
   def get_mgmt_vlanid_resolve_hint(self):
     hints = {}
@@ -198,7 +198,7 @@ class NetBoxClient:
       else:
         hints[device["name"]] = 362
     return hints
-  
+
 
   def get_tokyotech_vlanid_resolve_hint(self):
     hints = {}
@@ -417,7 +417,7 @@ class NetBoxClient:
           if vids:
             req["mode"] = "tagged"
             req["tagged_vlans"] = vids
-            
+
         # Configure uplink (mode: UPLINK)
         if props["mode"] == "UPLINK":
           req["mode"] = "tagged-all"
@@ -464,7 +464,7 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
   summary = []
   ok = True
   for tn4_port, rule_props in rule.items():
-    
+
     # Uplink ports
     if rule_props["uplink_mode"]:
       if tn4_port[:2] == "ae":
@@ -479,7 +479,7 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
           tn4_interfaces[tn4_port] = cf
           tn4_lag_interfaces[tn4_port] = cf
         continue
-      
+
       parent = rule_props["lag"]
       if parent:
         tn4_interfaces[tn4_port] = {
@@ -498,7 +498,7 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
           "poe":         False,
           "lag":         None,
         }
-        
+
     # Wi-Fi ports
     elif rule_props["wifi_mode"]:
 
@@ -598,7 +598,7 @@ def migrate_all_edges(devices, tn3_interface_info, tn3_stack_info, hosts=[]):
 def main():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  
+
   vlans = vlan_load()
   devices = device_load(hosts=[])
   hosts = [d["name"] for d in devices]
