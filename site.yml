@@ -5,3 +5,4 @@
 
   roles:
     - role: juniper
+      when: manufacturer == "juniper"
