@@ -603,20 +603,20 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  #print("STEP 1 of 9: Create VLANs")
-  #res = nb.create_vlans(vlans)
-  #if res:
-  #  pprint(res)
+  print("STEP 1 of 9: Create VLANs")
+  res = nb.create_vlans(vlans)
+  if res:
+    pprint(res)
 
-  #print("STEP 2 of 9: Create Site Groups")
-  #res = nb.create_sitegroups(sitegroups)
-  #if res:
-  #  pprint(res)
+  print("STEP 2 of 9: Create Site Groups")
+  res = nb.create_sitegroups(sitegroups)
+  if res:
+    pprint(res)
 
-  #print("STEP 3 of 9: Create Sites")
-  #res = nb.create_sites(sites)
-  #if res:
-  #  pprint(res)
+  print("STEP 3 of 9: Create Sites")
+  res = nb.create_sites(sites)
+  if res:
+    pprint(res)
 
   print("STEP 4 of 9: Create Devices")
   res = nb.create_devices(devices, tn4_n_stacked)

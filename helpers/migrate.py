@@ -63,7 +63,7 @@ def parse_migration_rule(lines):
       tn3_port = ""
       
       # Replace ae1 to ae0
-      tn4_desc.replace("ae1", "ae0")
+      tn4_desc = tn4_desc.replace("ae1", "ae0")
       if tn4_port == "ae1":
         tn4_port = "ae0"
       if tn4_lag == "ae1":
