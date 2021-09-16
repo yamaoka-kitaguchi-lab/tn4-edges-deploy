@@ -125,8 +125,8 @@ def load():
 
   interface_props = "Active,Switchport_Mode,Access_VLAN,Allowed_VLANs,Description"
   alala_phy_regex = "(Fast|Gigabit)Ethernet0\/[0-9]{1,2}$"
-  juniper_phy_regex = "[g,x]e-[0-9]+\/[0,1]\/[0-9]{1,2}$"
-  juniper_log_regex = "[g,x]e-[0-9]+\/[0,1]\/[0-9]{1,2}\.[0-9]+$"
+  juniper_phy_regex = "[g,x]e-[0-9]+\/[0-9]\/[0-9]{1,2}$"
+  juniper_log_regex = "[g,x]e-[0-9]+\/[0-9]\/[0-9]{1,2}\.[0-9]+$"
 
   q1 = bfq.interfaceProperties(interfaces=f"/({alala_phy_regex}|{juniper_phy_regex})/", properties=interface_props)
   q2 = bfq.interfaceProperties(interfaces=f"/{juniper_log_regex}/", properties=interface_props)

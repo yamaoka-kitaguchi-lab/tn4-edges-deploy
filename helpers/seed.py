@@ -546,6 +546,10 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
         ok = False
         if rule_props["lag"]:
           ok = True
+
+        # Exceptions (these interfaces will be manually added after seeding)
+        if tn4_hostname == "j3" and tn4_port == "et-1/2/1": ok = True
+
         if not ok:
           print(f"No interface found on Tn3 ({tn4_hostname}): from {tn3_port} to {tn4_port}")
         continue
