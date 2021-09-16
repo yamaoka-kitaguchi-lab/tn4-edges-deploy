@@ -91,7 +91,7 @@ class EdgeConfig:
       except KeyError:
         arranged[key] = {interface["name"]: interface}
     return arranged
-  
+
 
   def get_vlans(self, hostname):
     vlans, vids = [], set()
@@ -112,13 +112,18 @@ class EdgeConfig:
 
   def get_all_devices(self):
     return [d["name"] for d in self.all_devices if d["device_role"]["slug"] == "edge-sw"]
+
+
+  def get_device_manufacturer(self, hostname):
+    for device in self.all_devices:
+      if device["name"] == hostname:
+        return device["device_type"]["manufacturer"]["slug"]
   
 
   def get_device_ip_address(self, hostname):
     for device in self.all_devices:
-      if device["name"] != hostname:
-        continue
-      return device["primary_ip"]["address"].split("/")[0]
+      if device["name"] == hostname:
+        return device["primary_ip"]["address"].split("/")[0]
   
   
   def get_lag_members(self, hostname):
@@ -186,11 +191,12 @@ if __name__ == "__main__":
     hostname: {
       "hosts": [cf.get_device_ip_address(hostname)],
       "vars": {
-        "hostname":    hostname,
-        "datetime":    ts,
-        "vlans":       cf.get_vlans(hostname),
-        "interfaces":  cf.get_interfaces(hostname),
-        "lag_members": cf.get_lag_members(hostname),
+        "hostname":     hostname,
+        "datetime":     ts,
+        "manufacturer": cf.get_device_manufacturer(hostname),
+        "vlans":        cf.get_vlans(hostname),
+        "interfaces":   cf.get_interfaces(hostname),
+        "lag_members":  cf.get_lag_members(hostname),
       }
     }
     for hostname in cf.get_all_devices()
