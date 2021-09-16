@@ -322,6 +322,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-0/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-0/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: irb
   type: virtual
   mgmt_only: true
@@ -497,6 +507,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-0/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-0/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-1/0/0
   type: 1000base-x-sfp
   mgmt_only: false
@@ -657,6 +677,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-1/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-2/0/0
   type: 1000base-x-sfp
   mgmt_only: false
@@ -814,6 +844,16 @@ interfaces:
   description: ''
 - name: ge-2/0/31
   type: 1000base-x-sfp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-2/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-2/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -1072,6 +1112,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-0/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-0/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: irb
   type: virtual
   mgmt_only: true
@@ -1327,6 +1377,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-0/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-0/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-1/0/0
   type: 1000base-t
   mgmt_only: false
@@ -1564,6 +1624,16 @@ interfaces:
   description: ''
 - name: mge-1/0/47
   type: 10gbase-t
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -1822,6 +1892,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-0/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-0/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-1/0/0
   type: 1000base-t
   mgmt_only: false
@@ -2059,6 +2139,16 @@ interfaces:
   description: ''
 - name: mge-1/0/47
   type: 10gbase-t
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -2302,6 +2392,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-2/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-2/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-3/0/0
   type: 1000base-t
   mgmt_only: false
@@ -2539,6 +2639,16 @@ interfaces:
   description: ''
 - name: mge-3/0/47
   type: 10gbase-t
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-3/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-3/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -2782,6 +2892,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-4/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-4/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-5/0/0
   type: 1000base-t
   mgmt_only: false
@@ -3022,6 +3142,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-5/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-5/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-6/0/0
   type: 1000base-t
   mgmt_only: false
@@ -3259,6 +3389,16 @@ interfaces:
   description: ''
 - name: mge-6/0/47
   type: 10gbase-t
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-6/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-6/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -3517,6 +3657,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-0/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-0/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-1/0/0
   type: 1000base-t
   mgmt_only: false
@@ -3754,6 +3904,16 @@ interfaces:
   description: ''
 - name: mge-1/0/47
   type: 10gbase-t
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -3997,6 +4157,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-2/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-2/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-3/0/0
   type: 1000base-t
   mgmt_only: false
@@ -4234,6 +4404,16 @@ interfaces:
   description: ''
 - name: mge-3/0/47
   type: 10gbase-t
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-3/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-3/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -4477,6 +4657,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-4/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-4/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-5/0/0
   type: 1000base-t
   mgmt_only: false
@@ -4714,6 +4904,16 @@ interfaces:
   description: ''
 - name: mge-5/0/47
   type: 10gbase-t
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-5/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-5/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -4957,6 +5157,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-6/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-6/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-7/0/0
   type: 1000base-t
   mgmt_only: false
@@ -5194,6 +5404,16 @@ interfaces:
   description: ''
 - name: mge-7/0/47
   type: 10gbase-t
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-7/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-7/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -5452,6 +5672,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-0/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-0/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-1/0/0
   type: 1000base-x-sfp
   mgmt_only: false
@@ -5609,6 +5839,16 @@ interfaces:
   description: ''
 - name: ge-1/0/31
   type: 1000base-x-sfp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''
@@ -5867,6 +6107,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-0/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-0/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-1/0/0
   type: 1000base-x-sfp
   mgmt_only: false
@@ -6027,6 +6277,16 @@ interfaces:
   mgmt_only: false
   label: ''
   description: ''
+- name: et-1/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-1/2/1
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
 - name: ge-2/0/0
   type: 1000base-x-sfp
   mgmt_only: false
@@ -6184,6 +6444,16 @@ interfaces:
   description: ''
 - name: ge-2/0/31
   type: 1000base-x-sfp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-2/2/0
+  type: 40gbase-x-qsfpp
+  mgmt_only: false
+  label: ''
+  description: ''
+- name: et-2/2/1
+  type: 40gbase-x-qsfpp
   mgmt_only: false
   label: ''
   description: ''

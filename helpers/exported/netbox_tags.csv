@@ -1,4 +1,5 @@
 Name,Items,Slug,Color,Description
+Dynamic VLAN,200,dynamic-vlan,#673ab7,
 PoE,0,poe,#ff5722,
 Wi-Fi,0,wifi,#03a9f4,
 mGig,0,mgig,#cddc39,
