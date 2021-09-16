@@ -51,13 +51,28 @@ def parse_migration_rule(lines):
     # Header
     if n < 1: continue
 
-    # Skip uplink LAG interfaces as well as incomplete lines
+    # Skip incomplete lines
     if tn4_port == "": continue
-    if tn3_port == "" and tn4_desc == "": continue
-    if tn4_port == "ae0": continue
-    if tn4_port == "ae1": continue  # added temporally (2021.09.15)
-    if tn4_port[:2] == "et": continue
+    
+    # Uplink interfaces
+    uplink_mode = False
+    is_uplink_lag = tn4_port in ["ae0", "ae1"]
+    is_uplink_et = tn4_port[:3] == "et-" and tn4_lag in ["ae0", "ae1"]
+    if is_uplink_lag or is_uplink_et:
+      uplink_mode = True
+      tn3_port = ""
+      
+      # Replace ae1 to ae0
+      tn4_desc.replace("ae1", "ae0")
+      if tn4_port == "ae1":
+        tn4_port = "ae0"
+      if tn4_lag == "ae1":
+        tn4_lag = "ae0"
 
+    # Skip incomplete lines
+    if tn3_port == "" and tn4_desc == "" and not uplink_mode:
+      continue
+    
     # Mark if this port connects to AP or Meraki switch (LAG parent and children)
     # Submit specified VLAN settings instead of migrating from Tn3
     wifi_mode = False
@@ -69,6 +84,7 @@ def parse_migration_rule(lines):
       tn3_port = ""
 
     rule[tn4_port] = {
+      "uplink_mode": uplink_mode,
       "wifi_mode":   wifi_mode,
       "tn3_port":    tn3_port,
       "description": tn4_desc,

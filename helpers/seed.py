@@ -417,6 +417,11 @@ class NetBoxClient:
           if vids:
             req["mode"] = "tagged"
             req["tagged_vlans"] = vids
+            
+        # Configure uplink (mode: UPLINK)
+        if props["mode"] == "UPLINK":
+          req["mode"] = "tagged-all"
+          req["tags"].append({"slug": "uplink"})
 
         # Configure Wi-Fi (mode: WIFI)
         if props["mode"] == "WIFI":
@@ -459,7 +464,43 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
   summary = []
   ok = True
   for tn4_port, rule_props in rule.items():
-    if rule_props["wifi_mode"]:
+    
+    # Uplink ports
+    if rule_props["uplink_mode"]:
+      if tn4_port[:2] == "ae":
+        if tn4_port not in tn4_lag_interfaces.keys():
+          cf = {
+            "enabled":     True,
+            "description": rule_props["description"],
+            "mode":        "UPLINK",
+            "poe":         False,
+            "lag":         None,
+          }
+          tn4_interfaces[tn4_port] = cf
+          tn4_lag_interfaces[tn4_port] = cf
+        continue
+      
+      parent = rule_props["lag"]
+      if parent:
+        tn4_interfaces[tn4_port] = {
+          "enabled":     True,
+          "description": rule_props["description"],
+          "mode":        "NONE",
+          "poe":         False,
+          "lag":         parent,
+        }
+
+      else:
+        tn4_interfaces[tn4_port] = {
+          "enabled":     True,
+          "description": rule_props["description"],
+          "mode":        "UPLINK",
+          "poe":         False,
+          "lag":         None,
+        }
+        
+    # Wi-Fi ports
+    elif rule_props["wifi_mode"]:
 
       # To Meraki switch: create LAG interface
       if tn4_port[:2] == "ae":
@@ -475,9 +516,8 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
           tn4_lag_interfaces[tn4_port] = cf
         continue
 
-      parent = rule_props["lag"]
-      
       # To Meraki switch: append child interfaces to the LAG
+      parent = rule_props["lag"]
       if parent:
         tn4_interfaces[tn4_port] = {
           "enabled":     True,
@@ -497,7 +537,7 @@ def migrate_edge(rule, tn3_interfaces, tn4_hostname):
           "lag":         None,
         }
 
-    # other than Wi-Fi ports
+    # other than Uplink/Wi-Fi ports
     else:
       tn3_port = rule_props["tn3_port"]
       try:
@@ -563,20 +603,20 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  print("STEP 1 of 9: Create VLANs")
-  res = nb.create_vlans(vlans)
-  if res:
-    pprint(res)
+  #print("STEP 1 of 9: Create VLANs")
+  #res = nb.create_vlans(vlans)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 2 of 9: Create Site Groups")
-  res = nb.create_sitegroups(sitegroups)
-  if res:
-    pprint(res)
+  #print("STEP 2 of 9: Create Site Groups")
+  #res = nb.create_sitegroups(sitegroups)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 3 of 9: Create Sites")
-  res = nb.create_sites(sites)
-  if res:
-    pprint(res)
+  #print("STEP 3 of 9: Create Sites")
+  #res = nb.create_sites(sites)
+  #if res:
+  #  pprint(res)
 
   print("STEP 4 of 9: Create Devices")
   res = nb.create_devices(devices, tn4_n_stacked)
