@@ -156,7 +156,7 @@ class EdgeConfig:
         if mode == "access":
           vlans = [prop["untagged_vlan"]["vid"]]
         if mode == "tagged":
-          mode = "trunk"  # Format conversion: from netbox to junos
+          mode = "trunk"  # Format conversion: from netbox to juniper/cisco
           vlans = [v["vid"] for v in prop["tagged_vlans"]]
           if prop["untagged_vlan"] is not None:
             native = prop["untagged_vlan"]["vid"]
