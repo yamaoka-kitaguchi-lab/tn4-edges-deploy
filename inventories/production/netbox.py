@@ -3,12 +3,11 @@
 
 from pprint import pprint
 from datetime import datetime
-import os
-import sys
 import json
-import yaml
-
+import os
 import requests
+import sys
+import yaml
 
 from ansible.constants import DEFAULT_VAULT_ID_MATCH
 from ansible.parsing.vault import VaultLib
@@ -40,6 +39,9 @@ class NetBoxClient:
   def __init__(self, netbox_url, netbox_api_token):
     self.api_endpoint = netbox_url.rstrip("/") + "/api"
     self.token = netbox_api_token
+    self.all_vlans = []
+    self.all_devices = []
+    self.all_interfaces = []
 
 
   def query(self, request_path):
@@ -47,28 +49,34 @@ class NetBoxClient:
     url = self.api_endpoint + request_path
     headers = {
       "Authorization": f"Token {self.token}",
-      "Content-Type": "application/json",
-      "Accept": "application/json; indent=4"
+      "Content-Type":  "application/json",
+      "Accept":        "application/json; indent=4"
     }
-    
+
     while url:
       raw = requests.get(url, headers=headers, verify=True)
       res = json.loads(raw.text)
       responses += res["results"]
       url = res["next"]
     return responses
-  
 
-  def get_all_vlans(self):
-    return self.query("/ipam/vlans/")
-  
 
-  def get_all_devices(self):
-    return self.query("/dcim/devices/")
-  
+  def get_all_vlans(self, use_cache=True):
+    if not use_cache or not self.all_vlans:
+      self.all_vlans = self.query("/ipam/vlans/")
+    return self.all_vlans
 
-  def get_all_interfaces(self):
-    return self.query("/dcim/interfaces/")
+
+  def get_all_devices(self, use_cache=True):
+    if not use_cache or not self.all_devices:
+      self.all_devices = self.query("/dcim/devices/")
+    return self.all_devices
+
+
+  def get_all_interfaces(self, use_cache=True):
+    if not use_cache or not self.all_interfaces:
+      self.all_interfaces = self.query("/dcim/interfaces/")
+    return self.all_interfaces
 
 
 class EdgeConfig:
@@ -76,11 +84,11 @@ class EdgeConfig:
     self.all_vlans = netbox_cli.get_all_vlans()
     self.all_devices = self.__grep_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
-  
+
 
   def __grep_active_devices(self, devices):
     return [dev for dev in devices if dev["status"]["value"] == "active"]
-  
+
 
   def __group_by_device(self, interfaces):
     arranged = {}
@@ -103,12 +111,12 @@ class EdgeConfig:
       for vlan in self.all_vlans:
         if vlan["vid"] == vid:
           vlans.append({
-            "name": vlan["name"],
-            "vid": vlan["vid"],
+            "name":        vlan["name"],
+            "vid":         vlan["vid"],
             "description": vlan["description"],
           })
     return vlans
-  
+
 
   def get_all_devices(self):
     return [d["name"] for d in self.all_devices if d["device_role"]["slug"] == "edge-sw"]
@@ -118,21 +126,21 @@ class EdgeConfig:
     for device in self.all_devices:
       if device["name"] == hostname:
         return device["device_type"]["manufacturer"]["slug"]
-  
+
 
   def get_device_ip_address(self, hostname):
     for device in self.all_devices:
       if device["name"] == hostname:
         return device["primary_ip"]["address"].split("/")[0]
-  
-  
+
+
   def get_lag_members(self, hostname):
     lag_members = {}
     for ifname, prop in self.all_interfaces[hostname].items():
       # Skip management and uplink interfaces
       if ifname in ["irb", "ae0"] or ifname[:3] == "et-":
         continue
-      
+
       if ifname[:2] == "ae":
         if ifname not in lag_members.keys():
           lag_members[ifname] = []
@@ -142,9 +150,9 @@ class EdgeConfig:
             lag_members[prop["lag"]["name"]].append(ifname)
           except KeyError:
             lag_members[prop["lag"]["name"]] = [ifname]
-      
+
     return lag_members
-  
+
 
   def get_interfaces(self, hostname):
     interfaces = {}
@@ -152,7 +160,7 @@ class EdgeConfig:
       # Skip management and uplink interfaces
       if ifname in ["irb", "ae0"] or ifname[:3] == "et-":
         continue
-      
+
       # Configure VLANs
       native, vlans = None, []
       mode = prop["mode"]
@@ -161,23 +169,26 @@ class EdgeConfig:
         if mode == "access":
           vlans = [prop["untagged_vlan"]["vid"]]
         if mode == "tagged":
-          mode = "trunk"  # Format conversion: from netbox to juniper/cisco
+          mode = "trunk"  # Format conversion: from netbox to juniper/cisco style
           vlans = [v["vid"] for v in prop["tagged_vlans"]]
           if prop["untagged_vlan"] is not None:
             native = prop["untagged_vlan"]["vid"]
-      
+
       tags = [t["slug"] for t in prop["tags"]]
+      is_physical_port = ifname[:2] != "ae"
+      is_poe_port = "poe" in tags
+
       interfaces[ifname] = {
-        "physical":    ifname[:2] != "ae",
+        "physical":    is_physical_port,
         "enabled":     prop["enabled"],
         "description": prop["description"],
-        "poe":         "poe" in tags,
+        "poe":         is_poe_port,
         "auto_speed":  True,
         "mode":        mode,
         "vlans":       vlans,
         "native":      native,
       }
-    
+
     return interfaces
 
 
@@ -186,7 +197,7 @@ if __name__ == "__main__":
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
   cf = EdgeConfig(nb)
-  
+
   print(json.dumps({
     hostname: {
       "hosts": [cf.get_device_ip_address(hostname)],
