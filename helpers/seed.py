@@ -317,6 +317,17 @@ class NetBoxClient:
     return
 
 
+  def rename_interfaces(self):
+    data = []
+    data.append({
+      "id": 18952,
+      "name": "ae10"
+    })
+    if data:
+      return self.query("/dcim/interfaces/", data, update=True)
+    return
+
+
   def create_and_assign_device_ips(self, devices):
     existed_ips = self.get_all_ips()
     interface_hints = self.get_interface_resolve_hint()
@@ -678,6 +689,7 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
+  print(nb.rename_interfaces())
 
   #for device_id in [277, 278]:
   #  interfaces = nb.get_all_device_interfaces(device_id)
