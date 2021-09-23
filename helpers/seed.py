@@ -607,47 +607,49 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  print("STEP 1 of 9: Create VLANs")
+  print("STEP 1 of 10: Create VLANs")
   res = nb.create_vlans(vlans)
   if res:
     pprint(res)
 
-  print("STEP 2 of 9: Create Site Groups")
+  print("STEP 2 of 10: Create Site Groups")
   res = nb.create_sitegroups(sitegroups)
   if res:
     pprint(res)
 
-  print("STEP 3 of 9: Create Sites")
+  print("STEP 3 of 10: Create Sites")
   res = nb.create_sites(sites)
   if res:
     pprint(res)
 
-  print("STEP 4 of 9: Create Devices")
+  print("STEP 4 of 10: Create Devices (rename interfaces)")
   res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
-  print("STEP 5 of 9: Create IP Addresses")
+  print("STEP 5 of 10: Create VC")
+
+  print("STEP 6 of 10: Create IP Addresses")
   res = nb.create_and_assign_device_ips(devices)
   if res:
     pprint(res)
 
-  print("STEP 6 of 9: Update device addresses")
+  print("STEP 7 of 10: Update device addresses")
   res = nb.set_primary_device_ips(devices)
   if res:
     pprint(res)
 
-  print("STEP 7 of 9: Create LAG interfaces")
+  print("STEP 8 of 10: Create LAG interfaces")
   res = nb.create_lag_interfaces(tn4_lags)
   if res:
     pprint(res)
 
-  print("STEP 8 of 9: Disable all interfaces")
+  print("STEP 9 of 10: Disable all interfaces")
   res = nb.disable_all_interfaces(devices)
   if res:
     pprint(res)
 
-  print("STEP 9 of 9: Update interface configurations")
+  print("STEP 10 of 10: Update interface configurations")
   res = nb.update_interface_configs(tn4_interfaces)
   if res:
     pprint(res)
