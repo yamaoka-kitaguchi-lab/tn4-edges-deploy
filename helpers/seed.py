@@ -281,6 +281,16 @@ class NetBoxClient:
     return
 
 
+  def create_vcs(self, devices, n_stacked):
+    data = []
+    data.append({
+      "name": "vc-test"
+    })
+    if data:
+      return self.query("/dcim/virtual-chassis/", data)
+    return
+
+
   def create_devices(self, devices, n_stacked):
     exist_devices = self.get_all_devicenames()
     data = []
@@ -658,6 +668,7 @@ def main():
   if res:
     pprint(res)
 
+  # ToDo: MC-LAG (need to fix device name specification)
   print("STEP 10 of 10: Update interface configurations")
   res = nb.update_interface_configs(tn4_interfaces)
   if res:
