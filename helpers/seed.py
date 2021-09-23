@@ -134,6 +134,11 @@ class NetBoxClient:
     return self.all_devices
 
 
+  def get_all_vcs(self):
+    self.all_vcs = self.query("/dcim/virtual-chassis/")
+    return self.all_vcs
+
+
   def lookup_sitegroup(self, site_slug):
     for site in self.get_all_sites():
       if site["slug"] == site_slug:
@@ -164,6 +169,10 @@ class NetBoxClient:
   def get_all_interfaces(self):
     self.all_interfaces = self.query("/dcim/interfaces/")
     return self.all_interfaces
+
+
+  def get_all_device_interfaces(self, device_id):
+    return self.query(f"/dcim/interfaces/?device_id={device_id}")
 
 
   def get_interface(self, iid):
@@ -622,12 +631,12 @@ def main():
   if res:
     pprint(res)
 
-  print("STEP 4 of 10: Create Devices (rename interfaces)")
+  print("STEP 4 of 10: Create VC")
+
+  print("STEP 5 of 10: Create Devices (join VC and rename interfaces)")
   res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
-
-  print("STEP 5 of 10: Create VC")
 
   print("STEP 6 of 10: Create IP Addresses")
   res = nb.create_and_assign_device_ips(devices)
@@ -658,6 +667,12 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
+
+  #for device_id in [277, 278]:
+  #  interfaces = nb.get_all_device_interfaces(device_id)
+  #  print(len(interfaces))
+  #  for interface in interfaces:
+  #    print(interface["device"]["display"], interface["display"])
 
 
 if __name__ == "__main__":
