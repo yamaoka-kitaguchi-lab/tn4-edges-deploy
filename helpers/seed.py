@@ -281,6 +281,7 @@ class NetBoxClient:
     return
 
 
+  # ToDo:
   def create_vcs(self, devices, n_stacked):
     data = []
     data.append({
@@ -317,6 +318,7 @@ class NetBoxClient:
     return
 
 
+  # ToDo:
   def rename_interfaces(self):
     data = []
     data.append({
