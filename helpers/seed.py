@@ -666,11 +666,13 @@ def main():
   if res:
     pprint(res)
 
+  # ToDo: Need to update
   print("STEP 7 of 10: Update device addresses")
   res = nb.set_primary_device_ips(devices)
   if res:
     pprint(res)
 
+  # ToDo: Need to update
   print("STEP 8 of 10: Create LAG interfaces")
   res = nb.create_lag_interfaces(tn4_lags)
   if res:
