@@ -281,12 +281,18 @@ class NetBoxClient:
     return
 
 
-  # ToDo:
   def create_vcs(self, devices, n_stacked):
+    exist_vcs = self.get_all_vcs()
+    exceptions = ["nishi8w", "nishi8e", "r1", "b2"]
     data = []
-    data.append({
-      "name": "vc-test"
-    })
+    for device in devices:
+      device_name = device["name"]
+      if device_name in exist_vcs:
+        continue
+      if device_name not in exceptions and n_stacked[device_name] > 1:
+        data.append({
+          "name": device_name
+        })
     if data:
       return self.query("/dcim/virtual-chassis/", data)
     return
