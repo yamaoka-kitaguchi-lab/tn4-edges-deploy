@@ -121,9 +121,7 @@ class EdgeConfig:
   def __group_by_device(self, interfaces):
     arranged = {}
     for interface in interfaces:
-      _, is_vc_slave, basename = self.__regex_device_name(interface["device"]["name"])
-      if is_vc_slave:
-        continue
+      _, _, basename = self.__regex_device_name(interface["device"]["name"])
       try:
         arranged[basename][interface["name"]] = interface
       except KeyError:
