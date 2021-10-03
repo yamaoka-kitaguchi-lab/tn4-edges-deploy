@@ -315,8 +315,8 @@ class NetBoxClient:
       device_name = device["name"]
       device_type = device["device_type"]
 
-      if device_name in exist_devices:
-        continue
+      if device_name in exist_devices or f"{device_name} (1)" in exist_devices:
+         continue
 
       # stacked use
       if device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1:
