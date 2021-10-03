@@ -182,10 +182,16 @@ class NetBoxClient:
         return interface
 
 
-  def get_interface_resolve_hint(self):
+  def get_interface_resolve_hint(self, vc_mode=False):
     hints = {}
     for interface in self.get_all_interfaces():
-      key = interface["device"]["name"]
+      device_name = interface["device"]["name"]
+      if vc_mode:
+        r_device_name = re.match("(\w+) \(\d+\)", device_name)
+        if r_device_name is not None:
+          device_name = r_device_name.group(1)
+
+      key = device_name
       subkey = interface["name"]
       iid = interface["id"]
       try:
@@ -555,7 +561,7 @@ class NetBoxClient:
 
 
   def update_interface_configs(self, interfaces):
-    interface_hints = self.get_interface_resolve_hint()
+    interface_hints = self.get_interface_resolve_hint(vc_mode=True)
     vlan_resolver = self.make_vlan_resolver()
     mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint()
     tokyotech_vlanid_hints = self.get_tokyotech_vlanid_resolve_hint()
@@ -563,8 +569,6 @@ class NetBoxClient:
     orphan_vlans = {}
 
     for hostname, device_interfaces in interfaces.items():
-      if hostname not in interface_hints:
-        hostname = f"{hostname} (1)"
       orphan_vlans[hostname] = []
       for interface, props in device_interfaces.items():
         req = {
@@ -796,58 +800,57 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  #print("STEP 1 of 10: Create VLANs")
+  #print("STEP 1 of 11: Create VLANs")
   #res = nb.create_vlans(vlans)
   #if res:
   #  pprint(res)
 
-  #print("STEP 2 of 10: Create Site Groups")
+  #print("STEP 2 of 11: Create site groups")
   #res = nb.create_sitegroups(sitegroups)
   #if res:
   #  pprint(res)
 
-  #print("STEP 3 of 10: Create Sites")
+  #print("STEP 3 of 11: Create sites")
   #res = nb.create_sites(sites)
   #if res:
   #  pprint(res)
 
-  print("STEP 4 of 10: Create VC")
-  res = nb.create_vcs(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 4 of 11: Create VC")
+  #res = nb.create_vcs(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 5 of 10: Create Devices")
-  res = nb.create_devices(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 5 of 11: Create devices")
+  #res = nb.create_devices(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 6 of 10: Set VC master")
-  res = nb.update_vc_masters(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 6 of 11: Set VC master")
+  #res = nb.update_vc_masters(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 6 of 10: Create IP Addresses")
-  res = nb.create_and_assign_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 7 of 11: Create IP Addresses")
+  #res = nb.create_and_assign_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 7 of 10: Update device addresses")
-  res = nb.set_primary_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 8 of 11: Update device addresses")
+  #res = nb.set_primary_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 8 of 10: Create LAG interfaces")
-  res = nb.create_lag_interfaces(tn4_lags)
-  if res:
-    pprint(res)
+  #print("STEP 9 of 11: Create LAG interfaces")
+  #res = nb.create_lag_interfaces(tn4_lags)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 9 of 10: Disable all interfaces")
-  res = nb.disable_all_interfaces(devices)
-  if res:
-    pprint(res)
+  #print("STEP 10 of 11: Disable all interfaces")
+  #res = nb.disable_all_interfaces(devices)
+  #if res:
+  #  pprint(res)
 
-  # ToDo: MC-LAG (need to fix device name specification)
-  print("STEP 10 of 10: Update interface configurations")
+  print("STEP 11 of 11: Update interface configurations")
   res = nb.update_interface_configs(tn4_interfaces)
   if res:
     pprint(res)
