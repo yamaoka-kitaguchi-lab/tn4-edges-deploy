@@ -584,6 +584,7 @@ class NetBoxClient:
 
 
   def update_interface_configs(self, interfaces):
+    __raw_interface_hints = self.get_interface_resolve_hint()
     interface_hints = self.get_interface_resolve_hint(vc_mode=True)
     vlan_resolver = self.make_vlan_resolver()
     mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint(vc_mode=True)
@@ -607,8 +608,11 @@ class NetBoxClient:
 
         # LAG
         if props["lag"]:
+          device_name = hostname
+          if device_name not in __raw_interface_hints:
+            device_name = f"{device_name} (1)"
           req["lag"] = {
-            "device": {"name": hostname},
+            "device": {"name": device_name},
             "name": props["lag"]
           }
 
