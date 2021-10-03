@@ -468,19 +468,28 @@ class NetBoxClient:
   def create_and_assign_device_ips(self, devices):
     existed_ips = self.get_all_ips()
     interface_hints = self.get_interface_resolve_hint()
-    data = [
-      {
+    data = []
+
+    for device in devices:
+      if "/".join([device["ipv4"], device["cidr"]]) in existed_ips:
+        continue
+
+      device_name = device["name"]
+      if device_name not in interface_hints:
+        device_name = f"{device_name} (1)"
+      irb_id = interface_hints[device_name]["irb"]
+
+      data.append({
         "address": "/".join([device["ipv4"], device["cidr"]]),
         "status": "active",
         "dns_name": ".".join([device["name"], "m.noc.titech.ac.jp"]),
         "assigned_object_type": "dcim.interface",
-        "assigned_object_id": interface_hints[device["name"]]["irb"],
+        "assigned_object_id": irb_id,
         "assigned_object": {
-          "id": interface_hints[device["name"]]["irb"]
+          "id": irb_id
         },
-      }
-      for device in devices if "/".join([device["ipv4"], device["cidr"]]) not in existed_ips
-    ]
+      })
+
     if data:
       return self.query("/ipam/ip-addresses/", data)
     return
@@ -489,13 +498,17 @@ class NetBoxClient:
   def set_primary_device_ips(self, devices):
     ip_hints = self.get_ip_resolve_hint()
     device_hints = self.get_device_resolve_hint()
-    data = [
-      {
-        "id": device_hints[device["name"]],
+    data = []
+
+    for device in devices:
+      device_name = device["name"]
+      if device_name not in device_hints:
+        device_name = f"{device_name} (1)"
+      data.append({
+        "id": device_hints[device_name],
         "primary_ip4": ip_hints["/".join([device["ipv4"], device["cidr"]])],
-      }
-      for device in devices
-    ]
+      })
+
     if data:
       return self.query("/dcim/devices/", data, update=True)
     return
@@ -804,16 +817,15 @@ def main():
   if res:
     pprint(res)
 
-  #print("STEP 6 of 10: Create IP Addresses")
-  #res = nb.create_and_assign_device_ips(devices)
-  #if res:
-  #  pprint(res)
+  print("STEP 6 of 10: Create IP Addresses")
+  res = nb.create_and_assign_device_ips(devices)
+  if res:
+    pprint(res)
 
-  ## ToDo: Need to update
-  #print("STEP 7 of 10: Update device addresses")
-  #res = nb.set_primary_device_ips(devices)
-  #if res:
-  #  pprint(res)
+  print("STEP 7 of 10: Update device addresses")
+  res = nb.set_primary_device_ips(devices)
+  if res:
+    pprint(res)
 
   ## ToDo: Need to update
   #print("STEP 8 of 10: Create LAG interfaces")
@@ -840,5 +852,5 @@ def develop():
 
 
 if __name__ == "__main__":
-    #main()
-    develop()
+    main()
+    #develop()
