@@ -189,7 +189,7 @@ class NetBoxClient:
       interface_name = interface["name"]
 
       if vc_mode:
-        r_device_name = re.match("(\w+) \((\d+)\)", device_name)
+        r_device_name = re.match("([\w|-]+) \((\d+)\)", device_name)
         if r_device_name is not None:
           device_name = r_device_name.group(1)
           chassis_n = int(r_device_name.group(2))
@@ -211,7 +211,7 @@ class NetBoxClient:
     for device in self.get_all_devices():
       device_name = device["name"]
       if vc_mode:
-        r_device_name = re.match("(\w+) \((\d+)\)", device_name)
+        r_device_name = re.match("([\w|-]+) \((\d+)\)", device_name)
         if r_device_name is not None:
           if int(r_device_name.group(2)) > 1:
             continue
@@ -235,7 +235,7 @@ class NetBoxClient:
     for device in self.get_all_devices():
       device_name = device["name"]
       if vc_mode:
-        r_device_name = re.match("(\w+) \((\d+)\)", device_name)
+        r_device_name = re.match("([\w|-]+) \((\d+)\)", device_name)
         if r_device_name is not None:
           if int(r_device_name.group(2)) > 1:
             continue
@@ -842,35 +842,35 @@ def main():
   #if res:
   #  pprint(res)
 
-  #print("STEP 4 of 12: Create VC")
-  #res = nb.create_vcs(devices, tn4_n_stacked)
-  #if res:
-  #  pprint(res)
+  print("STEP 4 of 12: Create VC")
+  res = nb.create_vcs(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
 
-  #print("STEP 5 of 12: Create devices")
-  #res = nb.create_devices(devices, tn4_n_stacked)
-  #if res:
-  #  pprint(res)
+  print("STEP 5 of 12: Create devices")
+  res = nb.create_devices(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
 
-  #print("STEP 6 of 12: Set VC master")
-  #res = nb.update_vc_masters(devices, tn4_n_stacked)
-  #if res:
-  #  pprint(res)
+  print("STEP 6 of 12: Set VC master")
+  res = nb.update_vc_masters(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
 
-  #print("STEP 7 of 12: Create IP Addresses")
-  #res = nb.create_and_assign_device_ips(devices)
-  #if res:
-  #  pprint(res)
+  print("STEP 7 of 12: Create IP Addresses")
+  res = nb.create_and_assign_device_ips(devices)
+  if res:
+    pprint(res)
 
-  #print("STEP 8 of 12: Update device addresses")
-  #res = nb.set_primary_device_ips(devices)
-  #if res:
-  #  pprint(res)
+  print("STEP 8 of 12: Update device addresses")
+  res = nb.set_primary_device_ips(devices)
+  if res:
+    pprint(res)
 
-  #print("STEP 9 of 12: Rename interfaces")
-  #res = nb.rename_interfaces()
-  #if res:
-  #  pprint(res)
+  print("STEP 9 of 12: Rename interfaces")
+  res = nb.rename_interfaces()
+  if res:
+    pprint(res)
 
   print("STEP 10 of 12: Create LAG interfaces")
   res = nb.create_lag_interfaces(tn4_lags)
