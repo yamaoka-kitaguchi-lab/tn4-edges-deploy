@@ -282,7 +282,7 @@ class NetBoxClient:
 
 
   def create_vcs(self, devices, n_stacked):
-    exist_vcs = self.get_all_vcs()
+    exist_vcs = self.get_all_vcnames()
     data = []
     for device in devices:
       device_name = device["name"]
@@ -321,7 +321,9 @@ class NetBoxClient:
             "region": {"slug": device["region"]},
             "site": {"slug": device["site"]},
             "status": "active",
-            "virtual_chassis": {"name": device_name}
+            "virtual_chassis": {
+              "name": device_name,
+            }
           })
 
       # stacked use (special)
@@ -333,7 +335,9 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
-          "virtual_chassis": {"name": device_name}
+          "virtual_chassis": {
+            "name": device_name
+          }
         })
         data.append({
           "name": f"{device_name} (2)",
@@ -342,7 +346,9 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
-          "virtual_chassis": {"name": device_name}
+          "virtual_chassis": {
+            "name": device_name,
+          }
         })
 
       # stacked use (special)
@@ -354,7 +360,9 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
-          "virtual_chassis": {"name": device_name}
+          "virtual_chassis": {
+            "name": device_name,
+          }
         })
         data.append({
           "name": f"{device_name} (2)",
@@ -363,7 +371,9 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
-          "virtual_chassis": {"name": device_name}
+          "virtual_chassis": {
+            "name": device_name,
+          }
         })
         data.append({
           "name": f"{device_name} (3)",
@@ -372,7 +382,9 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
-          "virtual_chassis": {"name": device_name}
+          "virtual_chassis": {
+            "name": device_name,
+          }
         })
 
       # single use
@@ -751,7 +763,7 @@ def main():
   if res:
     pprint(res)
 
-  print("STEP 5 of 10: Create Devices (join VC)")
+  print("STEP 5 of 10: Create Devices")
   res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
