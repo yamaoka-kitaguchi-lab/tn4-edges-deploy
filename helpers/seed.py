@@ -297,7 +297,6 @@ class NetBoxClient:
         })
     if data:
       return self.query("/dcim/virtual-chassis/", data)
-    return
 
 
   def create_devices(self, devices, n_stacked):
@@ -403,6 +402,34 @@ class NetBoxClient:
     if data:
       return self.query("/dcim/devices/", data)
     return
+
+
+  def create_device_test(self):
+    data = [
+      {
+        "name": "minami3 (1)",
+        "device_role": {"slug": "edge-sw"},
+        "device_type": {"slug": "ex4300-48mp"},
+        "region": {"slug": "ookayama"},
+        "site": {"slug": "ookayama-s"},
+        "status": "active",
+        "virtual_chassis": {
+          "name": "minami3",
+        }
+      },
+      {
+        "name": "minami3 (2)",
+        "device_role": {"slug": "edge-sw"},
+        "device_type": {"slug": "ex4300-48mp"},
+        "region": {"slug": "ookayama"},
+        "site": {"slug": "ookayama-s"},
+        "status": "active",
+        "virtual_chassis": {
+          "name": "minami3",
+        }
+      },
+    ]
+    return self.query("/dcim/devices/", data)
 
 
   def update_vc_masters(self, devices, n_stacked):
@@ -805,7 +832,7 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  print(nb.rename_interfaces())
+  nb.create_device_test()
 
   #for device_id in [277, 278]:
   #  interfaces = nb.get_all_device_interfaces(device_id)
@@ -815,5 +842,5 @@ def develop():
 
 
 if __name__ == "__main__":
-    main()
-    #develop()
+    #main()
+    develop()
