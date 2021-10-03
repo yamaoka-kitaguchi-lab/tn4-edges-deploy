@@ -517,7 +517,10 @@ class NetBoxClient:
   def create_lag_interfaces(self, lags):
     interface_hints = self.get_interface_resolve_hint()
     data = []
+
     for hostname, device_lags in lags.items():
+      if hostname not in interface_hints:
+        hostname = f"{hostname} (1)"
       for ifname, _ in device_lags.items():
         if ifname in interface_hints[hostname].keys():
           continue
@@ -527,14 +530,18 @@ class NetBoxClient:
           "type": "lag"
         }
         data.append(req)
+
     if data:
       return self.query("/dcim/interfaces/", data)
+    return
 
 
   def disable_all_interfaces(self, devices):
     interface_hints = self.get_interface_resolve_hint()
     data = []
     for hostname in [v["name"] for v in devices]:
+      if hostname not in interface_hints:
+        hostname = f"{hostname} (1)"
       for ifname, iid in interface_hints[hostname].items():
         if ifname == "irb":
           continue
@@ -556,6 +563,8 @@ class NetBoxClient:
     orphan_vlans = {}
 
     for hostname, device_interfaces in interfaces.items():
+      if hostname not in interface_hints:
+        hostname = f"{hostname} (1)"
       orphan_vlans[hostname] = []
       for interface, props in device_interfaces.items():
         req = {
@@ -827,22 +836,21 @@ def main():
   if res:
     pprint(res)
 
-  ## ToDo: Need to update
-  #print("STEP 8 of 10: Create LAG interfaces")
-  #res = nb.create_lag_interfaces(tn4_lags)
-  #if res:
-  #  pprint(res)
+  print("STEP 8 of 10: Create LAG interfaces")
+  res = nb.create_lag_interfaces(tn4_lags)
+  if res:
+    pprint(res)
 
-  #print("STEP 9 of 10: Disable all interfaces")
-  #res = nb.disable_all_interfaces(devices)
-  #if res:
-  #  pprint(res)
+  print("STEP 9 of 10: Disable all interfaces")
+  res = nb.disable_all_interfaces(devices)
+  if res:
+    pprint(res)
 
-  ## ToDo: MC-LAG (need to fix device name specification)
-  #print("STEP 10 of 10: Update interface configurations")
-  #res = nb.update_interface_configs(tn4_interfaces)
-  #if res:
-  #  pprint(res)
+  # ToDo: MC-LAG (need to fix device name specification)
+  print("STEP 10 of 10: Update interface configurations")
+  res = nb.update_interface_configs(tn4_interfaces)
+  if res:
+    pprint(res)
 
 
 def develop():
