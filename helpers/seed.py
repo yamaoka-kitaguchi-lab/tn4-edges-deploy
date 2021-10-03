@@ -231,6 +231,14 @@ class NetBoxClient:
     return [vc["name"] for vc in vcs]
 
 
+  def get_vc_id_resolve_hint(self):
+    hints = {}
+    vcs = self.get_all_vcs()
+    for vc in vcs:
+      hints[vc["name"]] = vc["id"]
+    return hints
+
+
   def create_vlans(self, vlans):
     existed_vids = self.get_all_vids()
     data = [
@@ -405,33 +413,40 @@ class NetBoxClient:
 
 
   def create_device_test(self):
-    data = [
-      {
-        "name": "minami3 (1)",
-        "device_role": {"slug": "edge-sw"},
-        "device_type": {"slug": "ex4300-48mp"},
-        "region": {"slug": "ookayama"},
-        "site": {"slug": "minami3"},
-        "status": "active",
-        "vc_position": 1,
-        "virtual_chassis": {
-          "name": "minami3",
-        }
-      },
-      {
-        "name": "minami3 (2)",
-        "device_role": {"slug": "edge-sw"},
-        "device_type": {"slug": "ex4300-48mp"},
-        "region": {"slug": "ookayama"},
-        "site": {"slug": "minami3"},
-        "status": "active",
-        "vc_position": 2,
-        "virtual_chassis": {
-          "name": "minami3",
-        }
-      },
-    ]
-    pprint(self.query("/dcim/devices/", data))
+    #data = [
+    #  {
+    #    "name": "minami3 (1)",
+    #    "device_role": {"slug": "edge-sw"},
+    #    "device_type": {"slug": "ex4300-48mp"},
+    #    "region": {"slug": "ookayama"},
+    #    "site": {"slug": "minami3"},
+    #    "status": "active",
+    #    "vc_position": 1,
+    #    "virtual_chassis": {
+    #      "name": "minami3",
+    #    }
+    #  },
+    #  {
+    #    "name": "minami3 (2)",
+    #    "device_role": {"slug": "edge-sw"},
+    #    "device_type": {"slug": "ex4300-48mp"},
+    #    "region": {"slug": "ookayama"},
+    #    "site": {"slug": "minami3"},
+    #    "status": "active",
+    #    "vc_position": 2,
+    #    "virtual_chassis": {
+    #      "name": "minami3",
+    #    }
+    #  },
+    #]
+    #pprint(self.query("/dcim/devices/", data))
+
+    h = self.get_vc_id_resolve_hint()
+    data = [{
+      "id": h["minami3"],
+      "master": {"name": "minami3 (1)"}
+    }]
+    pprint(self.query("/dcim/virtual-chassis/", data, update=True))
 
 
   def update_vc_masters(self, devices, n_stacked):
@@ -834,7 +849,7 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  pprint(nb.create_device_test())
+  nb.create_device_test()
 
   #for device_id in [277, 278]:
   #  interfaces = nb.get_all_device_interfaces(device_id)
