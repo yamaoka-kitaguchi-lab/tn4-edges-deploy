@@ -439,7 +439,7 @@ class NetBoxClient:
   def rename_interfaces(self):
     data = []
 
-    for interface in self.get_all_device_interfaces():
+    for interface in self.get_all_interfaces():
       if_id = interface["id"]
       if_name = interface["name"]
       device_name = interface["device"]["name"]
@@ -450,14 +450,15 @@ class NetBoxClient:
       if r_device_name is None or r_if_name is None:
         continue
 
-      chassis_n = r_device_name.group(1)
+      chassis_n = int(r_device_name.group(1)) - 1  # 0-based index (juniper rule)
       if_type = r_if_name.group(1)
       if_n = r_if_name.group(2)
 
-      data.append({
-        "id": if_id,
-        "name": f"{if_type}-{chassis_n}/{if_n}"
-      })
+      if chassis_n > 0:
+        data.append({
+          "id": if_id,
+          "name": f"{if_type}-{chassis_n}/{if_n}"
+        })
 
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
@@ -835,15 +836,9 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  nb.create_device_test()
-
-  #for device_id in [277, 278]:
-  #  interfaces = nb.get_all_device_interfaces(device_id)
-  #  print(len(interfaces))
-  #  for interface in interfaces:
-  #    print(interface["device"]["display"], interface["display"])
+  pprint(nb.rename_interfaces())
 
 
 if __name__ == "__main__":
-    main()
-    #develop()
+    #main()
+    develop()
