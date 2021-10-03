@@ -154,7 +154,7 @@ class EdgeConfig:
     for d in self.all_devices:
       if d["name"] == hostname:
         return d["device_type"]["manufacturer"]["slug"]
-    return "Unknown"
+    return None
 
 
   def get_ip_address(self, hostname):
