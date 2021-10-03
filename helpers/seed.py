@@ -473,7 +473,7 @@ class NetBoxClient:
       if_name = interface["name"]
       device_name = interface["device"]["name"]
 
-      r_device_name = re.match("\w+ \((\d+)\)", device_name)
+      r_device_name = re.match("[\w|-]+ \((\d+)\)", device_name)
       r_if_name = re.match("([ge|mge|et]+)-\d+/(\d+/\d+)", if_name)
 
       if r_device_name is None or r_if_name is None:
@@ -842,35 +842,35 @@ def main():
   #if res:
   #  pprint(res)
 
-  print("STEP 4 of 12: Create VC")
-  res = nb.create_vcs(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 4 of 12: Create VC")
+  #res = nb.create_vcs(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 5 of 12: Create devices")
-  res = nb.create_devices(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 5 of 12: Create devices")
+  #res = nb.create_devices(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 6 of 12: Set VC master")
-  res = nb.update_vc_masters(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 6 of 12: Set VC master")
+  #res = nb.update_vc_masters(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 7 of 12: Create IP Addresses")
-  res = nb.create_and_assign_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 7 of 12: Create IP Addresses")
+  #res = nb.create_and_assign_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 8 of 12: Update device addresses")
-  res = nb.set_primary_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 8 of 12: Update device addresses")
+  #res = nb.set_primary_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 9 of 12: Rename interfaces")
-  res = nb.rename_interfaces()
-  if res:
-    pprint(res)
+  #print("STEP 9 of 12: Rename interfaces")
+  #res = nb.rename_interfaces()
+  #if res:
+  #  pprint(res)
 
   print("STEP 10 of 12: Create LAG interfaces")
   res = nb.create_lag_interfaces(tn4_lags)
