@@ -2,6 +2,7 @@
 from pprint import pprint
 import os
 import sys
+import re
 import json
 import yaml
 
@@ -435,13 +436,29 @@ class NetBoxClient:
     return
 
 
-  # ToDo:
   def rename_interfaces(self):
     data = []
-    data.append({
-      "id": 18952,
-      "name": "ae10"
-    })
+
+    for interface in self.get_all_device_interfaces():
+      if_id = interface["id"]
+      if_name = interface["name"]
+      device_name = interface["device"]["name"]
+
+      r_device_name = re.match("\w+ \((\d+)\)", device_name)
+      r_if_name = re.match("([ge|mge|et]+)-\d+/(\d+/\d+)", if_name)
+
+      if r_device_name is None or r_if_name is None:
+        continue
+
+      chassis_n = r_device_name.group(1)
+      if_type = r_if_name.group(1)
+      if_n = r_if_name.group(2)
+
+      data.append({
+        "id": if_id,
+        "name": f"{if_type}-{chassis_n}/{if_n}"
+      })
+
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
     return
