@@ -411,8 +411,9 @@ class NetBoxClient:
         "device_role": {"slug": "edge-sw"},
         "device_type": {"slug": "ex4300-48mp"},
         "region": {"slug": "ookayama"},
-        "site": {"slug": "ookayama-s"},
+        "site": {"slug": "minami3"},
         "status": "active",
+        "vc_position": 1,
         "virtual_chassis": {
           "name": "minami3",
         }
@@ -422,14 +423,15 @@ class NetBoxClient:
         "device_role": {"slug": "edge-sw"},
         "device_type": {"slug": "ex4300-48mp"},
         "region": {"slug": "ookayama"},
-        "site": {"slug": "ookayama-s"},
+        "site": {"slug": "minami3"},
         "status": "active",
+        "vc_position": 2,
         "virtual_chassis": {
           "name": "minami3",
         }
       },
     ]
-    return self.query("/dcim/devices/", data)
+    pprint(self.query("/dcim/devices/", data))
 
 
   def update_vc_masters(self, devices, n_stacked):
@@ -832,7 +834,7 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  nb.create_device_test()
+  pprint(nb.create_device_test())
 
   #for device_id in [277, 278]:
   #  interfaces = nb.get_all_device_interfaces(device_id)
