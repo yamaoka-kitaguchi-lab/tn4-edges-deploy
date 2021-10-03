@@ -151,7 +151,10 @@ class EdgeConfig:
 
 
   def get_manufacturer(self, hostname):
-    return [d["device_type"]["manufacturer"]["slug"] for d in self.all_devices if d["name"] == hostname]
+    for d in self.all_devices:
+      if d["name"] == hostname:
+        return d["device_type"]["manufacturer"]["slug"]
+    return "Unknown"
 
 
   def get_ip_address(self, hostname):
