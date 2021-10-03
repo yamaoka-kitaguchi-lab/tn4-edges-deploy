@@ -283,14 +283,15 @@ class NetBoxClient:
 
   def create_vcs(self, devices, n_stacked):
     exist_vcs = self.get_all_vcs()
-    device_types = ["ex4300-48mp", "ex4300-32f"]
     data = []
     for device in devices:
       device_name = device["name"]
       device_type = device["device_type"]
       if device_name in exist_vcs:
         continue
-      if device_type not in device_types and n_stacked[device_name] > 1:
+      is_vs = device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1
+      is_special_vc = device_type in ["ex4300-48mp-32f", "ex4300-48mp-32f-st2"]
+      if is_vs or is_special_vc:
         data.append({
           "name": device_name
         })
@@ -389,6 +390,23 @@ class NetBoxClient:
     #pprint(data)
     if data:
       return self.query("/dcim/devices/", data)
+    return
+
+
+  def update_vc_masters(self, devices, n_stacked):
+    data = []
+    for device in devices:
+      device_name = device["name"]
+      device_type = device["device_type"]
+      is_vs = device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1
+      is_special_vc = device_type in ["ex4300-48mp-32f", "ex4300-48mp-32f-st2"]
+      if is_vs or is_special_vc:
+        data.append({
+          "name": device_name,
+          "master": {"name": f"{device_name} (1)"}
+        })
+    if data:
+      return self.query("/dcim/virtual-chassis/", data, update=True)
     return
 
 
@@ -738,8 +756,8 @@ def main():
   if res:
     pprint(res)
 
-  print("STEP 5 of 10: Set VC master and rename interfaces")
-  res = nb.create_devices(devices, tn4_n_stacked)
+  print("STEP 6 of 10: Set VC master")
+  res = nb.update_vc_masters(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
