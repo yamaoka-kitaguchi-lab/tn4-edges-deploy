@@ -186,13 +186,18 @@ class NetBoxClient:
     hints = {}
     for interface in self.get_all_interfaces():
       device_name = interface["device"]["name"]
+      interface_name = interface["name"]
+
       if vc_mode:
-        r_device_name = re.match("(\w+) \(\d+\)", device_name)
+        r_device_name = re.match("(\w+) \((\d+)\)", device_name)
         if r_device_name is not None:
           device_name = r_device_name.group(1)
+          chassis_n = int(r_device_name.group(2))
+          if chassis_n > 1 and interface_name == "irb":
+            continue
 
       key = device_name
-      subkey = interface["name"]
+      subkey = interface_name
       iid = interface["id"]
       try:
         hints[key][subkey] = iid
@@ -201,31 +206,49 @@ class NetBoxClient:
     return hints
 
 
-  def get_mgmt_vlanid_resolve_hint(self):
+  def get_mgmt_vlanid_resolve_hint(self, vc_mode=False):
     hints = {}
     for device in self.get_all_devices():
+      device_name = device["name"]
+      if vc_mode:
+        r_device_name = re.match("(\w+) \((\d+)\)", device_name)
+        if r_device_name is not None:
+          if int(r_device_name.group(2)) > 1:
+            continue
+          device_name = r_device_name.group(1)
+
       if device["device_role"]["slug"] != "edge-sw":
         continue
+
       area = self.lookup_sitegroup(device["site"]["slug"])
       if area in ["ookayama-n", "ookayama-w", "midorigaoka"]:
-        hints[device["name"]] = 360
+        hints[device_name] = 360
       elif area in ["ookayama-e", "ookayama-s", "ishikawadai", "tamachi"]:
-        hints[device["name"]] = 361
+        hints[device_name] = 361
       else:
-        hints[device["name"]] = 362
+        hints[device_name] = 362
     return hints
 
 
-  def get_tokyotech_vlanid_resolve_hint(self):
+  def get_tokyotech_vlanid_resolve_hint(self, vc_mode=False):
     hints = {}
     for device in self.get_all_devices():
+      device_name = device["name"]
+      if vc_mode:
+        r_device_name = re.match("(\w+) \((\d+)\)", device_name)
+        if r_device_name is not None:
+          if int(r_device_name.group(2)) > 1:
+            continue
+          device_name = r_device_name.group(1)
+
       if device["device_role"]["slug"] != "edge-sw":
         continue
+
       region = self.lookup_region(device["site"]["slug"])
       if region in ["ookayama", "tamachi"]:
-        hints[device["name"]] = 112
+        hints[device_name] = 112
       else:
-        hints[device["name"]] = 113
+        hints[device_name] = 113
     return hints
 
 
@@ -563,8 +586,8 @@ class NetBoxClient:
   def update_interface_configs(self, interfaces):
     interface_hints = self.get_interface_resolve_hint(vc_mode=True)
     vlan_resolver = self.make_vlan_resolver()
-    mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint()
-    tokyotech_vlanid_hints = self.get_tokyotech_vlanid_resolve_hint()
+    mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint(vc_mode=True)
+    tokyotech_vlanid_hints = self.get_tokyotech_vlanid_resolve_hint(vc_mode=True)
     data = []
     orphan_vlans = {}
 
@@ -800,57 +823,62 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  #print("STEP 1 of 11: Create VLANs")
+  #print("STEP 1 of 12: Create VLANs")
   #res = nb.create_vlans(vlans)
   #if res:
   #  pprint(res)
 
-  #print("STEP 2 of 11: Create site groups")
+  #print("STEP 2 of 12: Create site groups")
   #res = nb.create_sitegroups(sitegroups)
   #if res:
   #  pprint(res)
 
-  #print("STEP 3 of 11: Create sites")
+  #print("STEP 3 of 12: Create sites")
   #res = nb.create_sites(sites)
   #if res:
   #  pprint(res)
 
-  #print("STEP 4 of 11: Create VC")
+  #print("STEP 4 of 12: Create VC")
   #res = nb.create_vcs(devices, tn4_n_stacked)
   #if res:
   #  pprint(res)
 
-  #print("STEP 5 of 11: Create devices")
+  #print("STEP 5 of 12: Create devices")
   #res = nb.create_devices(devices, tn4_n_stacked)
   #if res:
   #  pprint(res)
 
-  #print("STEP 6 of 11: Set VC master")
+  #print("STEP 6 of 12: Set VC master")
   #res = nb.update_vc_masters(devices, tn4_n_stacked)
   #if res:
   #  pprint(res)
 
-  #print("STEP 7 of 11: Create IP Addresses")
+  #print("STEP 7 of 12: Create IP Addresses")
   #res = nb.create_and_assign_device_ips(devices)
   #if res:
   #  pprint(res)
 
-  #print("STEP 8 of 11: Update device addresses")
+  #print("STEP 8 of 12: Update device addresses")
   #res = nb.set_primary_device_ips(devices)
   #if res:
   #  pprint(res)
 
-  #print("STEP 9 of 11: Create LAG interfaces")
+  #print("STEP 9 of 12: Rename interfaces")
+  #res = nb.rename_interfaces()
+  #if res:
+  #  pprint(res)
+
+  #print("STEP 10 of 12: Create LAG interfaces")
   #res = nb.create_lag_interfaces(tn4_lags)
   #if res:
   #  pprint(res)
 
-  #print("STEP 10 of 11: Disable all interfaces")
+  #print("STEP 11 of 12: Disable all interfaces")
   #res = nb.disable_all_interfaces(devices)
   #if res:
   #  pprint(res)
 
-  print("STEP 11 of 11: Update interface configurations")
+  print("STEP 12 of 12: Update interface configurations")
   res = nb.update_interface_configs(tn4_interfaces)
   if res:
     pprint(res)
@@ -859,7 +887,7 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  pprint(nb.rename_interfaces())
+  pprint(nb.get_interface_resolve_hint(vc_mode=True))
 
 
 if __name__ == "__main__":
