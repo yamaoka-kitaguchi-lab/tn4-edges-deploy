@@ -283,13 +283,14 @@ class NetBoxClient:
 
   def create_vcs(self, devices, n_stacked):
     exist_vcs = self.get_all_vcs()
-    exceptions = ["nishi8w", "nishi8e", "r1", "b2"]
+    device_types = ["ex4300-48mp", "ex4300-32f"]
     data = []
     for device in devices:
       device_name = device["name"]
+      device_type = device["device_type"]
       if device_name in exist_vcs:
         continue
-      if device_name not in exceptions and n_stacked[device_name] > 1:
+      if device_type not in device_types and n_stacked[device_name] > 1:
         data.append({
           "name": device_name
         })
@@ -301,22 +302,89 @@ class NetBoxClient:
   def create_devices(self, devices, n_stacked):
     exist_devices = self.get_all_devicenames()
     data = []
+
     for device in devices:
       device_name = device["name"]
+      device_type = device["device_type"]
+
       if device_name in exist_devices:
         continue
-      device_type = device["device_type"]
-      exceptions = ["nishi8w", "nishi8e", "r1", "b2"]
-      if n_stacked[device_name] > 1 and device_name not in exceptions:
-        device_type += "-st" + str(n_stacked[device_name])
-      data.append({
-        "name": device_name,
-        "device_role": {"slug": "edge-sw"},
-        "device_type": {"slug": device_type},
-        "region": {"slug": device["region"]},
-        "site": {"slug": device["site"]},
-        "status": "active"
-      })
+
+      # stacked use
+      if device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1:
+        for n in range(1, n_stacked[device_name]+1):
+          data.append({
+            "name": f"{device_name} ({n})",
+            "device_role": {"slug": "edge-sw"},
+            "device_type": {"slug": device_type},
+            "region": {"slug": device["region"]},
+            "site": {"slug": device["site"]},
+            "status": "active",
+            "virtual_chassis": {"name": device_name}
+          })
+
+      # stacked use (special)
+      elif device_type == "ex4300-48mp-32f":
+        data.append({
+          "name": f"{device_name} (1)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-48mp"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "virtual_chassis": {"name": device_name}
+        })
+        data.append({
+          "name": f"{device_name} (2)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-32f"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "virtual_chassis": {"name": device_name}
+        })
+
+      # stacked use (special)
+      elif device_type == "ex4300-48mp-32f-st2":
+        data.append({
+          "name": f"{device_name} (1)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-48mp"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "virtual_chassis": {"name": device_name}
+        })
+        data.append({
+          "name": f"{device_name} (2)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-32f"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "virtual_chassis": {"name": device_name}
+        })
+        data.append({
+          "name": f"{device_name} (3)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-32f"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "virtual_chassis": {"name": device_name}
+        })
+
+      # single use
+      else:
+        data.append({
+          "name": device_name,
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": device_type},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active"
+        })
+
     data = list({v["name"]:v for v in data}.values())
     #pprint(data)
     if data:
@@ -645,55 +713,63 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  print("STEP 1 of 10: Create VLANs")
-  res = nb.create_vlans(vlans)
-  if res:
-    pprint(res)
+  #print("STEP 1 of 10: Create VLANs")
+  #res = nb.create_vlans(vlans)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 2 of 10: Create Site Groups")
-  res = nb.create_sitegroups(sitegroups)
-  if res:
-    pprint(res)
+  #print("STEP 2 of 10: Create Site Groups")
+  #res = nb.create_sitegroups(sitegroups)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 3 of 10: Create Sites")
-  res = nb.create_sites(sites)
-  if res:
-    pprint(res)
+  #print("STEP 3 of 10: Create Sites")
+  #res = nb.create_sites(sites)
+  #if res:
+  #  pprint(res)
 
   print("STEP 4 of 10: Create VC")
+  res = nb.create_vcs(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
 
-  print("STEP 5 of 10: Create Devices (join VC and rename interfaces)")
+  print("STEP 5 of 10: Create Devices (join VC)")
   res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
-  print("STEP 6 of 10: Create IP Addresses")
-  res = nb.create_and_assign_device_ips(devices)
+  print("STEP 5 of 10: Set VC master and rename interfaces")
+  res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
-  # ToDo: Need to update
-  print("STEP 7 of 10: Update device addresses")
-  res = nb.set_primary_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 6 of 10: Create IP Addresses")
+  #res = nb.create_and_assign_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  # ToDo: Need to update
-  print("STEP 8 of 10: Create LAG interfaces")
-  res = nb.create_lag_interfaces(tn4_lags)
-  if res:
-    pprint(res)
+  ## ToDo: Need to update
+  #print("STEP 7 of 10: Update device addresses")
+  #res = nb.set_primary_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 9 of 10: Disable all interfaces")
-  res = nb.disable_all_interfaces(devices)
-  if res:
-    pprint(res)
+  ## ToDo: Need to update
+  #print("STEP 8 of 10: Create LAG interfaces")
+  #res = nb.create_lag_interfaces(tn4_lags)
+  #if res:
+  #  pprint(res)
 
-  # ToDo: MC-LAG (need to fix device name specification)
-  print("STEP 10 of 10: Update interface configurations")
-  res = nb.update_interface_configs(tn4_interfaces)
-  if res:
-    pprint(res)
+  #print("STEP 9 of 10: Disable all interfaces")
+  #res = nb.disable_all_interfaces(devices)
+  #if res:
+  #  pprint(res)
+
+  ## ToDo: MC-LAG (need to fix device name specification)
+  #print("STEP 10 of 10: Update interface configurations")
+  #res = nb.update_interface_configs(tn4_interfaces)
+  #if res:
+  #  pprint(res)
 
 
 def develop():
@@ -709,5 +785,5 @@ def develop():
 
 
 if __name__ == "__main__":
-    #main()
-    develop()
+    main()
+    #develop()
