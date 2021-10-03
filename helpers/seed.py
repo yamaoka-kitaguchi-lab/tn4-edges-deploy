@@ -328,6 +328,7 @@ class NetBoxClient:
             "region": {"slug": device["region"]},
             "site": {"slug": device["site"]},
             "status": "active",
+            "vc_position": n,
             "virtual_chassis": {
               "name": device_name,
             }
@@ -342,6 +343,7 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
+          "vc_position": 1,
           "virtual_chassis": {
             "name": device_name
           }
@@ -353,6 +355,7 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
+          "vc_position": 2,
           "virtual_chassis": {
             "name": device_name,
           }
@@ -367,6 +370,7 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
+          "vc_position": 1,
           "virtual_chassis": {
             "name": device_name,
           }
@@ -378,6 +382,7 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
+          "vc_position": 2,
           "virtual_chassis": {
             "name": device_name,
           }
@@ -389,6 +394,7 @@ class NetBoxClient:
           "region": {"slug": device["region"]},
           "site": {"slug": device["site"]},
           "status": "active",
+          "vc_position": 3,
           "virtual_chassis": {
             "name": device_name,
           }
@@ -406,51 +412,14 @@ class NetBoxClient:
         })
 
     data = list({v["name"]:v for v in data}.values())
-    #pprint(data)
     if data:
       return self.query("/dcim/devices/", data)
     return
 
 
-  def create_device_test(self):
-    #data = [
-    #  {
-    #    "name": "minami3 (1)",
-    #    "device_role": {"slug": "edge-sw"},
-    #    "device_type": {"slug": "ex4300-48mp"},
-    #    "region": {"slug": "ookayama"},
-    #    "site": {"slug": "minami3"},
-    #    "status": "active",
-    #    "vc_position": 1,
-    #    "virtual_chassis": {
-    #      "name": "minami3",
-    #    }
-    #  },
-    #  {
-    #    "name": "minami3 (2)",
-    #    "device_role": {"slug": "edge-sw"},
-    #    "device_type": {"slug": "ex4300-48mp"},
-    #    "region": {"slug": "ookayama"},
-    #    "site": {"slug": "minami3"},
-    #    "status": "active",
-    #    "vc_position": 2,
-    #    "virtual_chassis": {
-    #      "name": "minami3",
-    #    }
-    #  },
-    #]
-    #pprint(self.query("/dcim/devices/", data))
-
-    h = self.get_vc_id_resolve_hint()
-    data = [{
-      "id": h["minami3"],
-      "master": {"name": "minami3 (1)"}
-    }]
-    pprint(self.query("/dcim/virtual-chassis/", data, update=True))
-
-
   def update_vc_masters(self, devices, n_stacked):
     data = []
+    vc_ids = self.get_vc_id_resolve_hint()
     for device in devices:
       device_name = device["name"]
       device_type = device["device_type"]
@@ -458,7 +427,7 @@ class NetBoxClient:
       is_special_vc = device_type in ["ex4300-48mp-32f", "ex4300-48mp-32f-st2"]
       if is_vs or is_special_vc:
         data.append({
-          "name": device_name,
+          "id": vc_ids[device_name],
           "master": {"name": f"{device_name} (1)"}
         })
     if data:
@@ -859,5 +828,5 @@ def develop():
 
 
 if __name__ == "__main__":
-    #main()
-    develop()
+    main()
+    #develop()
