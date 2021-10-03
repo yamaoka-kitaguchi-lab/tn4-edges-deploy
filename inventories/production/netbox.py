@@ -5,6 +5,7 @@ from pprint import pprint
 from datetime import datetime
 import json
 import os
+import re
 import requests
 import sys
 import yaml
@@ -82,22 +83,43 @@ class NetBoxClient:
 class EdgeConfig:
   def __init__(self, netbox_cli):
     self.all_vlans = netbox_cli.get_all_vlans()
-    self.all_devices = self.__grep_active_devices(netbox_cli.get_all_devices())
+    self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
 
 
-  def __grep_active_devices(self, devices):
-    return [dev for dev in devices if dev["status"]["value"] == "active"]
+  def __regex_device_name(self, device_name):
+    dev_name_reg = re.match("([\w|-]+) \((\d+)\)", device_name)
+    is_stacked = dev_name_reg is not None
+    is_vc_slave = is_stacked and int(dev_name_reg.group(2)) > 1
+    basename = device_name
+    if is_stacked:
+      basename = dev_name_reg.group(1)
+    return is_stacked, is_vc_slave, basename
+
+
+  def __filter_active_devices(self, devices):
+    filtered = []
+    for dev in devices:
+      is_inactive = dev["status"]["value"] != "active"
+      has_ipaddr = dev["primary_ip"] is not None
+      _, is_vc_slave, basename = self.__regex_device_name(dev["name"])
+      if is_inactive or not has_ipaddr or is_vc_slave:
+        continue
+      dev["name"] = basename
+      filtered.append(dev)
+    return filtered
 
 
   def __group_by_device(self, interfaces):
     arranged = {}
     for interface in interfaces:
-      key = interface["device"]["name"]
+      _, is_vc_slave, basename = self.__regex_device_name(interface["device"]["name"])
+      if is_vc_slave:
+        continue
       try:
-        arranged[key][interface["name"]] = interface
+        arranged[basename][interface["name"]] = interface
       except KeyError:
-        arranged[key] = {interface["name"]: interface}
+        arranged[basename] = { interface["name"]: interface }
     return arranged
 
 
@@ -105,7 +127,7 @@ class EdgeConfig:
     vlans, vids = [], set()
     for prop in self.all_interfaces[hostname].values():
       for vlan in [prop["untagged_vlan"], *prop["tagged_vlans"]]:
-        if vlan:
+        if vlan is not None:
           vids.add(vlan["vid"])
     for vid in vids:
       for vlan in self.all_vlans:
