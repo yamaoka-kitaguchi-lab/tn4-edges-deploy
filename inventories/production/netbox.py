@@ -203,6 +203,7 @@ class EdgeConfig:
           vids = [v["vid"] for v in prop["tagged_vlans"]]
           if prop["untagged_vlan"] is not None:
             native_vid = prop["untagged_vlan"]["vid"]
+            vids.append(native_vid)
 
       interfaces[ifname] = {
         "physical":    not (is_mgmt_port or is_lag_port),
