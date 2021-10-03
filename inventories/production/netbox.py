@@ -98,11 +98,11 @@ class EdgeConfig:
 
 
   def __regex_interface_name(self, interface_name):
-      is_mgmt_port = interface_name == "irb"
-      is_upstream_port = interface_name == "ae0"
-      is_qsfp_port = interface_name[:3] == "et-"
-      is_lag_port = interface_name[:2] == "ae"
-      return is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port
+    is_mgmt_port = interface_name == "irb"
+    is_upstream_port = interface_name == "ae0"
+    is_qsfp_port = interface_name[:3] == "et-"
+    is_lag_port = interface_name[:2] == "ae"
+    return is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port
 
 
   def __filter_active_devices(self, devices):
