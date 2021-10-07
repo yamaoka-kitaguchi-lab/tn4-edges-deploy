@@ -2,11 +2,7 @@
   Create VLANs
 #}
 {% for vlan in vlans %}
-{% if vlan.description %}
-set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }} description "{{ vlan.description }}"
-{% else %}
 set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }}
-{% endif %}
 {% endfor %}
 
 
