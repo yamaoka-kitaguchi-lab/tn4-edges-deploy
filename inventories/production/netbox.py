@@ -159,7 +159,9 @@ class EdgeConfig:
 
   def get_ip_address(self, hostname):
     ip = lambda cidr: cidr.split("/")[0]
-    return [ip(d["primary_ip"]["address"]) for d in self.all_devices if d["name"] == hostname]
+    for d in self.all_devices:
+      if d["name"] == hostname:
+        return ip(d["primary_ip"]["address"])
 
 
   def get_lag_members(self, hostname):
