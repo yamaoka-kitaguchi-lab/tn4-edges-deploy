@@ -2,6 +2,7 @@
 from pprint import pprint
 import os
 import sys
+import re
 import json
 import yaml
 
@@ -181,11 +182,22 @@ class NetBoxClient:
         return interface
 
 
-  def get_interface_resolve_hint(self):
+  def get_interface_resolve_hint(self, vc_mode=False):
     hints = {}
     for interface in self.get_all_interfaces():
-      key = interface["device"]["name"]
-      subkey = interface["name"]
+      device_name = interface["device"]["name"]
+      interface_name = interface["name"]
+
+      if vc_mode:
+        r_device_name = re.match("([\w|-]+) \((\d+)\)", device_name)
+        if r_device_name is not None:
+          device_name = r_device_name.group(1)
+          chassis_n = int(r_device_name.group(2))
+          if chassis_n > 1 and interface_name == "irb":
+            continue
+
+      key = device_name
+      subkey = interface_name
       iid = interface["id"]
       try:
         hints[key][subkey] = iid
@@ -194,31 +206,49 @@ class NetBoxClient:
     return hints
 
 
-  def get_mgmt_vlanid_resolve_hint(self):
+  def get_mgmt_vlanid_resolve_hint(self, vc_mode=False):
     hints = {}
     for device in self.get_all_devices():
+      device_name = device["name"]
+      if vc_mode:
+        r_device_name = re.match("([\w|-]+) \((\d+)\)", device_name)
+        if r_device_name is not None:
+          if int(r_device_name.group(2)) > 1:
+            continue
+          device_name = r_device_name.group(1)
+
       if device["device_role"]["slug"] != "edge-sw":
         continue
+
       area = self.lookup_sitegroup(device["site"]["slug"])
       if area in ["ookayama-n", "ookayama-w", "midorigaoka"]:
-        hints[device["name"]] = 360
+        hints[device_name] = 360
       elif area in ["ookayama-e", "ookayama-s", "ishikawadai", "tamachi"]:
-        hints[device["name"]] = 361
+        hints[device_name] = 361
       else:
-        hints[device["name"]] = 362
+        hints[device_name] = 362
     return hints
 
 
-  def get_tokyotech_vlanid_resolve_hint(self):
+  def get_tokyotech_vlanid_resolve_hint(self, vc_mode=False):
     hints = {}
     for device in self.get_all_devices():
+      device_name = device["name"]
+      if vc_mode:
+        r_device_name = re.match("([\w|-]+) \((\d+)\)", device_name)
+        if r_device_name is not None:
+          if int(r_device_name.group(2)) > 1:
+            continue
+          device_name = r_device_name.group(1)
+
       if device["device_role"]["slug"] != "edge-sw":
         continue
+
       region = self.lookup_region(device["site"]["slug"])
       if region in ["ookayama", "tamachi"]:
-        hints[device["name"]] = 112
+        hints[device_name] = 112
       else:
-        hints[device["name"]] = 113
+        hints[device_name] = 113
     return hints
 
 
@@ -229,6 +259,14 @@ class NetBoxClient:
   def get_all_vcnames(self):
     vcs = self.get_all_vcs()
     return [vc["name"] for vc in vcs]
+
+
+  def get_vc_id_resolve_hint(self):
+    hints = {}
+    vcs = self.get_all_vcs()
+    for vc in vcs:
+      hints[vc["name"]] = vc["id"]
+    return hints
 
 
   def create_vlans(self, vlans):
@@ -281,50 +319,176 @@ class NetBoxClient:
     return
 
 
-  # ToDo:
   def create_vcs(self, devices, n_stacked):
+    exist_vcs = self.get_all_vcnames()
     data = []
-    data.append({
-      "name": "vc-test"
-    })
+    for device in devices:
+      device_name = device["name"]
+      device_type = device["device_type"]
+      if device_name in exist_vcs:
+        continue
+      is_vs = device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1
+      is_special_vc = device_type in ["ex4300-48mp-32f", "ex4300-48mp-32f-st2"]
+      if is_vs or is_special_vc:
+        data.append({
+          "name": device_name
+        })
     if data:
       return self.query("/dcim/virtual-chassis/", data)
-    return
 
 
   def create_devices(self, devices, n_stacked):
     exist_devices = self.get_all_devicenames()
     data = []
+
     for device in devices:
       device_name = device["name"]
-      if device_name in exist_devices:
-        continue
       device_type = device["device_type"]
-      exceptions = ["nishi8w", "nishi8e", "r1", "b2"]
-      if n_stacked[device_name] > 1 and device_name not in exceptions:
-        device_type += "-st" + str(n_stacked[device_name])
-      data.append({
-        "name": device_name,
-        "device_role": {"slug": "edge-sw"},
-        "device_type": {"slug": device_type},
-        "region": {"slug": device["region"]},
-        "site": {"slug": device["site"]},
-        "status": "active"
-      })
+
+      if device_name in exist_devices or f"{device_name} (1)" in exist_devices:
+         continue
+
+      # stacked use
+      if device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1:
+        for n in range(1, n_stacked[device_name]+1):
+          data.append({
+            "name": f"{device_name} ({n})",
+            "device_role": {"slug": "edge-sw"},
+            "device_type": {"slug": device_type},
+            "region": {"slug": device["region"]},
+            "site": {"slug": device["site"]},
+            "status": "active",
+            "vc_position": n,
+            "virtual_chassis": {
+              "name": device_name,
+            }
+          })
+
+      # stacked use (special)
+      elif device_type == "ex4300-48mp-32f":
+        data.append({
+          "name": f"{device_name} (1)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-48mp"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "vc_position": 1,
+          "virtual_chassis": {
+            "name": device_name
+          }
+        })
+        data.append({
+          "name": f"{device_name} (2)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-32f"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "vc_position": 2,
+          "virtual_chassis": {
+            "name": device_name,
+          }
+        })
+
+      # stacked use (special)
+      elif device_type == "ex4300-48mp-32f-st2":
+        data.append({
+          "name": f"{device_name} (1)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-48mp"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "vc_position": 1,
+          "virtual_chassis": {
+            "name": device_name,
+          }
+        })
+        data.append({
+          "name": f"{device_name} (2)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-32f"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "vc_position": 2,
+          "virtual_chassis": {
+            "name": device_name,
+          }
+        })
+        data.append({
+          "name": f"{device_name} (3)",
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": "ex4300-32f"},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active",
+          "vc_position": 3,
+          "virtual_chassis": {
+            "name": device_name,
+          }
+        })
+
+      # single use
+      else:
+        data.append({
+          "name": device_name,
+          "device_role": {"slug": "edge-sw"},
+          "device_type": {"slug": device_type},
+          "region": {"slug": device["region"]},
+          "site": {"slug": device["site"]},
+          "status": "active"
+        })
+
     data = list({v["name"]:v for v in data}.values())
-    #pprint(data)
     if data:
       return self.query("/dcim/devices/", data)
     return
 
 
-  # ToDo:
+  def update_vc_masters(self, devices, n_stacked):
+    data = []
+    vc_ids = self.get_vc_id_resolve_hint()
+    for device in devices:
+      device_name = device["name"]
+      device_type = device["device_type"]
+      is_vs = device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1
+      is_special_vc = device_type in ["ex4300-48mp-32f", "ex4300-48mp-32f-st2"]
+      if is_vs or is_special_vc:
+        data.append({
+          "id": vc_ids[device_name],
+          "master": {"name": f"{device_name} (1)"}
+        })
+    if data:
+      return self.query("/dcim/virtual-chassis/", data, update=True)
+    return
+
+
   def rename_interfaces(self):
     data = []
-    data.append({
-      "id": 18952,
-      "name": "ae10"
-    })
+
+    for interface in self.get_all_interfaces():
+      if_id = interface["id"]
+      if_name = interface["name"]
+      device_name = interface["device"]["name"]
+
+      r_device_name = re.match("[\w|-]+ \((\d+)\)", device_name)
+      r_if_name = re.match("([ge|mge|et]+)-\d+/(\d+/\d+)", if_name)
+
+      if r_device_name is None or r_if_name is None:
+        continue
+
+      chassis_n = int(r_device_name.group(1)) - 1  # 0-based index (juniper rule)
+      if_type = r_if_name.group(1)
+      if_n = r_if_name.group(2)
+
+      if chassis_n > 0:
+        data.append({
+          "id": if_id,
+          "name": f"{if_type}-{chassis_n}/{if_n}"
+        })
+
     if data:
       return self.query("/dcim/interfaces/", data, update=True)
     return
@@ -333,19 +497,28 @@ class NetBoxClient:
   def create_and_assign_device_ips(self, devices):
     existed_ips = self.get_all_ips()
     interface_hints = self.get_interface_resolve_hint()
-    data = [
-      {
+    data = []
+
+    for device in devices:
+      if "/".join([device["ipv4"], device["cidr"]]) in existed_ips:
+        continue
+
+      device_name = device["name"]
+      if device_name not in interface_hints:
+        device_name = f"{device_name} (1)"
+      irb_id = interface_hints[device_name]["irb"]
+
+      data.append({
         "address": "/".join([device["ipv4"], device["cidr"]]),
         "status": "active",
         "dns_name": ".".join([device["name"], "m.noc.titech.ac.jp"]),
         "assigned_object_type": "dcim.interface",
-        "assigned_object_id": interface_hints[device["name"]]["irb"],
+        "assigned_object_id": irb_id,
         "assigned_object": {
-          "id": interface_hints[device["name"]]["irb"]
+          "id": irb_id
         },
-      }
-      for device in devices if "/".join([device["ipv4"], device["cidr"]]) not in existed_ips
-    ]
+      })
+
     if data:
       return self.query("/ipam/ip-addresses/", data)
     return
@@ -354,13 +527,17 @@ class NetBoxClient:
   def set_primary_device_ips(self, devices):
     ip_hints = self.get_ip_resolve_hint()
     device_hints = self.get_device_resolve_hint()
-    data = [
-      {
-        "id": device_hints[device["name"]],
+    data = []
+
+    for device in devices:
+      device_name = device["name"]
+      if device_name not in device_hints:
+        device_name = f"{device_name} (1)"
+      data.append({
+        "id": device_hints[device_name],
         "primary_ip4": ip_hints["/".join([device["ipv4"], device["cidr"]])],
-      }
-      for device in devices
-    ]
+      })
+
     if data:
       return self.query("/dcim/devices/", data, update=True)
     return
@@ -369,7 +546,10 @@ class NetBoxClient:
   def create_lag_interfaces(self, lags):
     interface_hints = self.get_interface_resolve_hint()
     data = []
+
     for hostname, device_lags in lags.items():
+      if hostname not in interface_hints:
+        hostname = f"{hostname} (1)"
       for ifname, _ in device_lags.items():
         if ifname in interface_hints[hostname].keys():
           continue
@@ -379,14 +559,18 @@ class NetBoxClient:
           "type": "lag"
         }
         data.append(req)
+
     if data:
       return self.query("/dcim/interfaces/", data)
+    return
 
 
   def disable_all_interfaces(self, devices):
     interface_hints = self.get_interface_resolve_hint()
     data = []
     for hostname in [v["name"] for v in devices]:
+      if hostname not in interface_hints:
+        hostname = f"{hostname} (1)"
       for ifname, iid in interface_hints[hostname].items():
         if ifname == "irb":
           continue
@@ -400,10 +584,11 @@ class NetBoxClient:
 
 
   def update_interface_configs(self, interfaces):
-    interface_hints = self.get_interface_resolve_hint()
+    __raw_interface_hints = self.get_interface_resolve_hint()
+    interface_hints = self.get_interface_resolve_hint(vc_mode=True)
     vlan_resolver = self.make_vlan_resolver()
-    mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint()
-    tokyotech_vlanid_hints = self.get_tokyotech_vlanid_resolve_hint()
+    mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint(vc_mode=True)
+    tokyotech_vlanid_hints = self.get_tokyotech_vlanid_resolve_hint(vc_mode=True)
     data = []
     orphan_vlans = {}
 
@@ -423,8 +608,11 @@ class NetBoxClient:
 
         # LAG
         if props["lag"]:
+          device_name = hostname
+          if device_name not in __raw_interface_hints:
+            device_name = f"{device_name} (1)"
           req["lag"] = {
-            "device": {"name": hostname},
+            "device": {"name": device_name},
             "name": props["lag"]
           }
 
@@ -639,52 +827,62 @@ def main():
   tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn4_interfaces, tn4_lags, tn4_n_stacked = migrate_all_edges(devices, tn3_interfaces, tn3_n_stacked, hosts=hosts)
 
-  print("STEP 1 of 10: Create VLANs")
-  res = nb.create_vlans(vlans)
+  #print("STEP 1 of 12: Create VLANs")
+  #res = nb.create_vlans(vlans)
+  #if res:
+  #  pprint(res)
+
+  #print("STEP 2 of 12: Create site groups")
+  #res = nb.create_sitegroups(sitegroups)
+  #if res:
+  #  pprint(res)
+
+  #print("STEP 3 of 12: Create sites")
+  #res = nb.create_sites(sites)
+  #if res:
+  #  pprint(res)
+
+  print("STEP 4 of 12: Create VC")
+  res = nb.create_vcs(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
-  print("STEP 2 of 10: Create Site Groups")
-  res = nb.create_sitegroups(sitegroups)
-  if res:
-    pprint(res)
-
-  print("STEP 3 of 10: Create Sites")
-  res = nb.create_sites(sites)
-  if res:
-    pprint(res)
-
-  print("STEP 4 of 10: Create VC")
-
-  print("STEP 5 of 10: Create Devices (join VC and rename interfaces)")
+  print("STEP 5 of 12: Create devices")
   res = nb.create_devices(devices, tn4_n_stacked)
   if res:
     pprint(res)
 
-  print("STEP 6 of 10: Create IP Addresses")
+  print("STEP 6 of 12: Set VC master")
+  res = nb.update_vc_masters(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
+
+  print("STEP 7 of 12: Create IP Addresses")
   res = nb.create_and_assign_device_ips(devices)
   if res:
     pprint(res)
 
-  # ToDo: Need to update
-  print("STEP 7 of 10: Update device addresses")
+  print("STEP 8 of 12: Update device addresses")
   res = nb.set_primary_device_ips(devices)
   if res:
     pprint(res)
 
-  # ToDo: Need to update
-  print("STEP 8 of 10: Create LAG interfaces")
+  print("STEP 9 of 12: Rename interfaces")
+  res = nb.rename_interfaces()
+  if res:
+    pprint(res)
+
+  print("STEP 10 of 12: Create LAG interfaces")
   res = nb.create_lag_interfaces(tn4_lags)
   if res:
     pprint(res)
 
-  print("STEP 9 of 10: Disable all interfaces")
+  print("STEP 11 of 12: Disable all interfaces")
   res = nb.disable_all_interfaces(devices)
   if res:
     pprint(res)
 
-  # ToDo: MC-LAG (need to fix device name specification)
-  print("STEP 10 of 10: Update interface configurations")
+  print("STEP 12 of 12: Update interface configurations")
   res = nb.update_interface_configs(tn4_interfaces)
   if res:
     pprint(res)
@@ -693,15 +891,9 @@ def main():
 def develop():
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  print(nb.rename_interfaces())
-
-  #for device_id in [277, 278]:
-  #  interfaces = nb.get_all_device_interfaces(device_id)
-  #  print(len(interfaces))
-  #  for interface in interfaces:
-  #    print(interface["device"]["display"], interface["display"])
+  pprint(nb.get_interface_resolve_hint(vc_mode=True))
 
 
 if __name__ == "__main__":
-    #main()
-    develop()
+    main()
+    #develop()
