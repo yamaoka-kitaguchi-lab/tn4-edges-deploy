@@ -250,7 +250,7 @@ class DevConfig:
     ]
 
     for ifname, prop in self.all_interfaces[hostname].items():
-      is_deploy_port = prop["type"]["slug"] in [*iftypes_virtual, *iftypes_ethernet]
+      is_deploy_port = prop["type"]["value"] in [*iftypes_virtual, *iftypes_ethernet]
       is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port = self.__regex_interface_name(ifname)
       is_poe_port = DevConfig.TAG_POE in prop["tags"]
 
