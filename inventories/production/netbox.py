@@ -137,11 +137,14 @@ class EdgeConfig:
           vids.add(vlan["vid"])
     for vid in vids:
       for vlan in self.all_vlans:
-        if vlan["vid"] == vid:
+        is_in_use_vlan = vlan["vid"] == vid
+        is_protected_vlan = "protect" in vlan["tags"]
+        if is_in_use_vlan or is_protected_vlan:
           vlans.append({
             "name":        vlan["name"],
             "vid":         vlan["vid"],
-            "protected":   "protect" in vlan["tags"],
+            "used":        is_in_use_vlan,
+            "protected":   is_protected_vlan,
             "description": vlan["description"],
           })
     return vlans

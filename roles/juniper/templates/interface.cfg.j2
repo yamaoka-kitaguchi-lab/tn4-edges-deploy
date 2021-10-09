@@ -1,12 +1,15 @@
-{# Create VLANs #}
-{% for vlan in vlans %}
-set vlans {{ vlan.name }} vlan-id {{ vlan.vid }}
-{% endfor %}
-
-{# Clear interface configurations #}
+{# Clear configurations #}
+delete vlans
 {% for interface, _ in interfaces.items() %}
 delete interfaces {{ interface }}
 delete poe interface {{ interface }}
+{% endfor %}
+
+{# Create VLANs #}
+{% for vlan in vlans %}
+{% if vlan.used %}
+set vlans {{ vlan.name }} vlan-id {{ vlan.vid }}
+{% endif %}
 {% endfor %}
 
 {% for interface, prop in interfaces.items() %}
