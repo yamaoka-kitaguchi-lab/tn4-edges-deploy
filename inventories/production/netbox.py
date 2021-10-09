@@ -141,6 +141,7 @@ class EdgeConfig:
           vlans.append({
             "name":        vlan["name"],
             "vid":         vlan["vid"],
+            "protected":   "protect" in vlan["tags"],
             "description": vlan["description"],
           })
     return vlans

@@ -1,56 +1,29 @@
-{#
-  Create VLANs
-#}
+{# Create VLANs #}
 {% for vlan in vlans %}
-set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }}
+set vlans {{ vlan.name }} vlan-id {{ vlan.vid }}
 {% endfor %}
 
-{#
-  Clear configurations
-#}
+{# Clear interface configurations #}
 {% for interface, _ in interfaces.items() %}
 delete interfaces {{ interface }}
 delete poe interface {{ interface }}
 {% endfor %}
-{% for _, childlen in lag_members.items() %}
-{% for child in childlen %}
-delete interfaces {{ child }} unit 0
-{% endfor %}
-{% endfor %}
 
-{#
-  Configure interfaces: description, shutdown, speed, PoE, and VLANs
-#}
 {% for interface, prop in interfaces.items() %}
 
-{% if prop.description %}
-set interfaces {{ interface }} description "{{ prop.description }}"
-{% endif %}
-
+{# shutdown #}
 {% if prop.enabled %}
 set interfaces {{ interface }} enable
 {% else %}
 set interfaces {{ interface }} disable
 {% endif %}
 
-{% if prop.physical and prop.auto_speed %}
-set interfaces {{ interface }} ether-options auto-negotiation
-{% elif prop.physical %}
-set interfaces {{ interface }} speed {{ prop.speed }}
+{# description #}
+{% if prop.description %}
+set interfaces {{ interface }} description "{{ prop.description }}"
 {% endif %}
 
-{% if prop.physical and prop.poe %}
-set poe interface {{ interface }}
-{% endif %}
-
-{% if prop.physical %}
-set interfaces {{ interface }} unit 0 family ethernet-switching storm-control default
-{% endif %}
-
-{% if prop.native %}
-set interfaces {{ interface }} native-vlan-id {{ prop.native }}
-{% endif %}
-
+{# VLAN #}
 {% if prop.physical and prop.mode %}
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.mode }}
 {% for vlan in prop.vlans %}
@@ -62,15 +35,33 @@ set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {
 set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vlan }}
 {% endfor %}
 {% endif %}
+{% if prop.native %}
+set interfaces {{ interface }} native-vlan-id {{ prop.native }}
+{% endif %}
+
+{# link speed #}
+{% if prop.physical and prop.auto_speed %}
+set interfaces {{ interface }} ether-options auto-negotiation
+{% elif prop.physical %}
+set interfaces {{ interface }} speed {{ prop.speed }}
+{% endif %}
+
+{# PoE #}
+{% if prop.physical and prop.poe %}
+set poe interface {{ interface }}
+{% endif %}
+
+{# storm control #}
+{% if prop.physical %}
+set interfaces {{ interface }} unit 0 family ethernet-switching storm-control default
+{% endif %}
+
 {% endfor %}
 
-
-{#
-  Enable LAG feature and append the childlen to the parent
-#}
-{% for parent, childlen in lag_members.items() %}
+{# LAG #}
+{% for parent, children in lag_members.items() %}
 set interfaces {{ parent }} aggregated-ether-options lacp active
-{% for child in childlen %}
+{% for child in children %}
 set interfaces {{ child }} ether-options 802.3ad {{ parent }}
 {% endfor %}
 {% endfor %}
