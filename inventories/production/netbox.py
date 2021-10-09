@@ -189,7 +189,11 @@ class DevConfig:
 
     for vlan in self.all_vlans:
       if mgmt_vlan_tags[region][device_role] in vlan["tags"]:
-        return vlan["vid"]
+        return {
+          "name":        vlan["name"],
+          "vid":         vlan["vid"],
+          "description": vlan["description"],
+        }
     return None
 
 
