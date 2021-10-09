@@ -27,7 +27,7 @@ set interfaces {{ interface }} disable
 
 {# description #}
 {% if prop.description %}
-set interfaces {{ interface }} description "{{ prop.description }}"
+set interfaces {{ interface }} description {{ prop.description }}
 {% endif %}
 
 {# VLAN #}
