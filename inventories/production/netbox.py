@@ -239,11 +239,22 @@ class DevConfig:
 
   def get_interfaces(self, hostname):
     interfaces = {}
+
+    # See: https://github.com/netbox-community/netbox/blob/develop/netbox/dcim/choices.py#L688-L923
+    iftypes_virtual = ["virtual", "lag"]
+    iftypes_ethernet = [
+      "100base-tx", "1000base-t", "1000base-x-gbic", "1000base-x-sfp", "2.5gbase-t", "5gbase-t",
+      "10gbase-t", "10gbase-cx4", "10gbase-x-sfpp", "10gbase-x-xfp", "10gbase-x-xenpak", "10gbase-x-x2",
+      "25gbase-x-sfp28", "40gbase-x-qsfpp", "50gbase-x-sfp28", "100gbase-x-cfp", "100gbase-x-cfp2", "100gbase-x-cfp4",
+      "100gbase-x-cpak", "100gbase-x-qsfp28", "200gbase-x-cfp2", "200gbase-x-qsfp56", "400gbase-x-qsfpdd", "400gbase-x-osfp",
+    ]
+
     for ifname, prop in self.all_interfaces[hostname].items():
+      is_deploy_port = prop["type"]["slug"] in [*iftypes_virtual, *iftypes_ethernet]
       is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port = self.__regex_interface_name(ifname)
       is_poe_port = DevConfig.TAG_POE in prop["tags"]
 
-      if is_mgmt_port or is_upstream_port or is_qsfp_port:
+      if not is_deploy_port or is_mgmt_port or is_upstream_port or is_qsfp_port:
         continue
 
       is_vlan_port = prop["mode"] is not None
