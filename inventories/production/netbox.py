@@ -23,6 +23,7 @@ class NetBoxClient:
   def __init__(self, netbox_url, netbox_api_token):
     self.api_endpoint = netbox_url.rstrip("/") + "/api"
     self.token = netbox_api_token
+    self.all_sites = []
     self.all_vlans = []
     self.all_devices = []
     self.all_interfaces = []
@@ -45,25 +46,37 @@ class NetBoxClient:
     return responses
 
 
+  def get_all_sites(self, use_cache=True):
+    if not use_cache or not self.all_sites:
+      self.all_sites = self.query("/dcim/sites/")
+    return self.all_sites
+
+
   def get_all_vlans(self, use_cache=True):
     if not use_cache or not self.all_vlans:
       self.all_vlans = self.query("/ipam/vlans/")
+      for vlan in self.all_vlans:
+        vlan["tags"] = [tag["slug"] for tag in vlan["tags"]]
     return self.all_vlans
 
 
   def get_all_devices(self, use_cache=True):
     if not use_cache or not self.all_devices:
       self.all_devices = self.query("/dcim/devices/")
+      for device in self.all_devices:
+        device["tags"] = [tag["slug"] for tag in device["tags"]]
     return self.all_devices
 
 
   def get_all_interfaces(self, use_cache=True):
     if not use_cache or not self.all_interfaces:
       self.all_interfaces = self.query("/dcim/interfaces/")
+      for interface in self.all_interfaces:
+        interface["tags"] = [tag["slug"] for tag in interface["tags"]]
     return self.all_interfaces
 
 
-class EdgeConfig:
+class DevConfig:
   IF_MGMT_JUNIPER = "irb"
   IF_MGMT_CISCO = "MGMT"
   DEV_ROLE_EDGE = "edge-sw"
@@ -81,6 +94,7 @@ class EdgeConfig:
 
 
   def __init__(self, netbox_cli):
+    self.all_sites = netbox_cli.get_all_sites()
     self.all_vlans = netbox_cli.get_all_vlans()
     self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
@@ -97,7 +111,7 @@ class EdgeConfig:
 
 
   def __regex_interface_name(self, interface_name):
-    is_mgmt_port = interface_name in [EdgeConfig.IF_MGMT_JUNIPER, EdgeConfig.IF_MGMT_CISCO]
+    is_mgmt_port = interface_name in [DevConfig.IF_MGMT_JUNIPER, DevConfig.IF_MGMT_CISCO]
     is_upstream_port = interface_name == "ae0"
     is_qsfp_port = interface_name[:3] == "et-"
     is_lag_port = interface_name[:2] == "ae"
@@ -128,6 +142,13 @@ class EdgeConfig:
     return arranged
 
 
+  def get_region(self, site):
+    for s in self.all_sites:
+      if s["slug"] == site:
+        return s["region"]["slug"]
+    return None
+
+
   def get_vlans(self, hostname):
     vlans, vids = [], set()
     for prop in self.all_interfaces[hostname].values():
@@ -152,31 +173,32 @@ class EdgeConfig:
 
   def get_mgmt_vlan(self, device_role, region):
     mgmt_vlan_tags = {
-      EdgeConfig.REGION_OOKAYAMA: {
-        EdgeConfig.DEV_ROLE_EDGE: EdgeConfig.TAG_MGMT_EDGE_OOKAYAMA,
-        EdgeConfig.DEV_ROLE_CORE: EdgeConfig.TAG_MGMT_CORE_OOKAYAMA,
+      DevConfig.REGION_OOKAYAMA: {
+        DevConfig.DEV_ROLE_EDGE: DevConfig.TAG_MGMT_EDGE_OOKAYAMA,
+        DevConfig.DEV_ROLE_CORE: DevConfig.TAG_MGMT_CORE_OOKAYAMA,
       },
-      EdgeConfig.REGION_TAMACHI: {
-        EdgeConfig.DEV_ROLE_EDGE: EdgeConfig.TAG_MGMT_EDGE_OOKAYAMA,
-        EdgeConfig.DEV_ROLE_CORE: EdgeConfig.TAG_MGMT_CORE_OOKAYAMA,
+      DevConfig.REGION_TAMACHI: {
+        DevConfig.DEV_ROLE_EDGE: DevConfig.TAG_MGMT_EDGE_OOKAYAMA,
+        DevConfig.DEV_ROLE_CORE: DevConfig.TAG_MGMT_CORE_OOKAYAMA,
       },
-      EdgeConfig.REGION_SUZUKAKE: {
-        EdgeConfig.DEV_ROLE_EDGE: EdgeConfig.TAG_MGMT_EDGE_SUZUKAKE,
-        EdgeConfig.DEV_ROLE_CORE: EdgeConfig.TAG_MGMT_CORE_SUZUKAKE,
+      DevConfig.REGION_SUZUKAKE: {
+        DevConfig.DEV_ROLE_EDGE: DevConfig.TAG_MGMT_EDGE_SUZUKAKE,
+        DevConfig.DEV_ROLE_CORE: DevConfig.TAG_MGMT_CORE_SUZUKAKE,
       },
     }
 
     for vlan in self.all_vlans:
-      if mgmt_vlan_tags[region][device_role] in vlan["tag"]:
+      if mgmt_vlan_tags[region][device_role] in vlan["tags"]:
         return vlan["id"]
+    return None
 
 
   def get_all_devices(self):
-    roles = [EdgeConfig.DEV_ROLE_EDGE]
+    roles = [DevConfig.DEV_ROLE_EDGE]
     return [{
       "hostname": d["name"],
-      "region":   d["region"]["slug"],
       "role":     d["device_role"]["slug"],
+      "region":   self.get_region(d["site"]["slug"]),
     } for d in self.all_devices if d["device_role"]["slug"] in roles]
 
 
@@ -218,9 +240,8 @@ class EdgeConfig:
   def get_interfaces(self, hostname):
     interfaces = {}
     for ifname, prop in self.all_interfaces[hostname].items():
-      tags = [t["slug"] for t in prop["tags"]]
       is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port = self.__regex_interface_name(ifname)
-      is_poe_port = EdgeConfig.TAG_POE in tags
+      is_poe_port = DevConfig.TAG_POE in prop["tags"]
 
       if is_mgmt_port or is_upstream_port or is_qsfp_port:
         continue
@@ -273,19 +294,20 @@ if __name__ == "__main__":
   ts = timestamp()
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
-  cf = EdgeConfig(nb)
+  cf = DevConfig(nb)
 
   print(json.dumps({
     device["hostname"]: {
       "hosts": [cf.get_ip_address(device["hostname"])],
       "vars": {
         "hostname":     device["hostname"],
-        "datetime":     ts,
+        "region":       device["region"],
         "manufacturer": cf.get_manufacturer(device["hostname"]),
         "vlans":        cf.get_vlans(device["hostname"]),
         "mgmt_vlan":    cf.get_mgmt_vlan(device["role"], device["region"]),
         "interfaces":   cf.get_interfaces(device["hostname"]),
         "lag_members":  cf.get_lag_members(device["hostname"]),
+        "datetime":     ts,
       }
     }
     for device in cf.get_all_devices()
