@@ -81,6 +81,22 @@ class NetBoxClient:
 
 
 class EdgeConfig:
+  IF_MGMT_JUNIPER = "irb"
+  IF_MGMT_CISCO = "MGMT"
+  DEV_ROLE_EDGE = "edge-sw"
+  DEV_ROLE_CORE = "core-sw"
+  REGION_OOKAYAMA = "ookayama"
+  REGION_SUZUKAKE = "suzukakedai"
+  REGION_TAMACHI = "tamachi"
+  TAG_MGMT_EDGE_OOKAYAMA = "mgmt-vlan-eo"
+  TAG_MGMT_EDGE_SUZUKAKE = "mgmt-vlan-es"
+  TAG_MGMT_CORE_OOKAYAMA = "mgmt-vlan-co"
+  TAG_MGMT_CORE_SUZUKAKE = "mgmt-vlan-cs"
+  TAG_PROTECT = "protect"
+  TAG_UPLINK = "uplink"
+  TAG_POE = "poe"
+
+
   def __init__(self, netbox_cli):
     self.all_vlans = netbox_cli.get_all_vlans()
     self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
@@ -98,7 +114,7 @@ class EdgeConfig:
 
 
   def __regex_interface_name(self, interface_name):
-    is_mgmt_port = interface_name == "irb"
+    is_mgmt_port = interface_name in [EdgeConfig.IF_MGMT_JUNIPER, EdgeConfig.IF_MGMT_CISCO]
     is_upstream_port = interface_name == "ae0"
     is_qsfp_port = interface_name[:3] == "et-"
     is_lag_port = interface_name[:2] == "ae"
@@ -135,6 +151,7 @@ class EdgeConfig:
       for vlan in [prop["untagged_vlan"], *prop["tagged_vlans"]]:
         if vlan is not None:
           vids.add(vlan["vid"])
+
     for vid in vids:
       for vlan in self.all_vlans:
         is_in_use_vlan = vlan["vid"] == vid
@@ -150,8 +167,34 @@ class EdgeConfig:
     return vlans
 
 
+  def get_mgmt_vlan(self, device_role, region):
+    mgmt_vlan_tags = {
+      EdgeConfig.REGION_OOKAYAMA: {
+        EdgeConfig.DEV_ROLE_EDGE: EdgeConfig.TAG_MGMT_EDGE_OOKAYAMA,
+        EdgeConfig.DEV_ROLE_CORE: EdgeConfig.TAG_MGMT_CORE_OOKAYAMA,
+      },
+      EdgeConfig.REGION_TAMACHI: {
+        EdgeConfig.DEV_ROLE_EDGE: EdgeConfig.TAG_MGMT_EDGE_OOKAYAMA,
+        EdgeConfig.DEV_ROLE_CORE: EdgeConfig.TAG_MGMT_CORE_OOKAYAMA,
+      },
+      EdgeConfig.REGION_SUZUKAKE: {
+        EdgeConfig.DEV_ROLE_EDGE: EdgeConfig.TAG_MGMT_EDGE_SUZUKAKE,
+        EdgeConfig.DEV_ROLE_CORE: EdgeConfig.TAG_MGMT_CORE_SUZUKAKE,
+      },
+    }
+
+    for vlan in self.all_vlans:
+      if mgmt_vlan_tags[region][device_role] in vlan["tag"]:
+        return vlan["id"]
+
+
   def get_all_devices(self):
-    return [d["name"] for d in self.all_devices if d["device_role"]["slug"] == "edge-sw"]
+    roles = [EdgeConfig.DEV_ROLE_EDGE]
+    return [{
+      "hostname": d["name"],
+      "region":   d["region"]["slug"],
+      "role":     d["device_role"]["slug"],
+    } for d in self.all_devices if d["device_role"]["slug"] in roles]
 
 
   def get_manufacturer(self, hostname):
@@ -194,7 +237,7 @@ class EdgeConfig:
     for ifname, prop in self.all_interfaces[hostname].items():
       tags = [t["slug"] for t in prop["tags"]]
       is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port = self.__regex_interface_name(ifname)
-      is_poe_port = "poe" in tags
+      is_poe_port = EdgeConfig.TAG_POE in tags
 
       if is_mgmt_port or is_upstream_port or is_qsfp_port:
         continue
@@ -233,16 +276,17 @@ if __name__ == "__main__":
   cf = EdgeConfig(nb)
 
   print(json.dumps({
-    hostname: {
-      "hosts": [cf.get_ip_address(hostname)],
+    device["hostname"]: {
+      "hosts": [cf.get_ip_address(device["hostname"])],
       "vars": {
-        "hostname":     hostname,
+        "hostname":     device["hostname"],
         "datetime":     ts,
-        "manufacturer": cf.get_manufacturer(hostname),
-        "vlans":        cf.get_vlans(hostname),
-        "interfaces":   cf.get_interfaces(hostname),
-        "lag_members":  cf.get_lag_members(hostname),
+        "manufacturer": cf.get_manufacturer(device["hostname"]),
+        "vlans":        cf.get_vlans(device["hostname"]),
+        "mgmt_vlan":    cf.get_mgmt_vlan(device["role"], device["region"]),
+        "interfaces":   cf.get_interfaces(device["hostname"]),
+        "lag_members":  cf.get_lag_members(device["hostname"]),
       }
     }
-    for hostname in cf.get_all_devices()
+    for device in cf.get_all_devices()
   }))
