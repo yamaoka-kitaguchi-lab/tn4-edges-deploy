@@ -6,11 +6,11 @@ delete poe interface {{ interface }}
 {% endfor %}
 
 {# Create VLANs #}
-{% for vlan in vlans %}
 set vlans default vlan-id 1
 set vlans default l3-interface irb.0
 set vlans {{ mgmt_vlan.name }} vlan-id {{ mgmt_vlan.vid }}
 set vlans {{ mgmt_vlan.name }} l3-interface irb.{{ mgmt_vlan.vid }}
+{% for vlan in vlans %}
 {% if vlan.used %}
 set vlans {{ vlan.name }} vlan-id {{ vlan.vid }}
 {% endif %}
