@@ -19,23 +19,6 @@ VAULT_FILE = os.path.join(os.path.dirname(__file__), "./group_vars/all/vault.yml
 VAULT_PASSWORD_FILE = os.path.join(os.path.dirname(__file__), "../../.secrets/vault-pass.txt")
 
 
-def __load_encrypted_secrets():
-  with open(VAULT_FILE) as v, open(VAULT_PASSWORD_FILE, "r") as p:
-    key = str.encode(p.read().rstrip())
-    try:
-      vault = VaultLib([(DEFAULT_VAULT_ID_MATCH, VaultSecret(key))])
-      raw = vault.decrypt(v.read())
-      return yaml.load(raw, Loader=yaml.CLoader)
-    except AnsibleVaultError as e:
-      print("Failed to decrypt the vault. Check your password and try again:", e, file=sys.stderr)
-      sys.exit(1)
-
-
-def timestamp():
-  n = datetime.now()
-  return n.strftime("%Y-%m-%d@%H-%M-%S")
-
-
 class NetBoxClient:
   def __init__(self, netbox_url, netbox_api_token):
     self.api_endpoint = netbox_url.rstrip("/") + "/api"
@@ -267,6 +250,23 @@ class EdgeConfig:
       }
 
     return interfaces
+
+
+def __load_encrypted_secrets():
+  with open(VAULT_FILE) as v, open(VAULT_PASSWORD_FILE, "r") as p:
+    key = str.encode(p.read().rstrip())
+    try:
+      vault = VaultLib([(DEFAULT_VAULT_ID_MATCH, VaultSecret(key))])
+      raw = vault.decrypt(v.read())
+      return yaml.load(raw, Loader=yaml.CLoader)
+    except AnsibleVaultError as e:
+      print("Failed to decrypt the vault. Check your password and try again:", e, file=sys.stderr)
+      sys.exit(1)
+
+
+def timestamp():
+  n = datetime.now()
+  return n.strftime("%Y-%m-%d@%H-%M-%S")
 
 
 if __name__ == "__main__":
