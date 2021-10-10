@@ -275,11 +275,8 @@ class DevConfig:
 
       if is_vlan_port:
         vlan_mode = prop["mode"]["value"].lower()
-        has_untagged_vid = prop["untagged_vlan"] is not None
-        has_tagged_vid = prop["tagged_vlan"] is not None
-
         if vlan_mode == "access":
-          if has_untagged_vid:
+          if prop["untagged_vlan"] is not None:
             vid = prop["untagged_vlan"]["vid"]
             vids = [vid]
             vlan_name = self.__get_vlan_name(vid)
@@ -288,9 +285,9 @@ class DevConfig:
 
         elif vlan_mode == "tagged":
           vlan_mode = "trunk"  # Format conversion: from netbox to juniper/cisco style
-          if has_tagged_vid:
+          if prop["tagged_vlan"] is not None:
             vids = [v["vid"] for v in prop["tagged_vlans"]]
-          if has_untagged_vid:
+          if prop["untagged_vlan"] is not None:
             native_vid = prop["untagged_vlan"]["vid"]
             vids.append(native_vid)
 
