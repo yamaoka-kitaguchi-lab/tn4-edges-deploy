@@ -142,6 +142,13 @@ class DevConfig:
     return arranged
 
 
+  def __get_vlan_name(self, vid):
+    for vlan in self.all_vlans:
+      if vlan["vid"] == vid:
+        return vlan["name"]
+    return None
+
+
   def get_region(self, site):
     for s in self.all_sites:
       if s["slug"] == site:
@@ -262,25 +269,35 @@ class DevConfig:
       if not is_deploy_port or is_mgmt_port or is_upstream_port or is_qsfp_port:
         continue
 
+      description = prop["description"]
       is_vlan_port = prop["mode"] is not None
+      has_untagged_vid = prop["untagged_vlan"] is not None
+      has_tagged_vid = prop["tagged_vlan"] is not None
       vlan_mode, native_vid, vids = None, None, []
+
       if is_vlan_port:
         vlan_mode = prop["mode"]["value"].lower()
+
         if vlan_mode == "access":
-          if prop["untagged_vlan"] is not None:
-            vids = [prop["untagged_vlan"]["vid"]]
+          if has_untagged_vid:
+            vid = prop["untagged_vlan"]["vid"]
+            vids = [vid]
+            vlan_name = self.__get_vlan_name(vid)
+            if description == "" and vlan_name is not None:
+              description = vlan_name
+
         elif vlan_mode == "tagged":
           vlan_mode = "trunk"  # Format conversion: from netbox to juniper/cisco style
-          if prop["tagged_vlans"] is not None:
+          if has_tagged_vid:
             vids = [v["vid"] for v in prop["tagged_vlans"]]
-          if prop["untagged_vlan"] is not None:
+          if has_untagged_vid:
             native_vid = prop["untagged_vlan"]["vid"]
             vids.append(native_vid)
 
       interfaces[ifname] = {
         "physical":    not (is_mgmt_port or is_lag_port),
         "enabled":     prop["enabled"],
-        "description": prop["description"],
+        "description": description,
         "lag_member":  is_lag_member_port,
         "poe":         is_poe_port,
         "auto_speed":  True,
