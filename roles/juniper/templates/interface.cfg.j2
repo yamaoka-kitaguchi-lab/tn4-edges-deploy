@@ -41,14 +41,18 @@ set poe interface {{ interface }}
 {% endif %}
 {% endif %}
 
-{% if prop.mode %}
-set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.mode }}
-{% for vlan in prop.vlans %}
-set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vlan }}
+{% if prop.vlan_mode %}
+set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.vlan_mode }}
+{% if prop.trunk_all %}
+set interfaces {{ interface }} unit 0 family ethernet-switching vlan members all
+{% else %}
+{% for vid in prop.vids %}
+set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vid }}
 {% endfor %}
 {% endif %}
+{% endif %}
 
-{% if prop.native %}
-set interfaces {{ interface }} native-vlan-id {{ prop.native }}
+{% if prop.native_vid %}
+set interfaces {{ interface }} native-vlan-id {{ prop.native_vid }}
 {% endif %}
 {% endfor %}

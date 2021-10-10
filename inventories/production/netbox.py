@@ -271,7 +271,7 @@ class DevConfig:
 
       description = prop["description"]
       is_vlan_port = prop["mode"] is not None
-      vlan_mode, native_vid, vids = None, None, []
+      vlan_mode, native_vid, vids, is_trunk_all = None, None, [], False
 
       if is_vlan_port:
         vlan_mode = prop["mode"]["value"].lower()
@@ -294,6 +294,10 @@ class DevConfig:
             native_vid = prop["untagged_vlan"]["vid"]
             vids.append(native_vid)
 
+        elif vlan_mode == "tagged-all":
+          vlan_mode = "trunk"
+          is_trunk_all = True
+
       interfaces[ifname] = {
         "physical":    not (is_mgmt_port or is_lag_port),
         "enabled":     prop["enabled"],
@@ -301,9 +305,10 @@ class DevConfig:
         "lag_member":  is_lag_member_port,
         "poe":         is_poe_port,
         "auto_speed":  True,
-        "mode":        vlan_mode,
-        "vlans":       vids,
-        "native":      native_vid,
+        "vlan_mode":   vlan_mode,
+        "vids":        vids,
+        "native_vid":  native_vid,
+        "trunk_all":   is_trunk_all,
       }
 
     return interfaces
