@@ -271,12 +271,12 @@ class DevConfig:
 
       description = prop["description"]
       is_vlan_port = prop["mode"] is not None
-      has_untagged_vid = prop["untagged_vlan"] is not None
-      has_tagged_vid = prop["tagged_vlan"] is not None
       vlan_mode, native_vid, vids = None, None, []
 
       if is_vlan_port:
         vlan_mode = prop["mode"]["value"].lower()
+        has_untagged_vid = prop["untagged_vlan"] is not None
+        has_tagged_vid = prop["tagged_vlan"] is not None
 
         if vlan_mode == "access":
           if has_untagged_vid:
