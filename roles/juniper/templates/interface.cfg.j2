@@ -27,7 +27,7 @@ set interfaces {{ interface }} {{ "enable" if prop.enabled else "disable" }}
 set interfaces {{ interface }} description "{{ prop.description }}"
 {% endif %}
 
-{% if prop.physical %}
+{% if prop.physical and not prop.lag_member %}
 set interfaces {{ interface }} unit 0 family ethernet-switching storm-control default
 
 {% if prop.auto_speed %}

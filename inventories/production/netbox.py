@@ -256,6 +256,7 @@ class DevConfig:
     for ifname, prop in self.all_interfaces[hostname].items():
       is_deploy_port = prop["type"]["value"] in [*iftypes_virtual, *iftypes_ethernet]
       is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port = self.__regex_interface_name(ifname)
+      is_lag_member_port = prop["lag"] is not None
       is_poe_port = DevConfig.TAG_POE in prop["tags"]
 
       if not is_deploy_port or is_mgmt_port or is_upstream_port or is_qsfp_port:
@@ -278,6 +279,7 @@ class DevConfig:
         "physical":    not (is_mgmt_port or is_lag_port),
         "enabled":     prop["enabled"],
         "description": prop["description"],
+        "lag_member":  is_lag_member_port,
         "poe":         is_poe_port,
         "auto_speed":  True,
         "mode":        vlan_mode,
