@@ -313,19 +313,31 @@ if __name__ == "__main__":
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
   cf = DevConfig(nb)
 
-  print(json.dumps({
-    device["hostname"]: {
-      "hosts": [cf.get_ip_address(device["hostname"])],
-      "vars": {
-        "hostname":     device["hostname"],
-        "region":       device["region"],
-        "manufacturer": cf.get_manufacturer(device["hostname"]),
-        "vlans":        cf.get_vlans(device["hostname"]),
-        "mgmt_vlan":    cf.get_mgmt_vlan(device["role"], device["region"]),
-        "interfaces":   cf.get_interfaces(device["hostname"]),
-        "lag_members":  cf.get_lag_members(device["hostname"]),
-        "datetime":     ts,
-      }
+  devices = cf.get_all_devices()
+  inventory = {
+    "_meta": {
+      "hostvars": {}
     }
-    for device in cf.get_all_devices()
-  }))
+  }
+
+  for device in devices:
+    hostname = device["hostname"]
+    group = device["role"].upper()
+    try:
+      inventory[group]["hosts"].append(hostname)
+    except KeyError:
+      inventory[group] = {"hosts": [hostname]}
+
+    inventory["_meta"]["hostvars"][hostname] = {
+      "hostname":     hostname,
+      "region":       device["region"],
+      "manufacturer": cf.get_manufacturer(hostname),
+      "vlans":        cf.get_vlans(hostname),
+      "mgmt_vlan":    cf.get_mgmt_vlan(device["role"], device["region"]),
+      "interfaces":   cf.get_interfaces(hostname),
+      "lag_members":  cf.get_lag_members(hostname),
+      "ansible_host": cf.get_ip_address(hostname),
+      "datetime":     ts,
+    }
+
+  print(json.dumps(inventory))
