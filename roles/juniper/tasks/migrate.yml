@@ -32,14 +32,15 @@
   tags:
     - develop
 
-- name: Create VLANs and update interface settings
+- name: Update interface configurations
   connection: netconf
-  ansible_command_timeout: 60
   junos_config:
     src: interface.cfg.j2
     src_format: set
     comment: Action performed by ansible
     update: merge
+  vars:
+    ansible_command_timeout: 60
 
 - name: Create post-snapshots
   connection: netconf
