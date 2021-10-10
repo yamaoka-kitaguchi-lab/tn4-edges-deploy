@@ -82,7 +82,7 @@ class DevConfig:
   DEV_ROLE_EDGE = "edge-sw"
   DEV_ROLE_CORE = "core-sw"
   REGION_OOKAYAMA = "ookayama"
-  REGION_SUZUKAKE = "suzukakedai"
+  REGION_SUZUKAKE = "suzukake"
   REGION_TAMACHI = "tamachi"
   TAG_MGMT_EDGE_OOKAYAMA = "mgmt-vlan-eo"
   TAG_MGMT_EDGE_SUZUKAKE = "mgmt-vlan-es"
