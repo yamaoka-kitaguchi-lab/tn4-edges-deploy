@@ -34,6 +34,7 @@
 
 - name: Create VLANs and update interface settings
   connection: netconf
+  ansible_command_timeout: 60
   junos_config:
     src: interface.cfg.j2
     src_format: set
