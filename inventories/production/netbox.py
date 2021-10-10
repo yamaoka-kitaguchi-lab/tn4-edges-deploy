@@ -252,7 +252,7 @@ class DevConfig:
     interfaces = {}
 
     # See: https://github.com/netbox-community/netbox/blob/develop/netbox/dcim/choices.py#L688-L923
-    iftypes_virtual = ["virtual", "lag"]
+    iftypes_virtual = ["lag"]
     iftypes_ethernet = [
       "100base-tx", "1000base-t", "1000base-x-gbic", "1000base-x-sfp", "2.5gbase-t", "5gbase-t",
       "10gbase-t", "10gbase-cx4", "10gbase-x-sfpp", "10gbase-x-xfp", "10gbase-x-xenpak", "10gbase-x-x2",
@@ -275,8 +275,11 @@ class DevConfig:
 
       if is_vlan_port:
         vlan_mode = prop["mode"]["value"].lower()
+        has_untagged_vid = prop["untagged_vlan"] is not None
+        has_tagged_vid = prop["tagged_vlans"] is not None
+
         if vlan_mode == "access":
-          if prop["untagged_vlan"] is not None:
+          if has_untagged_vid:
             vid = prop["untagged_vlan"]["vid"]
             vids = [vid]
             vlan_name = self.__get_vlan_name(vid)
@@ -285,9 +288,9 @@ class DevConfig:
 
         elif vlan_mode == "tagged":
           vlan_mode = "trunk"  # Format conversion: from netbox to juniper/cisco style
-          if prop["tagged_vlan"] is not None:
+          if has_tagged_vid:
             vids = [v["vid"] for v in prop["tagged_vlans"]]
-          if prop["untagged_vlan"] is not None:
+          if has_untagged_vid:
             native_vid = prop["untagged_vlan"]["vid"]
             vids.append(native_vid)
 
