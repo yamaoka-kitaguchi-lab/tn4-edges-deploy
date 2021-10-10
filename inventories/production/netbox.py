@@ -342,4 +342,4 @@ if __name__ == "__main__":
       "datetime":     ts,
     }
 
-  #print(json.dumps(inventory))
+  print(json.dumps(inventory))
