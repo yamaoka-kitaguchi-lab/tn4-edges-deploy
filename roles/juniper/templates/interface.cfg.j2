@@ -22,7 +22,7 @@ set interfaces {{ child }} ether-options 802.3ad {{ parent }}
 {% endfor %}
 
 {% for interface, prop in interfaces.items() %}
-set interfaces {{ interface }} {% "enable" if prop.enabled else "disable" %}
+set interfaces {{ interface }} {{ "enable" if prop.enabled else "disable" }}
 {% if prop.description %}
 set interfaces {{ interface }} description "{{ prop.description }}"
 {% endif %}
