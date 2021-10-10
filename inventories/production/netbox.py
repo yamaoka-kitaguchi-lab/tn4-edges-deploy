@@ -267,10 +267,12 @@ class DevConfig:
       if is_vlan_port:
         vlan_mode = prop["mode"]["value"].lower()
         if vlan_mode == "access":
-          vids = [prop["untagged_vlan"]["vid"]]
+          if prop["untagged_vlan"] is not None:
+            vids = [prop["untagged_vlan"]["vid"]]
         elif vlan_mode == "tagged":
           vlan_mode = "trunk"  # Format conversion: from netbox to juniper/cisco style
-          vids = [v["vid"] for v in prop["tagged_vlans"]]
+          if prop["tagged_vlans"] is not None:
+            vids = [v["vid"] for v in prop["tagged_vlans"]]
           if prop["untagged_vlan"] is not None:
             native_vid = prop["untagged_vlan"]["vid"]
             vids.append(native_vid)
@@ -340,4 +342,4 @@ if __name__ == "__main__":
       "datetime":     ts,
     }
 
-  print(json.dumps(inventory))
+  #print(json.dumps(inventory))
