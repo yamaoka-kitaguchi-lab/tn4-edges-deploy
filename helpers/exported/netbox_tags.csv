@@ -1,6 +1,12 @@
 Name,Items,Slug,Color,Description
-Dynamic VLAN,200,dynamic-vlan,#673ab7,
-PoE,0,poe,#ff5722,
-Uplink,0,uplink,#3f51b5,
-Wi-Fi,0,wifi,#03a9f4,
+Dynamic VLAN,0,dynamic-vlan,#673ab7,
+Edge Mgmt VLAN (O),1,mgmt-vlan-eo,#ffe4e1,Management VLAN ID for edge SWs located in Ookayama and Tamachi regions
+Edge Mgmt VLAN (S),1,mgmt-vlan-es,#ffe4e1,Management VLAN ID for edge SWs located in Suzukake region
+Global,696,global,#4caf50,
+L2,38,l2,#607d8b,
+PoE,449,poe,#ff5722,
+Private,235,private,#ff9800,
+Protect,5,protect,#111111,
+Uplink,94,uplink,#3f51b5,
+Wi-Fi,357,wifi,#03a9f4,
 mGig,0,mgig,#cddc39,

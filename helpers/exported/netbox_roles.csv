@@ -1,0 +1,6 @@
+Name,Slug,Prefixes,VLANs,Description,Weight
+BB,bb,57,58,,1000
+BRANCH,branch,377,426,,1000
+NOC,noc,33,66,,1000
+PEER,peer,7,6,,1000
+PROJ,proj,0,25,,1000
