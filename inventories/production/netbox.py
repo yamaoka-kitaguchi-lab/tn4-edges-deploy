@@ -127,6 +127,7 @@ class DevConfig:
     return filtered
 
 
+  ## ToDo: Filter out invalid VC devices
   def __filter_active_devices(self, devices):
     filtered = []
     for dev in devices:
