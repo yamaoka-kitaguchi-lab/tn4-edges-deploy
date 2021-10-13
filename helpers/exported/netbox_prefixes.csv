@@ -1,0 +1,1931 @@
+Prefix,Status,Children,VRF,Utilization,Tenant,Site,VLAN,Role,Description,Tags,Prefix (Flat),Depth,Pool,Marked Utilized
+131.12.168.64/26,Active,0,Global,0%,,,es-6 (899),BRANCH,,Global,131.12.168.64/26,0,False,False
+131.112.0.0/16,Active,346,Global,0%,,,,NOC,,Global,131.112.0.0/16,0,False,False
+"•
+        
+    
+
+131.112.4.64/26",Active,0,Global,0%,,,gsic.cc-5 (626),BRANCH,,Global,131.112.4.64/26,1,False,False
+"•
+        
+    
+
+131.112.4.128/26",Active,0,Global,0%,,,gsic.cc-4 (652),BRANCH,,Global,131.112.4.128/26,1,False,False
+"•
+        
+    
+
+131.112.5.0/26",Active,0,Global,0%,,,gsic-4 (990),BRANCH,,Global,131.112.5.0/26,1,False,False
+"•
+        
+    
+
+131.112.5.64/27",Active,0,Global,0%,,,gsic-1 (995),BRANCH,,Global,131.112.5.64/27,1,False,False
+"•
+        
+    
+
+131.112.5.96/27",Active,0,Global,0%,,,gsic-5 (987),BRANCH,,Global,131.112.5.96/27,1,False,False
+"•
+        
+    
+
+131.112.5.128/27",Active,0,Global,0%,,,gsic-7 (956),BRANCH,,Global,131.112.5.128/27,1,False,False
+"•
+        
+    
+
+131.112.5.160/27",Active,0,Global,0%,,,gsic-3 (992),BB,,Global,131.112.5.160/27,1,False,False
+"•
+        
+    
+
+131.112.5.192/26",Active,0,Global,0%,,,gsic-6 (962),BRANCH,,Global,131.112.5.192/26,1,False,False
+"•
+        
+    
+
+131.112.6.128/25",Active,0,Global,0%,,,gsic-14 (526),BRANCH,,Global,131.112.6.128/25,1,False,False
+"•
+        
+    
+
+131.112.14.192/26",Active,0,Global,0%,,,cc.kyoiku (985),BRANCH,,Global,131.112.14.192/26,1,False,False
+"•
+        
+    
+
+131.112.16.0/24",Active,0,Global,0%,,,cs-1 (988),BRANCH,,Global,131.112.16.0/24,1,False,False
+"•
+        
+    
+
+131.112.18.0/24",Active,0,Global,0%,,,chem-1 (842),BRANCH,,Global,131.112.18.0/24,1,False,False
+"•
+        
+    
+
+131.112.19.0/24",Active,0,Global,0%,,,chem-2 (833),BRANCH,,Global,131.112.19.0/24,1,False,False
+"•
+        
+    
+
+131.112.20.0/24",Active,1,Global,0%,,,tac-mi-1 (487),BRANCH,,Global,131.112.20.0/24,1,False,False
+"•
+        
+            •
+        
+    
+
+131.112.20.64/27",Active,0,Global,0%,,,tac-mi-2 (484),BRANCH,,Global,131.112.20.64/27,2,False,False
+"•
+        
+    
+
+131.112.22.0/25",Active,0,Global,0%,,,sms-1 (773),BRANCH,,Global,131.112.22.0/25,1,False,False
+"•
+        
+    
+
+131.112.22.128/25",Active,0,Global,0%,,,sms-2 (772),BRANCH,,Global,131.112.22.128/25,1,False,False
+"•
+        
+    
+
+131.112.23.0/26",Active,0,Global,0%,,,sao-1 (644),BRANCH,,Global,131.112.23.0/26,1,False,False
+"•
+        
+    
+
+131.112.23.128/26",Active,0,Global,0%,,,sao-3 (606),BRANCH,,Global,131.112.23.128/26,1,False,False
+"•
+        
+    
+
+131.112.23.192/26",Active,0,Global,0%,,,sao.tv-kougi-o (709),BRANCH,,Global,131.112.23.192/26,1,False,False
+"•
+        
+    
+
+131.112.25.0/26",Active,0,Global,0%,,,ksvo-1 (739),BRANCH,,Global,131.112.25.0/26,1,False,False
+"•
+        
+    
+
+131.112.25.192/27",Active,0,Global,0%,,,ksvo-2 (736),BRANCH,,Global,131.112.25.192/27,1,False,False
+"•
+        
+    
+
+131.112.26.0/26",Active,0,Global,0%,,,flc-1 (743),BRANCH,,Global,131.112.26.0/26,1,False,False
+"•
+        
+    
+
+131.112.27.192/28",Active,0,Global,0%,,,infosyenergy-2 (470),BRANCH,,Global,131.112.27.192/28,1,False,False
+"•
+        
+    
+
+131.112.28.0/23",Active,0,Global,0%,,,gsic-12 (876),BRANCH,,Global,131.112.28.0/23,1,False,False
+"•
+        
+    
+
+131.112.31.0/25",Active,0,Global,0%,,,valdes-1 (562),BRANCH,,Global,131.112.31.0/25,1,False,False
+"•
+        
+    
+
+131.112.31.128/26",Active,0,Global,0%,,,valdes-2 (561),BRANCH,,Global,131.112.31.128/26,1,False,False
+"•
+        
+    
+
+131.112.31.192/26",Active,0,Global,0%,,,valdes-3 (960),BRANCH,,Global,131.112.31.192/26,1,False,False
+"•
+        
+    
+
+131.112.32.128/26",Active,0,Global,0%,,,hpcl-1 (642),BRANCH,,Global,131.112.32.128/26,1,False,False
+"•
+        
+    
+
+131.112.34.0/26",Active,0,Global,0%,,,mes-11 (758),BRANCH,,Global,131.112.34.0/26,1,False,False
+"•
+        
+    
+
+131.112.34.64/26",Active,0,Global,0%,,,mes-9 (801),BRANCH,,Global,131.112.34.64/26,1,False,False
+"•
+        
+    
+
+131.112.34.128/26",Active,0,Global,0%,,,mes-1 (824),BRANCH,,Global,131.112.34.128/26,1,False,False
+"•
+        
+    
+
+131.112.34.192/26",Active,0,Global,0%,,,mes-12 (757),BRANCH,,Global,131.112.34.192/26,1,False,False
+"•
+        
+    
+
+131.112.35.128/25",Active,0,Global,0%,,,gsic-13 (683),BRANCH,,Global,131.112.35.128/25,1,False,False
+"•
+        
+    
+
+131.112.36.64/27",Active,0,Global,0%,,,ce-4 (691),BRANCH,,Global,131.112.36.64/27,1,False,False
+"•
+        
+    
+
+131.112.36.192/26",Active,0,Global,0%,,,ce-2 (948),BRANCH,,Global,131.112.36.192/26,1,False,False
+"•
+        
+    
+
+131.112.37.0/24",Active,0,Global,0%,,,apc-1 (726),BRANCH,,Global,131.112.37.0/24,1,False,False
+"•
+        
+    
+
+131.112.38.0/24",Active,0,Global,0%,,,ap-1 (786),BRANCH,,Global,131.112.38.0/24,1,False,False
+"•
+        
+    
+
+131.112.39.0/26",Active,0,Global,0%,,,hum-2 (946),BRANCH,,Global,131.112.39.0/26,1,False,False
+"•
+        
+    
+
+131.112.39.192/26",Active,0,Global,0%,,,hum-3 (892),BRANCH,,Global,131.112.39.192/26,1,False,False
+"•
+        
+    
+
+131.112.40.0/26",Active,0,Global,0%,,,is-1 (983),BRANCH,,Global,131.112.40.0/26,1,False,False
+"•
+        
+    
+
+131.112.40.192/26",Active,0,Global,0%,,,is-4 (742),BRANCH,,Global,131.112.40.192/26,1,False,False
+"•
+        
+    
+
+131.112.41.0/26",Active,0,Global,0%,,,ryu-1 (916),BRANCH,,Global,131.112.41.0/26,1,False,False
+"•
+        
+    
+
+131.112.42.0/26",Active,0,Global,0%,,,mei-1 (755),BRANCH,,Global,131.112.42.0/26,1,False,False
+"•
+        
+    
+
+131.112.42.64/26",Active,0,Global,0%,,,mei-2 (754),BRANCH,,Global,131.112.42.64/26,1,False,False
+"•
+        
+    
+
+131.112.42.128/26",Active,0,Global,0%,,,mei-3 (753),BRANCH,,Global,131.112.42.128/26,1,False,False
+"•
+        
+    
+
+131.112.42.192/26",Active,0,Global,0%,,,mei-4 (752),BRANCH,,Global,131.112.42.192/26,1,False,False
+"•
+        
+    
+
+131.112.43.0/26",Active,0,Global,0%,,,cradle-4 (542),BRANCH,,Global,131.112.43.0/26,1,False,False
+"•
+        
+    
+
+131.112.43.64/26",Active,0,Global,0%,,,cradle-3 (543),BRANCH,,Global,131.112.43.64/26,1,False,False
+"•
+        
+    
+
+131.112.43.128/26",Active,0,Global,0%,,,e-1 (875),BRANCH,,Global,131.112.43.128/26,1,False,False
+"•
+        
+    
+
+131.112.43.192/26",Active,0,Global,0%,,,cradle-2 (688),BRANCH,,Global,131.112.43.192/26,1,False,False
+"•
+        
+    
+
+131.112.45.0/26",Active,0,Global,0%,,,ctrl-15 (508),BRANCH,,Global,131.112.45.0/26,1,False,False
+"•
+        
+    
+
+131.112.45.64/26",Active,0,Global,0%,,,ctrl-10 (805),BRANCH,,Global,131.112.45.64/26,1,False,False
+"•
+        
+    
+
+131.112.47.0/26",Active,0,Global,0%,,,bio-10 (961),BRANCH,,Global,131.112.47.0/26,1,False,False
+"•
+        
+    
+
+131.112.47.128/26",Active,0,Global,0%,,,bio-21 (597),BRANCH,,Global,131.112.47.128/26,1,False,False
+"•
+        
+    
+
+131.112.48.0/24",Active,0,Global,0%,,,mac-1 (516),BRANCH,,Global,131.112.48.0/24,1,False,False
+"•
+        
+    
+
+131.112.51.0/26",Active,0,Global,0%,,,is-5 (741),BRANCH,,Global,131.112.51.0/26,1,False,False
+"•
+        
+    
+
+131.112.51.128/26",Active,0,Global,0%,,,is-2 (951),BRANCH,,Global,131.112.51.128/26,1,False,False
+"•
+        
+    
+
+131.112.51.192/26",Active,0,Global,0%,,,is-3 (837),BRANCH,,Global,131.112.51.192/26,1,False,False
+"•
+        
+    
+
+131.112.52.0/25",Active,0,Global,0%,,,phys-2 (770),BRANCH,,Global,131.112.52.0/25,1,False,False
+"•
+        
+    
+
+131.112.52.128/26",Active,0,Global,0%,,,phys-3 (769),BRANCH,,Global,131.112.52.128/26,1,False,False
+"•
+        
+    
+
+131.112.52.192/26",Active,0,Global,0%,,,phys-4 (768),BRANCH,,Global,131.112.52.192/26,1,False,False
+"•
+        
+    
+
+131.112.53.0/26",Active,0,Global,0%,,,iir-2 (509),BRANCH,,Global,131.112.53.0/26,1,False,False
+"•
+        
+    
+
+131.112.53.64/27",Active,0,Global,0%,,,iir-5 (488),BRANCH,,Global,131.112.53.64/27,1,False,False
+"•
+        
+    
+
+131.112.58.0/24",Active,0,Global,0%,,,soc-1 (958),BRANCH,,Global,131.112.58.0/24,1,False,False
+"•
+        
+    
+
+131.112.59.0/24",Active,0,Global,0%,,,chemeng-2 (727),BRANCH,,Global,131.112.59.0/24,1,False,False
+"•
+        
+    
+
+131.112.60.0/26",Active,0,Global,0%,,,ctrl-2 (851),BRANCH,,Global,131.112.60.0/26,1,False,False
+"•
+        
+    
+
+131.112.60.64/27",Active,0,Global,0%,,,ctrl-3 (850),BRANCH,,Global,131.112.60.64/27,1,False,False
+"•
+        
+    
+
+131.112.60.96/27",Active,0,Global,0%,,,ctrl-11 (730),BRANCH,,Global,131.112.60.96/27,1,False,False
+"•
+        
+    
+
+131.112.60.128/27",Active,0,Global,0%,,,ctrl-4 (849),BRANCH,,Global,131.112.60.128/27,1,False,False
+"•
+        
+    
+
+131.112.60.160/27",Active,0,Global,0%,,,ctrl-12 (611),BRANCH,,Global,131.112.60.160/27,1,False,False
+"•
+        
+    
+
+131.112.60.192/26",Active,0,Global,0%,,,ctrl-5 (848),BRANCH,,Global,131.112.60.192/26,1,False,False
+"•
+        
+    
+
+131.112.63.0/25",Active,0,Global,0%,,,op-1 (864),BRANCH,,Global,131.112.63.0/25,1,False,False
+"•
+        
+    
+
+131.112.63.192/26",Active,0,Global,0%,,,op-2 (738),BRANCH,,Global,131.112.63.192/26,1,False,False
+"•
+        
+    
+
+131.112.64.0/24",Active,0,Global,0%,,,craft-1 (776),BRANCH,,Global,131.112.64.0/24,1,False,False
+"•
+        
+    
+
+131.112.65.0/24",Active,0,Global,0%,,,ce-1 (950),BRANCH,,Global,131.112.65.0/24,1,False,False
+"•
+        
+    
+
+131.112.66.0/24",Active,0,Global,0%,,,mep-2 (728),BRANCH,,Global,131.112.66.0/24,1,False,False
+"•
+        
+    
+
+131.112.67.0/26",Active,0,Global,0%,,,jim-2 (809),BRANCH,,Global,131.112.67.0/26,1,False,False
+"•
+        
+    
+
+131.112.67.128/26",Active,0,Global,0%,,,j-kiban-1 (510),BRANCH,,Global,131.112.67.128/26,1,False,False
+"•
+        
+    
+
+131.112.72.0/24",Active,0,Global,0%,,,arch-2 (888),BRANCH,,Global,131.112.72.0/24,1,False,False
+"•
+        
+    
+
+131.112.73.0/24",Active,0,Global,0%,,,arch-1 (949),BRANCH,,Global,131.112.73.0/24,1,False,False
+"•
+        
+    
+
+131.112.74.0/26",Active,0,Global,0%,,,afs-1 (717),BRANCH,,Global,131.112.74.0/26,1,False,False
+"•
+        
+    
+
+131.112.76.192/26",Active,0,Global,0%,,,cradle-1 (963),BRANCH,,Global,131.112.76.192/26,1,False,False
+"•
+        
+    
+
+131.112.78.0/24",Active,0,Global,0%,,,pe-1 (932),BRANCH,,Global,131.112.78.0/24,1,False,False
+"•
+        
+    
+
+131.112.79.0/26",Active,0,Global,0%,,,ctrl-6 (847),BRANCH,,Global,131.112.79.0/26,1,False,False
+"•
+        
+    
+
+131.112.79.64/27",Active,0,Global,0%,,,ctrl-7 (846),BRANCH,,Global,131.112.79.64/27,1,False,False
+"•
+        
+    
+
+131.112.79.96/27",Active,0,Global,0%,,,ctrl-14 (608),BRANCH,,Global,131.112.79.96/27,1,False,False
+"•
+        
+    
+
+131.112.79.128/27",Active,0,Global,0%,,,ctrl-13 (609),BRANCH,,Global,131.112.79.128/27,1,False,False
+"•
+        
+    
+
+131.112.79.160/27",Active,0,Global,0%,,,ctrl-9 (807),BRANCH,,Global,131.112.79.160/27,1,False,False
+"•
+        
+    
+
+131.112.79.192/27",Active,0,Global,0%,,,ctrl-8 (844),BRANCH,,Global,131.112.79.192/27,1,False,False
+"•
+        
+    
+
+131.112.79.224/27",Active,0,Global,0%,,,ctrl-1 (982),BRANCH,,Global,131.112.79.224/27,1,False,False
+"•
+        
+    
+
+131.112.80.64/26",Active,0,Global,0%,,,ide-5 (831),BRANCH,,Global,131.112.80.64/26,1,False,False
+"•
+        
+    
+
+131.112.80.192/26",Active,0,Global,0%,,,ide-4 (838),BRANCH,,Global,131.112.80.192/26,1,False,False
+"•
+        
+    
+
+131.112.81.128/25",Active,0,Global,0%,,,mtl-1 (906),BRANCH,,Global,131.112.81.128/25,1,False,False
+"•
+        
+    
+
+131.112.82.0/26",Active,0,Global,0%,,,hokekan-2 (795),BRANCH,,Global,131.112.82.0/26,1,False,False
+"•
+        
+    
+
+131.112.83.0/24",Active,0,Global,0%,,,ceram-1 (737),BRANCH,,Global,131.112.83.0/24,1,False,False
+"•
+        
+    
+
+131.112.85.0/26",Active,0,Global,0%,,,rcd-2 (712),BRANCH,,Global,131.112.85.0/26,1,False,False
+"•
+        
+    
+
+131.112.85.64/26",Active,0,Global,0%,,,rcd-1 (729),BRANCH,,Global,131.112.85.64/26,1,False,False
+"•
+        
+    
+
+131.112.85.128/26",Active,0,Global,0%,,,ofc-1 (500),BRANCH,,Global,131.112.85.128/26,1,False,False
+"•
+        
+    
+
+131.112.85.192/26",Active,0,Global,0%,,,ofc-2 (473),BRANCH,,Global,131.112.85.192/26,1,False,False
+"•
+        
+    
+
+131.112.87.0/26",Active,0,Global,0%,,,hum-5 (560),BRANCH,,Global,131.112.87.0/26,1,False,False
+"•
+        
+    
+
+131.112.87.64/27",Active,0,Global,0%,,,hum-6 (559),BRANCH,,Global,131.112.87.64/27,1,False,False
+"•
+        
+    
+
+131.112.87.96/27",Active,0,Global,0%,,,hum-7 (558),BRANCH,,Global,131.112.87.96/27,1,False,False
+"•
+        
+    
+
+131.112.87.128/26",Active,0,Global,0%,,,hum-8 (557),BRANCH,,Global,131.112.87.128/26,1,False,False
+"•
+        
+    
+
+131.112.87.192/26",Active,0,Global,0%,,,hum-9 (556),BRANCH,,Global,131.112.87.192/26,1,False,False
+"•
+        
+    
+
+131.112.88.0/27",Active,0,Global,0%,,,ee-3 (633),BRANCH,,Global,131.112.88.0/27,1,False,False
+"•
+        
+    
+
+131.112.91.0/26",Active,0,Global,0%,,,nr-4 (878),BRANCH,,Global,131.112.91.0/26,1,False,False
+"•
+        
+    
+
+131.112.91.64/26",Active,0,Global,0%,,,nr-6 (806),BRANCH,,Global,131.112.91.64/26,1,False,False
+"•
+        
+    
+
+131.112.92.0/26",Active,0,Global,0%,,,pe-2 (931),BRANCH,,Global,131.112.92.0/26,1,False,False
+"•
+        
+    
+
+131.112.92.128/26",Active,0,Global,0%,,,pe-4 (797),BRANCH,,Global,131.112.92.128/26,1,False,False
+"•
+        
+    
+
+131.112.95.0/26",Active,0,Global,0%,,,math-1 (871),BRANCH,,Global,131.112.95.0/26,1,False,False
+"•
+        
+    
+
+131.112.95.64/26",Active,0,Global,0%,,,math-3 (826),BRANCH,,Global,131.112.95.64/26,1,False,False
+"•
+        
+    
+
+131.112.95.128/26",Active,0,Global,0%,,,math-4 (665),BRANCH,,Global,131.112.95.128/26,1,False,False
+"•
+        
+    
+
+131.112.95.192/26",Active,0,Global,0%,,,math-5 (641),BRANCH,,Global,131.112.95.192/26,1,False,False
+"•
+        
+    
+
+131.112.96.0/26",Active,0,Global,0%,,,pe-3 (930),BRANCH,,Global,131.112.96.0/26,1,False,False
+"•
+        
+    
+
+131.112.97.0/26",Active,0,Global,0%,,,mes-2 (817),BRANCH,,Global,131.112.97.0/26,1,False,False
+"•
+        
+    
+
+131.112.97.64/26",Active,0,Global,0%,,,mes-3 (816),BRANCH,,Global,131.112.97.64/26,1,False,False
+"•
+        
+    
+
+131.112.97.128/26",Active,0,Global,0%,,,mes-4 (815),BRANCH,,Global,131.112.97.128/26,1,False,False
+"•
+        
+    
+
+131.112.97.192/26",Active,0,Global,0%,,,mes-5 (814),BRANCH,,Global,131.112.97.192/26,1,False,False
+"•
+        
+    
+
+131.112.99.0/26",Active,0,Global,0%,,,mes-6 (813),BRANCH,,Global,131.112.99.0/26,1,False,False
+"•
+        
+    
+
+131.112.99.64/26",Active,0,Global,0%,,,mes-7 (812),BRANCH,,Global,131.112.99.64/26,1,False,False
+"•
+        
+    
+
+131.112.99.128/26",Active,0,Global,0%,,,mes-8 (811),BRANCH,,Global,131.112.99.128/26,1,False,False
+"•
+        
+    
+
+131.112.99.192/26",Active,0,Global,0%,,,mes-10 (759),BRANCH,,Global,131.112.99.192/26,1,False,False
+"•
+        
+    
+
+131.112.100.0/24",Active,0,Global,0%,,,mep-1 (764),BRANCH,,Global,131.112.100.0/24,1,False,False
+"•
+        
+    
+
+131.112.102.0/23",Active,0,Global,0%,,,me-1 (957),BRANCH,,Global,131.112.102.0/23,1,False,False
+"•
+        
+    
+
+131.112.104.0/24",Active,0,Global,0%,,,eae-1 (651),BRANCH,,Global,131.112.104.0/24,1,False,False
+"•
+        
+    
+
+131.112.105.0/25",Active,0,Global,0%,,,polymer-2 (830),BRANCH,,Global,131.112.105.0/25,1,False,False
+"•
+        
+    
+
+131.112.105.128/26",Active,0,Global,0%,,,polymer-1 (859),BRANCH,,Global,131.112.105.128/26,1,False,False
+"•
+        
+    
+
+131.112.105.192/26",Active,0,Global,0%,,,polymer-3 (829),BRANCH,,Global,131.112.105.192/26,1,False,False
+"•
+        
+    
+
+131.112.106.0/26",Active,0,Global,0%,,,rcltp-1 (735),BRANCH,,Global,131.112.106.0/26,1,False,False
+"•
+        
+    
+
+131.112.107.0/24",Active,0,Global,0%,,,hum-1 (959),BRANCH,,Global,131.112.107.0/24,1,False,False
+"•
+        
+    
+
+131.112.108.0/24",Active,0,Global,0%,,,cv-2 (834),BRANCH,,Global,131.112.108.0/24,1,False,False
+"•
+        
+    
+
+131.112.109.0/26",Active,0,Global,0%,,,mei-5 (747),BRANCH,,Global,131.112.109.0/26,1,False,False
+"•
+        
+    
+
+131.112.109.64/26",Active,0,Global,0%,,,mei-6 (746),BRANCH,,Global,131.112.109.64/26,1,False,False
+"•
+        
+    
+
+131.112.109.128/26",Active,0,Global,0%,,,mei-7 (745),BRANCH,,Global,131.112.109.128/26,1,False,False
+"•
+        
+    
+
+131.112.109.192/26",Active,0,Global,0%,,,mei-8 (744),BRANCH,,Global,131.112.109.192/26,1,False,False
+"•
+        
+    
+
+131.112.112.0/24",Active,0,Global,0%,,,elsi-1 (610),BRANCH,,Global,131.112.112.0/24,1,False,False
+"•
+        
+    
+
+131.112.113.0/28",Active,0,Global,0%,,,ee-4 (477),BRANCH,,Global,131.112.113.0/28,1,False,False
+"•
+        
+    
+
+131.112.114.0/26",Active,0,Global,0%,,,gh4 (756),BRANCH,,Global,131.112.114.0/26,1,False,False
+"•
+        
+    
+
+131.112.115.0/26",Active,0,Global,0%,,,nr-1 (885),BRANCH,,Global,131.112.115.0/26,1,False,False
+"•
+        
+    
+
+131.112.115.64/26",Active,0,Global,0%,,,nr-2 (884),BRANCH,,Global,131.112.115.64/26,1,False,False
+"•
+        
+    
+
+131.112.115.128/26",Active,0,Global,0%,,,nr-5 (860),BRANCH,,Global,131.112.115.128/26,1,False,False
+"•
+        
+    
+
+131.112.115.192/26",Active,0,Global,0%,,,nr-3 (883),BRANCH,,Global,131.112.115.192/26,1,False,False
+"•
+        
+    
+
+131.112.116.0/24",Active,0,Global,0%,,,sci-1 (507),BRANCH,,Global,131.112.116.0/24,1,False,False
+"•
+        
+    
+
+131.112.117.0/24",Active,0,Global,0%,,,geo-1 (904),BRANCH,,Global,131.112.117.0/24,1,False,False
+"•
+        
+    
+
+131.112.118.0/24",Active,0,Global,0%,,,ce-3 (921),BRANCH,,Global,131.112.118.0/24,1,False,False
+"•
+        
+    
+
+131.112.119.64/27",Active,0,Global,0%,,,libra-3 (874),BRANCH,,Global,131.112.119.64/27,1,False,False
+"•
+        
+    
+
+131.112.120.64/26",Active,0,Global,0%,,,mech-1 (804),BRANCH,,Global,131.112.120.64/26,1,False,False
+"•
+        
+    
+
+131.112.120.128/26",Active,0,Global,0%,,,mech-2 (803),BRANCH,,Global,131.112.120.128/26,1,False,False
+"•
+        
+    
+
+131.112.120.192/26",Active,0,Global,0%,,,mech-3 (802),BRANCH,,Global,131.112.120.192/26,1,False,False
+"•
+        
+    
+
+131.112.121.0/24",Active,0,Global,0%,,,cv-1 (836),BRANCH,,Global,131.112.121.0/24,1,False,False
+"•
+        
+    
+
+131.112.123.0/26",Active,0,Global,0%,,,envpro-1 (798),BRANCH,,Global,131.112.123.0/26,1,False,False
+"•
+        
+    
+
+131.112.124.0/26",Active,0,Global,0%,,,mech-4 (791),BRANCH,,Global,131.112.124.0/26,1,False,False
+"•
+        
+    
+
+131.112.124.64/26",Active,0,Global,0%,,,mech-5 (790),BRANCH,,Global,131.112.124.64/26,1,False,False
+"•
+        
+    
+
+131.112.124.128/26",Active,0,Global,0%,,,mech-6 (789),BRANCH,,Global,131.112.124.128/26,1,False,False
+"•
+        
+    
+
+131.112.124.192/26",Active,0,Global,0%,,,mech-7 (788),BRANCH,,Global,131.112.124.192/26,1,False,False
+"•
+        
+    
+
+131.112.125.0/24",Active,0,Global,0%,,,noc-serv-o (997),BRANCH,,Global,131.112.125.0/24,1,False,False
+"•
+        
+    
+
+131.112.126.0/24",Active,0,Global,0%,,,noc-life-o (999),BRANCH,,Global,131.112.126.0/24,1,False,False
+"•
+        
+    
+
+131.112.130.0/23",Active,0,Global,0%,,,fcrc-1 (927),BRANCH,,Global,131.112.130.0/23,1,False,False
+"•
+        
+    
+
+131.112.137.0/27",Active,0,Global,0%,,,dis-5 (673),BRANCH,,Global,131.112.137.0/27,1,False,False
+"•
+        
+    
+
+131.112.137.32/27",Active,0,Global,0%,,,dis-4 (692),BRANCH,,Global,131.112.137.32/27,1,False,False
+"•
+        
+    
+
+131.112.137.64/27",Active,0,Global,0%,,,dis-2 (701),BRANCH,,Global,131.112.137.64/27,1,False,False
+"•
+        
+    
+
+131.112.137.128/26",Active,0,Global,0%,,,dis-8 (519),BRANCH,,Global,131.112.137.128/26,1,False,False
+"•
+        
+    
+
+131.112.137.192/26",Active,0,Global,0%,,,dis-9 (518),BRANCH,,Global,131.112.137.192/26,1,False,False
+"•
+        
+    
+
+131.112.140.0/23",Active,0,Global,0%,,,msl-1 (938),BRANCH,,Global,131.112.140.0/23,1,False,False
+"•
+        
+    
+
+131.112.144.0/24",Active,1,Global,0%,,,enveng-2 (862),BRANCH,,Global,131.112.144.0/24,1,False,False
+"•
+        
+            •
+        
+    
+
+131.112.144.64/28",Active,0,Global,0%,,,bio-17 (706),BRANCH,,Global,131.112.144.64/28,2,False,False
+"•
+        
+    
+
+131.112.146.192/26",Active,0,Global,0%,,,iem-1 (711),BRANCH,,Global,131.112.146.192/26,1,False,False
+"•
+        
+    
+
+131.112.148.0/24",Active,0,Global,0%,,,enveng-1 (914),BRANCH,,Global,131.112.148.0/24,1,False,False
+"•
+        
+    
+
+131.112.149.0/26",Active,0,Global,0%,,,bio-3 (974),BRANCH,,Global,131.112.149.0/26,1,False,False
+"•
+        
+    
+
+131.112.149.64/26",Active,0,Global,0%,,,bio-2 (975),BRANCH,,Global,131.112.149.64/26,1,False,False
+"•
+        
+    
+
+131.112.149.128/26",Active,0,Global,0%,,,bio-1 (976),BRANCH,,Global,131.112.149.128/26,1,False,False
+"•
+        
+    
+
+131.112.150.0/24",Active,0,Global,0%,,,materia-1 (908),BRANCH,,Global,131.112.150.0/24,1,False,False
+"•
+        
+    
+
+131.112.151.0/26",Active,0,Global,0%,,,bio-7 (970),BRANCH,,Global,131.112.151.0/26,1,False,False
+"•
+        
+    
+
+131.112.151.64/26",Active,0,Global,0%,,,bio-13 (855),BRANCH,,Global,131.112.151.64/26,1,False,False
+"•
+        
+    
+
+131.112.151.128/26",Active,0,Global,0%,,,bio-8 (969),BRANCH,,Global,131.112.151.128/26,1,False,False
+"•
+        
+    
+
+131.112.152.0/26",Active,0,Global,0%,,,bio-19 (695),BRANCH,,Global,131.112.152.0/26,1,False,False
+"•
+        
+    
+
+131.112.152.64/26",Active,0,Global,0%,,,bio-15 (718),BRANCH,,Global,131.112.152.64/26,1,False,False
+"•
+        
+    
+
+131.112.152.128/26",Active,0,Global,0%,,,bio-20 (694),BRANCH,,Global,131.112.152.128/26,1,False,False
+"•
+        
+    
+
+131.112.152.192/26",Active,0,Global,0%,,,bio-16 (714),BRANCH,,Global,131.112.152.192/26,1,False,False
+"•
+        
+    
+
+131.112.153.0/26",Active,0,Global,0%,,,bio-5 (972),BRANCH,,Global,131.112.153.0/26,1,False,False
+"•
+        
+    
+
+131.112.153.64/26",Active,0,Global,0%,,,bio-6 (971),BRANCH,,Global,131.112.153.64/26,1,False,False
+"•
+        
+    
+
+131.112.153.128/26",Active,0,Global,0%,,,bio-11 (870),BRANCH,,Global,131.112.153.128/26,1,False,False
+"•
+        
+    
+
+131.112.153.192/26",Active,0,Global,0%,,,bio-14 (794),BRANCH,,Global,131.112.153.192/26,1,False,False
+"•
+        
+    
+
+131.112.154.0/26",Active,0,Global,0%,,,bio-18 (703),BRANCH,,Global,131.112.154.0/26,1,False,False
+"•
+        
+    
+
+131.112.155.0/26",Active,0,Global,0%,,,bio-9 (968),BRANCH,,Global,131.112.155.0/26,1,False,False
+"•
+        
+    
+
+131.112.157.0/25",Active,0,Global,0%,,,echem-1 (926),BRANCH,,Global,131.112.157.0/25,1,False,False
+"•
+        
+    
+
+131.112.159.0/26",Active,0,Global,0%,,,chemenv-1 (924),BRANCH,,Global,131.112.159.0/26,1,False,False
+"•
+        
+    
+
+131.112.160.192/26",Active,0,Global,0%,,,gsic.cc-1 (887),BRANCH,,Global,131.112.160.192/26,1,False,False
+"•
+        
+    
+
+131.112.161.0/26",Active,0,Global,0%,,,ip-1 (986),BRANCH,,Global,131.112.161.0/26,1,False,False
+"•
+        
+    
+
+131.112.164.0/26",Active,0,Global,0%,,,hokekan-1 (915),BRANCH,,Global,131.112.164.0/26,1,False,False
+"•
+        
+    
+
+131.112.165.0/26",Active,0,Global,0%,,,pms-1 (980),BRANCH,,Global,131.112.165.0/26,1,False,False
+"•
+        
+    
+
+131.112.165.64/26",Active,0,Global,0%,,,pms-2 (900),BRANCH,,Global,131.112.165.64/26,1,False,False
+"•
+        
+    
+
+131.112.168.0/26",Active,0,Global,0%,,,es-5 (907),BRANCH,,Global,131.112.168.0/26,1,False,False
+"•
+        
+    
+
+131.112.169.0/26",Active,0,Global,0%,,,es-1 (913),BRANCH,,Global,131.112.169.0/26,1,False,False
+"•
+        
+    
+
+131.112.169.64/26",Active,0,Global,0%,,,es-2 (912),BRANCH,,Global,131.112.169.64/26,1,False,False
+"•
+        
+    
+
+131.112.169.128/26",Active,0,Global,0%,,,es-3 (911),BRANCH,,Global,131.112.169.128/26,1,False,False
+"•
+        
+    
+
+131.112.169.192/26",Active,0,Global,0%,,,es-4 (910),BRANCH,,Global,131.112.169.192/26,1,False,False
+"•
+        
+    
+
+131.112.170.0/26",Active,0,Global,0%,,,iir-3 (503),BRANCH,,Global,131.112.170.0/26,1,False,False
+"•
+        
+    
+
+131.112.172.0/27",Active,0,Global,0%,,,dis-1 (702),BRANCH,,Global,131.112.172.0/27,1,False,False
+"•
+        
+    
+
+131.112.172.128/27",Active,0,Global,0%,,,dis-3 (698),BRANCH,,Global,131.112.172.128/27,1,False,False
+"•
+        
+    
+
+131.112.172.192/27",Active,0,Global,0%,,,dis-7 (521),BRANCH,,Global,131.112.172.192/27,1,False,False
+"•
+        
+    
+
+131.112.174.0/26",Active,0,Global,0%,,,pi-2 (936),BRANCH,,Global,131.112.174.0/26,1,False,False
+"•
+        
+    
+
+131.112.174.64/26",Active,0,Global,0%,,,pi-3 (935),BRANCH,,Global,131.112.174.64/26,1,False,False
+"•
+        
+    
+
+131.112.174.128/26",Active,0,Global,0%,,,pi-4 (934),BRANCH,,Global,131.112.174.128/26,1,False,False
+"•
+        
+    
+
+131.112.174.192/26",Active,0,Global,0%,,,pi-1 (937),BRANCH,,Global,131.112.174.192/26,1,False,False
+"•
+        
+    
+
+131.112.177.0/26",Active,0,Global,0%,,,depe-5 (893),BRANCH,,Global,131.112.177.0/26,1,False,False
+"•
+        
+    
+
+131.112.180.0/24",Active,0,Global,0%,,,isl-1 (994),BRANCH,,Global,131.112.180.0/24,1,False,False
+"•
+        
+    
+
+131.112.181.0/26",Active,0,Global,0%,,,noc.serv-s (947),BRANCH,,Global,131.112.181.0/26,1,False,False
+"•
+        
+    
+
+131.112.182.0/23",Active,0,Global,0%,,,iir-1 (514),BRANCH,,Global,131.112.182.0/23,1,False,False
+"•
+        
+    
+
+131.112.186.0/26",Active,0,Global,0%,,,ric-1 (919),BRANCH,,Global,131.112.186.0/26,1,False,False
+"•
+        
+    
+
+131.112.188.0/26",Active,0,Global,0%,,,ep-1 (984),BRANCH,,Global,131.112.188.0/26,1,False,False
+"•
+        
+    
+
+131.112.188.64/26",Active,0,Global,0%,,,ep-3 (710),BRANCH,,Global,131.112.188.64/26,1,False,False
+"•
+        
+    
+
+131.112.189.128/26",Active,0,Global,0%,,,depe-1 (902),BRANCH,,Global,131.112.189.128/26,1,False,False
+"•
+        
+    
+
+131.112.189.192/26",Active,0,Global,0%,,,depe-2 (901),BRANCH,,Global,131.112.189.192/26,1,False,False
+"•
+        
+    
+
+131.112.190.0/26",Active,0,Global,0%,,,depe-4 (894),BRANCH,,Global,131.112.190.0/26,1,False,False
+"•
+        
+    
+
+131.112.190.64/26",Active,0,Global,0%,,,depe-3 (895),BRANCH,,Global,131.112.190.64/26,1,False,False
+"•
+        
+    
+
+131.112.191.0/26",Active,0,Global,0%,,,ircs-1 (615),BRANCH,,Global,131.112.191.0/26,1,False,False
+"•
+        
+    
+
+131.112.200.0/25",Active,0,Global,0%,,,noc-event-o1 (331),NOC,,Global,131.112.200.0/25,1,False,False
+"•
+        
+    
+
+131.112.200.128/25",Active,0,Global,0%,,,noc-event-o2 (332),NOC,,Global,131.112.200.128/25,1,False,False
+"•
+        
+    
+
+131.112.201.0/24",Active,0,Global,0%,,,noc-event-o3 (333),NOC,,Global,131.112.201.0/24,1,False,False
+"•
+        
+    
+
+131.112.202.0/23",Active,0,Global,0%,,,noc-event-o4 (334),NOC,,Global,131.112.202.0/23,1,False,False
+"•
+        
+    
+
+131.112.204.0/25",Active,0,Global,0%,,,noc-event-s1 (335),NOC,,Global,131.112.204.0/25,1,False,False
+"•
+        
+    
+
+131.112.204.128/25",Active,0,Global,0%,,,noc-event-s2 (336),NOC,,Global,131.112.204.128/25,1,False,False
+"•
+        
+    
+
+131.112.205.0/24",Active,0,Global,0%,,,noc-event-s3 (337),NOC,,Global,131.112.205.0/24,1,False,False
+"•
+        
+    
+
+131.112.206.0/23",Active,0,Global,0%,,,noc-event-s4 (338),NOC,,Global,131.112.206.0/23,1,False,False
+"•
+        
+    
+
+131.112.212.0/25",Active,0,Global,0%,,,noc-event-o5 (330),NOC,,Global,131.112.212.0/25,1,False,False
+"•
+        
+    
+
+131.112.225.0/26",Active,0,Global,0%,,,hst-1 (792),BRANCH,,Global,131.112.225.0/26,1,False,False
+"•
+        
+    
+
+131.112.237.0/28",Active,0,Global,0%,,,mot-1 (731),BRANCH,,Global,131.112.237.0/28,1,False,False
+"•
+        
+    
+
+131.112.237.48/28",Active,0,Global,0%,,,kyoiku-in-1 (922),BRANCH,,Global,131.112.237.48/28,1,False,False
+"•
+        
+    
+
+131.112.237.64/28",Active,0,Global,0%,,,kyoiku-in-2 (832),BRANCH,,Global,131.112.237.64/28,1,False,False
+"•
+        
+    
+
+131.112.237.80/28",Active,0,Global,0%,,,igs-3 (623),BRANCH,,Global,131.112.237.80/28,1,False,False
+"•
+        
+    
+
+131.112.237.96/28",Active,0,Global,0%,,,cic-1 (614),BRANCH,,Global,131.112.237.96/28,1,False,False
+"•
+        
+    
+
+131.112.237.112/28",Active,0,Global,0%,,,dis-6 (599),BRANCH,,Global,131.112.237.112/28,1,False,False
+"•
+        
+    
+
+131.112.237.128/27",Active,0,Global,0%,,,ee-2 (671),BRANCH,,Global,131.112.237.128/27,1,False,False
+"•
+        
+    
+
+131.112.240.0/26",Active,0,Global,0%,,,mue-1 (872),BRANCH,,Global,131.112.240.0/26,1,False,False
+"•
+        
+    
+
+131.112.240.64/26",Active,0,Global,0%,,,sangaku-1 (828),BRANCH,,Global,131.112.240.64/26,1,False,False
+"•
+        
+    
+
+131.112.240.192/27",Active,0,Global,0%,,,math-2 (861),BRANCH,,Global,131.112.240.192/27,1,False,False
+"•
+        
+    
+
+131.112.240.224/27",Active,0,Global,0%,,,total-3 (501),BRANCH,,Global,131.112.240.224/27,1,False,False
+"•
+        
+    
+
+131.112.241.0/26",Active,0,Global,0%,,,jim-1 (810),BRANCH,,Global,131.112.241.0/26,1,False,False
+"•
+        
+    
+
+131.112.241.64/26",Active,0,Global,0%,,,mono-1 (716),BRANCH,,Global,131.112.241.64/26,1,False,False
+"•
+        
+    
+
+131.112.241.192/26",Active,0,Global,0%,,,total-1 (808),BRANCH,,Global,131.112.241.192/26,1,False,False
+"•
+        
+    
+
+131.112.242.0/26",Active,0,Global,0%,,,ocw-2 (965),BRANCH,,Global,131.112.242.0/26,1,False,False
+"•
+        
+    
+
+131.112.242.64/26",Active,0,Global,0%,,,somu-1 (486),BRANCH,,Global,131.112.242.64/26,1,False,False
+"•
+        
+    
+
+131.112.242.128/26",Active,0,Global,0%,,,wise-sss-1 (481),BRANCH,,Global,131.112.242.128/26,1,False,False
+"•
+        
+    
+
+131.112.243.32/27",Active,0,Global,0%,,,ipo-1 (660),BRANCH,,Global,131.112.243.32/27,1,False,False
+"•
+        
+    
+
+131.112.243.96/27",Active,0,Global,0%,,,ksbs-1 (489),BRANCH,,Global,131.112.243.96/27,1,False,False
+"•
+        
+    
+
+131.112.244.16/28",Active,0,Global,0%,,,sns-1 (800),BRANCH,,Global,131.112.244.16/28,1,False,False
+"•
+        
+    
+
+131.112.244.32/28",Active,0,Global,0%,,,bande-1 (734),BRANCH,,Global,131.112.244.32/28,1,False,False
+"•
+        
+    
+
+131.112.244.48/28",Active,0,Global,0%,,,phys-5 (725),BRANCH,,Global,131.112.244.48/28,1,False,False
+"•
+        
+    
+
+131.112.244.80/28",Active,0,Global,0%,,,koho-1 (495),BRANCH,,Global,131.112.244.80/28,1,False,False
+"•
+        
+    
+
+131.112.244.96/28",Active,0,Global,0%,,,senryaku-1 (480),BRANCH,,Global,131.112.244.96/28,1,False,False
+"•
+        
+    
+
+131.112.244.112/28",Active,0,Global,0%,,,irs-1 (656),BRANCH,,Global,131.112.244.112/28,1,False,False
+"•
+        
+    
+
+131.112.244.128/28",Active,0,Global,0%,,,tsd-1 (650),BRANCH,,Global,131.112.244.128/28,1,False,False
+"•
+        
+    
+
+131.112.244.144/28",Active,0,Global,0%,,,dst-2 (648),BRANCH,,Global,131.112.244.144/28,1,False,False
+"•
+        
+    
+
+131.112.244.160/28",Active,0,Global,0%,,,midl-1 (637),BRANCH,,Global,131.112.244.160/28,1,False,False
+"•
+        
+    
+
+131.112.244.176/28",Active,0,Global,0%,,,cent-1 (634),BRANCH,,Global,131.112.244.176/28,1,False,False
+"•
+        
+    
+
+131.112.244.192/28",Active,0,Global,0%,,,ssr-1 (863),BRANCH,,Global,131.112.244.192/28,1,False,False
+"•
+        
+    
+
+131.112.244.208/28",Active,0,Global,0%,,,gsic.vdi-1 (476),BRANCH,,Global,131.112.244.208/28,1,False,False
+"•
+        
+    
+
+131.112.245.0/28",Active,0,Global,0%,,,rps-3 (784),BRANCH,,Global,131.112.245.0/28,1,False,False
+"•
+        
+    
+
+131.112.245.16/28",Active,0,Global,0%,,,nanof-1 (777),BRANCH,,Global,131.112.245.16/28,1,False,False
+"•
+        
+    
+
+131.112.245.32/28",Active,0,Global,0%,,,alcs-1 (740),BRANCH,,Global,131.112.245.32/28,1,False,False
+"•
+        
+    
+
+131.112.245.64/28",Active,0,Global,0%,,,adm-1 (602),BRANCH,,Global,131.112.245.64/28,1,False,False
+"•
+        
+    
+
+131.112.245.80/28",Active,0,Global,0%,,,kuramae (605),BRANCH,,Global,131.112.245.80/28,1,False,False
+"•
+        
+    
+
+131.112.245.96/28",Active,0,Global,0%,,,cert-1 (554),BRANCH,,Global,131.112.245.96/28,1,False,False
+"•
+        
+    
+
+131.112.245.112/28",Active,0,Global,0%,,,gakuseisien-3 (553),BRANCH,,Global,131.112.245.112/28,1,False,False
+"•
+        
+    
+
+131.112.245.128/28",Active,0,Global,0%,,,irds-1 (541),BRANCH,,Global,131.112.245.128/28,1,False,False
+"•
+        
+    
+
+131.112.245.144/28",Active,0,Global,0%,,,coi-happiness-1 (540),BRANCH,,Global,131.112.245.144/28,1,False,False
+"•
+        
+    
+
+131.112.245.160/28",Active,0,Global,0%,,,t2r2-3 (533),BRANCH,,Global,131.112.245.160/28,1,False,False
+"•
+        
+    
+
+131.112.245.176/28",Active,0,Global,0%,,,rpd-1 (530),BRANCH,,Global,131.112.245.176/28,1,False,False
+"•
+        
+    
+
+131.112.245.192/28",Active,0,Global,0%,,,oil-1 (512),BRANCH,,Global,131.112.245.192/28,1,False,False
+"•
+        
+    
+
+131.112.245.208/28",Active,0,Global,0%,,,sisetu.kikaku (474),BRANCH,,Global,131.112.245.208/28,1,False,False
+"•
+        
+    
+
+131.112.245.240/28",Active,0,Global,0%,,,eval-1 (496),BRANCH,,Global,131.112.245.240/28,1,False,False
+"•
+        
+    
+
+131.112.248.0/29",Active,0,Global,0%,,,fcrc (889),BRANCH,,Global,131.112.248.0/29,1,False,False
+"•
+        
+    
+
+131.112.248.16/28",Active,0,Global,0%,,,somu-2 (485),BRANCH,,Global,131.112.248.16/28,1,False,False
+"•
+        
+    
+
+131.112.248.32/28",Active,0,Global,0%,,,peecs-1 (482),BRANCH,,Global,131.112.248.32/28,1,False,False
+"•
+        
+    
+
+131.112.248.64/28",Active,0,Global,0%,,,tsd-2 (649),BRANCH,,Global,131.112.248.64/28,1,False,False
+"•
+        
+    
+
+131.112.248.80/28",Active,0,Global,0%,,,igs-2 (657),BRANCH,,Global,131.112.248.80/28,1,False,False
+"•
+        
+    
+
+131.112.248.96/28",Active,0,Global,0%,,,infosyenergy-1 (471),BRANCH,,Global,131.112.248.96/28,1,False,False
+"•
+        
+    
+
+131.112.248.112/28",Active,0,Global,0%,,,sisetu.seibi (468),BRANCH,,Global,131.112.248.112/28,1,False,False
+"•
+        
+    
+
+131.112.248.144/28",Active,0,Global,0%,,,jim-3 (622),BRANCH,,Global,131.112.248.144/28,1,False,False
+"•
+        
+    
+
+131.112.248.160/28",Active,0,Global,0%,,,acls-1 (681),BRANCH,,Global,131.112.248.160/28,1,False,False
+"•
+        
+    
+
+131.112.248.176/28",Active,0,Global,0%,,,ties-1 (680),BRANCH,,Global,131.112.248.176/28,1,False,False
+"•
+        
+    
+
+131.112.248.224/28",Active,0,Global,0%,,,coi-happiness-2 (539),BRANCH,,Global,131.112.248.224/28,1,False,False
+"•
+        
+    
+
+131.112.249.0/27",Active,0,Global,0%,,,sao-2 (607),BRANCH,,Global,131.112.249.0/27,1,False,False
+"•
+        
+    
+
+131.112.249.128/27",Active,0,Global,0%,,,total-2 (603),BRANCH,,Global,131.112.249.128/27,1,False,False
+"•
+        
+    
+
+131.112.249.192/28",Active,0,Global,0%,,,sangaku-2 (499),BRANCH,,Global,131.112.249.192/28,1,False,False
+"•
+        
+    
+
+131.112.253.232/29",Active,0,Global,0%,,,peering-wide (102),PEER,Peering segment to WIDE,Global,131.112.253.232/29,1,False,False
+"•
+        
+    
+
+131.112.254.0/30",Active,0,Global,0%,,,noc-bb-v3000 (3000),BB,border-o1 – border-s2,Global,131.112.254.0/30,1,False,False
+"•
+        
+    
+
+131.112.254.6/31",Active,0,Global,0%,,,noc-10go-10gs (3100),BB,10g-gsic – 10g-setubi,Global,131.112.254.6/31,1,False,False
+"•
+        
+    
+
+131.112.254.8/30",Active,0,Global,0%,,,noc-bb-v3004 (3004),BB,core-o1 – border-o1 (OSPF for IPv6),Global,131.112.254.8/30,1,False,False
+"•
+        
+    
+
+131.112.254.12/30",Active,0,Global,0%,,,noc-bb-v3005 (3005),BB,core-o2 – border-o1 (OSPF for IPv6),Global,131.112.254.12/30,1,False,False
+"•
+        
+    
+
+131.112.254.16/30",Active,0,Global,0%,,,noc-bb-v3014 (3014),BB,core-o1 – border-o2,Global,131.112.254.16/30,1,False,False
+"•
+        
+    
+
+131.112.254.20/30",Active,0,Global,0%,,,noc-bb-v3015 (3015),BB,core-o2 – border-o2,Global,131.112.254.20/30,1,False,False
+"•
+        
+    
+
+131.112.254.32/30",Active,0,Global,0%,,,noc-bb-v3040 (3040),BB,core-o1 – core-o2,Global,131.112.254.32/30,1,False,False
+"•
+        
+    
+
+131.112.254.58/31",Active,0,Global,0%,,,noc-vr-coo1-boo1 (3404),BB,vr core-o1 – border-o1,Global,131.112.254.58/31,1,False,False
+"•
+        
+    
+
+131.112.254.62/31",Active,0,Global,0%,,,noc-vr-coo2-coo1 (3440),BB,vr core-o2 – core-o1,Global,131.112.254.62/31,1,False,False
+"•
+        
+    
+
+131.112.254.64/31",Active,0,Global,0%,,,noc-vr-cos1-coo1 (3450),BB,vr core-s1 – core-o1,Global,131.112.254.64/31,1,False,False
+"•
+        
+    
+
+131.112.254.66/31",Active,0,Global,0%,,,noc-vr-cos2-coo2 (3460),BB,vr core-s2 – core-o2,Global,131.112.254.66/31,1,False,False
+"•
+        
+    
+
+131.112.254.70/31",Active,0,Global,0%,,,noc-vr-coo2-boo1 (3415),BB,vr core-o2 – border-o1,Global,131.112.254.70/31,1,False,False
+"•
+        
+    
+
+131.112.254.72/31",Active,0,Global,0%,,,noc-vr-cos1-bos1 (3504),BB,vr core-s1 – border-s1,Global,131.112.254.72/31,1,False,False
+"•
+        
+    
+
+131.112.254.74/31",Active,0,Global,0%,,,noc-vr-cos2-bos1 (3514),BB,vr core-s2 – border-s1,Global,131.112.254.74/31,1,False,False
+"•
+        
+    
+
+131.112.254.76/31",Active,0,Global,0%,,,noc-vr-cos2-cos1 (3540),BB,vr core-s2 – core-s1,Global,131.112.254.76/31,1,False,False
+"•
+        
+    
+
+131.112.254.78/31",Active,0,Global,0%,,,noc-nat-co2-fg (3188),BB,nat core-o2 – fortigate,Global,131.112.254.78/31,1,False,False
+"•
+        
+    
+
+131.112.254.80/31",Active,0,Global,0%,,,noc-co2-fg (3189),BB,core-o2 – fortigate,Global,131.112.254.80/31,1,False,False
+"•
+        
+    
+
+131.112.254.82/31",Active,0,Global,0%,,,noc-bo1-fg (3179),BB,border-o1 – fortigate,Global,131.112.254.82/31,1,False,False
+"•
+        
+    
+
+131.112.254.108/30",Active,0,Global,0%,,,noc-bb-v3140 (3140),BB,,Global,131.112.254.108/30,1,False,False
+"•
+        
+    
+
+131.112.254.112/30",Active,0,Global,0%,,,noc-bb-v3050 (3050),BB,core-o2 – core-s2,Global,131.112.254.112/30,1,False,False
+"•
+        
+    
+
+131.112.254.128/30",Active,0,Global,0%,,,noc-co1-slbo1 (3160),BB,core-o1 – slb-o1,Global,131.112.254.128/30,1,False,False
+"•
+        
+    
+
+131.112.254.132/30",Active,0,Global,0%,,,noc-co2-slbo1 (3161),BB,core-o2 – slb-o1,Global,131.112.254.132/30,1,False,False
+"•
+        
+    
+
+131.112.254.136/30",Active,0,Global,0%,,,noc-crs1-slbs1 (3360),BB,core-s1 – slb-s1,Global,131.112.254.136/30,1,False,False
+"•
+        
+    
+
+131.112.254.144/30",Active,0,Global,0%,,,noc-bb-v3150 (3150),BB,,Global,131.112.254.144/30,1,False,False
+"•
+        
+    
+
+131.112.254.148/31",Active,0,Global,0%,,,noc-sinetvpn-coo1-cos1 (3142),BB,,Global,131.112.254.148/31,1,False,False
+"•
+        
+    
+
+131.112.254.150/31",Active,0,Global,0%,,,noc-sinetvpn-coo2-cos2 (3052),BB,core-o2 –[sinet-vpn]– core-s2,Global,131.112.254.150/31,1,False,False
+"•
+        
+    
+
+131.112.254.156/31",Active,0,Global,0%,,,noc-eventnat-bo1-sgwo2 (3183),BB,nat border-o1 – sgw-o2,Global,131.112.254.156/31,1,False,False
+"•
+        
+    
+
+131.112.254.158/31",Active,0,Global,0%,,,event-nat-bdr (3178),BB,,Global,131.112.254.158/31,1,False,False
+"•
+        
+    
+
+131.112.254.160/31",Active,0,Global,0%,,,noc-co1-sgwo2 (3170),BB,core-o1 – sgw-o2,Global,131.112.254.160/31,1,False,False
+"•
+        
+    
+
+131.112.254.162/31",Active,0,Global,0%,,,noc-co2-sgwo2 (3181),BB,core-o2 – sgw-o2,Global,131.112.254.162/31,1,False,False
+"•
+        
+    
+
+131.112.254.164/31",Active,0,Global,0%,,,noc-nat-co1-sgwo2 (3172),BB,nat core-o1 – sgw-o2,Global,131.112.254.164/31,1,False,False
+"•
+        
+    
+
+131.112.254.166/31",Active,0,Global,0%,,,noc-nat-co2-sgwo2 (3182),BB,nat core-o2 – sgw-o2,Global,131.112.254.166/31,1,False,False
+"•
+        
+    
+
+131.112.254.168/31",Active,0,Global,0%,,,noc-cs1-sgws2 (3175),BB,core-s1 – sgw-s2,Global,131.112.254.168/31,1,False,False
+"•
+        
+    
+
+131.112.254.170/31",Active,0,Global,0%,,,noc-cs2-sgws2 (3186),BB,core-s2 – sgw-s2,Global,131.112.254.170/31,1,False,False
+"•
+        
+    
+
+131.112.254.172/31",Active,0,Global,0%,,,noc-nat-cs1-sgws2 (3177),BB,nat core-s1 – sgw-s2,Global,131.112.254.172/31,1,False,False
+"•
+        
+    
+
+131.112.254.174/31",Active,0,Global,0%,,,noc-fw-untrust (3184),BB,Firewall untrust segment,Global,131.112.254.174/31,1,False,False
+"•
+        
+    
+
+131.112.254.174/31",Active,0,Global,0%,,,noc-nat-cs2-sgws2 (3187),BB,nat core-s2 – sgw-s2,Global,131.112.254.174/31,1,False,False
+"•
+        
+    
+
+131.112.254.176/31",Active,0,Global,0%,,,noc-bo1-co1-sgwo2 (3180),BB,border-o1 – core-o2 – sgw-o2,Global,131.112.254.176/31,1,False,False
+"•
+        
+    
+
+131.112.254.178/31",Active,0,Global,0%,,,noc-bo1-co2-sgwo2 (3171),BB,border-o1 – core-o2 – sgw-o2,Global,131.112.254.178/31,1,False,False
+"•
+        
+    
+
+131.112.254.180/31",Active,0,Global,0%,,,noc-bs1-cs1-sgws2 (3185),BB,border-s1 – core-s1 – sgw-s2,Global,131.112.254.180/31,1,False,False
+"•
+        
+    
+
+131.112.254.182/31",Active,0,Global,0%,,,noc-bs1-cs2-sgws2 (3176),BB,border-s1 – core-s2 – sgw-s2,Global,131.112.254.182/31,1,False,False
+"•
+        
+    
+
+131.112.254.184/31",Active,0,Global,0%,,,noc-nat-co1-co2 (3049),BB,"core-o1 – core-o2, VR-NAT",Global,131.112.254.184/31,1,False,False
+"•
+        
+    
+
+131.112.254.186/31",Active,0,Global,0%,,,noc-nat-co1-cs1 (3149),BB,nat core-o1 – core-o2,Global,131.112.254.186/31,1,False,False
+"•
+        
+    
+
+131.112.254.188/31",Active,0,Global,0%,,,noc-nat-co2-cs2 (3059),BB,"core-o2 – core-s2, VR-NAT",Global,131.112.254.188/31,1,False,False
+"•
+        
+    
+
+131.112.254.190/31",Active,0,Global,0%,,,noc-nat-cs1-cs2 (3159),BB,nat core-s1 – core-s2,Global,131.112.254.190/31,1,False,False
+"•
+        
+    
+
+131.112.254.200/31",Active,0,Global,0%,,,noc-bb-cos1-bos1 (3104),BB,core-s1 – border-s1,Global,131.112.254.200/31,1,False,False
+"•
+        
+    
+
+131.112.254.202/31",Active,0,Global,0%,,,noc-bb-cos2-bos1 (3105),BB,core-s2 – border-s1,Global,131.112.254.202/31,1,False,False
+"•
+        
+    
+
+131.112.254.204/30",Active,0,Global,0%,,,noc-bb-v3240 (3240),BB,,Global,131.112.254.204/30,1,False,False
+"•
+        
+    
+
+131.112.254.208/30",Active,0,Global,0%,,,noc-bb-v3051 (3051),BB,core-o2 – tamachi-1,Global,131.112.254.208/30,1,False,False
+"•
+        
+    
+
+131.112.254.216/31",Active,0,Global,0%,,,noc-bo1-10go-sgwo4 (3169),BB,border-o1 – 10g-gsic – sgw-o4,Global,131.112.254.216/31,1,False,False
+"•
+        
+    
+
+131.112.254.220/31",Active,0,Global,0%,,,noc-co1-10go-sgwo4 (3162),BB,core-o1 – 10g-gsic – sgw-o4,Global,131.112.254.220/31,1,False,False
+"•
+        
+    
+
+131.112.254.222/31",Active,0,Global,0%,,,noc-co2-10go-sgwo4 (3163),BB,core-o2 – 10g-gsic – sgw-o4,Global,131.112.254.222/31,1,False,False
+"•
+        
+    
+
+131.112.254.224/28",Active,0,Global,0%,,,j-kiban-3 (469),BRANCH,,Global,131.112.254.224/28,1,False,False
+"•
+        
+    
+
+131.112.254.252/30",Active,0,Global,0%,,,noc-bb-v3011 (3011),BB,SencerBox – border-o1 (nicter),Global,131.112.254.252/30,1,False,False
+"•
+        
+    
+
+131.112.255.140/30",Active,0,Global,0%,,,noc-crs2-slbs1 (3361),BB,core-s2 – slb-s1,Global,131.112.255.140/30,1,False,False
+"•
+        
+    
+
+131.112.255.216/30",Active,0,Global,0%,,,noc-co2-sgw (28),NOC,,Global,131.112.255.216/30,1,False,False
+"•
+        
+    
+
+131.112.255.220/30",Active,0,Global,0%,,,noc-fw-trust (3174),BB,Firewall trust segment,Global,131.112.255.220/30,1,False,False
+"•
+        
+    
+
+131.112.255.224/30",Active,0,Global,0%,,,noc-cs2-sgw (3028),BB,core-s2 – sgw-s2,Global,131.112.255.224/30,1,False,False
+150.99.183.140/30,Active,0,Global,0%,,,peering-sinet-via-wide (2104),PEER,,,150.99.183.140/30,0,False,False
+150.99.186.228/30,Active,0,Global,0%,,,peering-sinet-o (4),PEER,Peering segment to SINET,,150.99.186.228/30,0,False,False
+172.20.1.64/26,Active,0,Global,0%,,,nr-8 (640),BRANCH,,Private,172.20.1.64/26,0,False,False
+172.20.3.64/26,Active,0,Global,0%,,,nr-7 (779),BRANCH,,Private,172.20.3.64/26,0,False,False
+172.20.5.0/26,Active,0,Global,0%,,,iri-1 (693),BRANCH,,Private,172.20.5.0/26,0,False,False
+172.20.6.0/24,Active,0,Global,0%,,,t2r2-2 (534),BRANCH,,Private,172.20.6.0/24,0,False,False
+172.20.7.0/24,Active,0,Global,0%,,,phys-1 (771),BRANCH,,Private,172.20.7.0/24,0,False,False
+172.20.8.0/24,Active,0,Global,0%,,,cert-2 (532),BRANCH,,Private,172.20.8.0/24,0,False,False
+172.20.10.0/24,Active,0,Global,0%,,,gsic-2 (993),BRANCH,,Private,172.20.10.0/24,0,False,False
+172.20.11.0/26,Active,0,Global,0%,,,gsic-8 (955),BRANCH,,Private,172.20.11.0/26,0,False,False
+172.20.11.64/26,Active,0,Global,0%,,,gsic-9 (954),BRANCH,,Private,172.20.11.64/26,0,False,False
+172.20.11.128/26,Active,0,Global,0%,,,gsic-10 (953),BRANCH,,Private,172.20.11.128/26,0,False,False
+172.20.13.0/24,Active,0,Global,0%,,,gsic-11 (928),BRANCH,,Private,172.20.13.0/24,0,False,False
+172.20.14.0/26,Active,0,Global,0%,,,ryu-2 (823),BRANCH,,Private,172.20.14.0/26,0,False,False
+172.20.14.64/26,Active,0,Global,0%,,,ryu-3 (822),BRANCH,,Private,172.20.14.64/26,0,False,False
+172.20.14.128/25,Active,0,Global,0%,,,ryu-4 (821),BRANCH,,Private,172.20.14.128/25,0,False,False
+172.20.16.0/24,Active,0,Global,0%,,,gsic.cc-3 (670),BRANCH,,Private,172.20.16.0/24,0,False,False
+172.20.17.0/24,Active,0,Global,0%,,,gsic.cc-2 (684),BRANCH,,Private,172.20.17.0/24,0,False,False
+172.20.18.0/24,Active,0,Global,0%,,,gsic.cc-6 (624),BRANCH,,Private,172.20.18.0/24,0,False,False
+172.20.21.0/24,Active,0,Global,0%,,,sisetu.suido-o (631),BRANCH,,Private,172.20.21.0/24,0,False,False
+172.20.22.0/24,Active,0,Global,0%,,,sisetu.denryoku-o (629),BRANCH,,Private,172.20.22.0/24,0,False,False
+172.20.23.0/24,Active,0,Global,0%,,,rps-1 (852),BRANCH,,Private,172.20.23.0/24,0,False,False
+172.20.24.0/24,Active,0,Global,0%,,,chemeng-1 (858),BRANCH,,Private,172.20.24.0/24,0,False,False
+172.20.25.0/26,Active,0,Global,0%,,,ide-2 (840),BRANCH,,Private,172.20.25.0/26,0,False,False
+172.20.25.64/26,Active,0,Global,0%,,,ide-3 (839),BRANCH,,Private,172.20.25.64/26,0,False,False
+172.20.25.128/26,Active,0,Global,0%,,,ide-1 (920),BRANCH,,Private,172.20.25.128/26,0,False,False
+172.20.25.192/26,Active,0,Global,0%,,,ens-1 (517),BRANCH,,Private,172.20.25.192/26,0,False,False
+172.20.26.0/26,Active,0,Global,0%,,,sisetu.server (619),BRANCH,,Private,172.20.26.0/26,0,False,False
+172.20.26.64/26,Active,0,Global,0%,,,sisetu.kanri (618),BRANCH,,Private,172.20.26.64/26,0,False,False
+172.20.28.0/24,Active,0,Global,0%,,,ee-1 (843),BRANCH,,Private,172.20.28.0/24,0,False,False
+172.20.29.0/24,Active,0,Global,0%,,,irds-3 (515),BRANCH,,Private,172.20.29.0/24,0,False,False
+172.20.30.128/25,Active,0,Global,0%,,,gsic-15 (524),BRANCH,,Private,172.20.30.128/25,0,False,False
+172.20.32.0/25,Active,0,Global,0%,,,hum-4 (782),BRANCH,,Private,172.20.32.0/25,0,False,False
+172.20.32.128/25,Active,0,Global,0%,,,hum-10 (555),BRANCH,,Private,172.20.32.128/25,0,False,False
+172.20.34.0/23,Active,0,Global,0%,,,gsic.vdi-2 (475),BRANCH,,Private,172.20.34.0/23,0,False,False
+172.20.36.0/26,Active,0,Global,0%,,,ofc-3 (472),BRANCH,,Private,172.20.36.0/26,0,False,False
+172.20.38.0/24,Active,0,Global,0%,,,dst-1 (765),BRANCH,,Private,172.20.38.0/24,0,False,False
+172.20.42.0/24,Active,0,Global,0%,,,mono-2 (715),BRANCH,,Private,172.20.42.0/24,0,False,False
+172.20.52.0/27,Active,0,Global,0%,,,gakuseisien-1 (647),BRANCH,,Private,172.20.52.0/27,0,False,False
+172.20.54.0/24,Active,0,Global,0%,,,eng.annai (635),BRANCH,,Private,172.20.54.0/24,0,False,False
+172.20.56.0/26,Active,0,Global,0%,,,eng-1 (886),BRANCH,,Private,172.20.56.0/26,0,False,False
+172.20.57.0/24,Active,0,Global,0%,,,rps-2 (825),BRANCH,,Private,172.20.57.0/24,0,False,False
+172.20.58.0/24,Active,0,Global,0%,,,t2r2-1 (799),BRANCH,,Private,172.20.58.0/24,0,False,False
+172.20.59.0/24,Active,0,Global,0%,,,liberal-1 (682),BRANCH,,Private,172.20.59.0/24,0,False,False
+172.20.64.0/26,Active,0,Global,0%,,,dst-3 (596),BRANCH,,Private,172.20.64.0/26,0,False,False
+172.20.64.64/26,Active,0,Global,0%,,,dst-4 (595),BRANCH,,Private,172.20.64.64/26,0,False,False
+172.20.64.128/26,Active,0,Global,0%,,,dst-5 (594),BRANCH,,Private,172.20.64.128/26,0,False,False
+172.20.64.192/26,Active,0,Global,0%,,,dst-6 (593),BRANCH,,Private,172.20.64.192/26,0,False,False
+172.20.65.0/26,Active,0,Global,0%,,,dst-7 (592),BRANCH,,Private,172.20.65.0/26,0,False,False
+172.20.65.64/26,Active,0,Global,0%,,,dst-8 (591),BRANCH,,Private,172.20.65.64/26,0,False,False
+172.20.65.128/26,Active,0,Global,0%,,,dst-9 (590),BRANCH,,Private,172.20.65.128/26,0,False,False
+172.20.65.192/26,Active,0,Global,0%,,,dst-10 (589),BRANCH,,Private,172.20.65.192/26,0,False,False
+172.20.66.0/26,Active,0,Global,0%,,,dst-11 (588),BRANCH,,Private,172.20.66.0/26,0,False,False
+172.20.66.64/26,Active,0,Global,0%,,,dst-12 (587),BRANCH,,Private,172.20.66.64/26,0,False,False
+172.20.66.128/26,Active,0,Global,0%,,,dst-13 (586),BRANCH,,Private,172.20.66.128/26,0,False,False
+172.20.66.192/26,Active,0,Global,0%,,,dst-14 (585),BRANCH,,Private,172.20.66.192/26,0,False,False
+172.20.67.0/26,Active,0,Global,0%,,,dst-15 (584),BRANCH,,Private,172.20.67.0/26,0,False,False
+172.20.67.64/26,Active,0,Global,0%,,,dst-16 (583),BRANCH,,Private,172.20.67.64/26,0,False,False
+172.20.67.128/26,Active,0,Global,0%,,,dst-17 (582),BRANCH,,Private,172.20.67.128/26,0,False,False
+172.20.67.192/26,Active,0,Global,0%,,,dst-18 (581),BRANCH,,Private,172.20.67.192/26,0,False,False
+172.20.68.0/26,Active,0,Global,0%,,,dst-19 (580),BRANCH,,Private,172.20.68.0/26,0,False,False
+172.20.68.64/26,Active,0,Global,0%,,,dst-20 (579),BRANCH,,Private,172.20.68.64/26,0,False,False
+172.20.68.128/26,Active,0,Global,0%,,,dst-21 (578),BRANCH,,Private,172.20.68.128/26,0,False,False
+172.20.68.192/26,Active,0,Global,0%,,,dst-22 (577),BRANCH,,Private,172.20.68.192/26,0,False,False
+172.20.69.0/26,Active,0,Global,0%,,,dst-23 (576),BRANCH,,Private,172.20.69.0/26,0,False,False
+172.20.69.64/26,Active,0,Global,0%,,,dst-24 (575),BRANCH,,Private,172.20.69.64/26,0,False,False
+172.20.69.128/26,Active,0,Global,0%,,,dst-25 (574),BRANCH,,Private,172.20.69.128/26,0,False,False
+172.20.69.192/26,Active,0,Global,0%,,,dst-26 (573),BRANCH,,Private,172.20.69.192/26,0,False,False
+172.20.70.0/26,Active,0,Global,0%,,,dst-27 (572),BRANCH,,Private,172.20.70.0/26,0,False,False
+172.20.70.64/26,Active,0,Global,0%,,,dst-28 (571),BRANCH,,Private,172.20.70.64/26,0,False,False
+172.20.70.128/26,Active,0,Global,0%,,,dst-29 (570),BRANCH,,Private,172.20.70.128/26,0,False,False
+172.20.70.192/26,Active,0,Global,0%,,,dst-30 (569),BRANCH,,Private,172.20.70.192/26,0,False,False
+172.20.71.0/26,Reserved,0,Global,0%,,,dst-31 (568),BRANCH,社会工学専攻 (予備),Private,172.20.71.0/26,0,False,False
+172.20.71.64/26,Reserved,0,Global,0%,,,dst-32 (567),BRANCH,社会工学専攻 (予備),Private,172.20.71.64/26,0,False,False
+172.20.71.128/26,Reserved,0,Global,0%,,,dst-33 (566),BRANCH,社会工学専攻 (予備),Private,172.20.71.128/26,0,False,False
+172.20.71.192/26,Reserved,0,Global,0%,,,dst-34 (565),BRANCH,社会工学専攻 (予備),Private,172.20.71.192/26,0,False,False
+172.20.72.0/24,Active,0,Global,0%,,,iidp-1 (523),BRANCH,,Private,172.20.72.0/24,0,False,False
+172.20.80.0/22,Active,0,Global,0%,,,gsic.cc-12 (491),BRANCH,,Private,172.20.80.0/22,0,False,False
+172.20.84.0/22,Active,0,Global,0%,,,gsic.cc-11 (492),BRANCH,,Private,172.20.84.0/22,0,False,False
+172.20.255.0/24,Active,0,Global,0%,,,somu.ttf-kansihi-camera (845),BRANCH,,Private,172.20.255.0/24,0,False,False
+172.21.5.0/24,Active,0,Global,0%,,,gakuseisien-4 (552),BRANCH,,Private,172.21.5.0/24,0,False,False
+172.24.4.0/24,Active,0,Global,0%,,,rcltp-2 (546),BRANCH,,Private,172.24.4.0/24,0,False,False
+172.24.5.0/24,Active,0,Global,0%,,,t2r2-4 (513),BRANCH,,Private,172.24.5.0/24,0,False,False
+172.24.6.0/24,Active,0,Global,0%,,,mono-3 (645),BRANCH,,Private,172.24.6.0/24,0,False,False
+172.24.15.0/24,Active,0,Global,0%,,,envpro-2 (601),BRANCH,,Private,172.24.15.0/24,0,False,False
+172.24.16.0/22,Active,0,Global,0%,,,gsic.cc-10 (493),BRANCH,,Private,172.24.16.0/22,0,False,False
+172.24.20.0/24,Active,0,Global,0%,,,sisetu.denryoku-s (628),BRANCH,,Private,172.24.20.0/24,0,False,False
+172.24.21.0/24,Active,0,Global,0%,,,sisetu.suido-s (630),BRANCH,,Private,172.24.21.0/24,0,False,False
+172.24.22.0/27,Active,0,Global,0%,,,gakuseisien-2 (646),BRANCH,,Private,172.24.22.0/27,0,False,False
+172.24.23.0/24,Active,0,Global,0%,,,sisetu.air-con-s (620),BRANCH,,Private,172.24.23.0/24,0,False,False
+172.24.24.0/22,Active,0,Global,0%,,,pi-5 (761),BRANCH,,Private,172.24.24.0/22,0,False,False
+172.24.31.0/24,Active,0,Global,0%,,,kanshi-camera-s (897),BRANCH,,Private,172.24.31.0/24,0,False,False
+172.24.32.0/19,Active,0,Global,0%,,,bio-12 (865),BRANCH,,Private,172.24.32.0/19,0,False,False
+172.24.64.0/26,Active,0,Global,0%,,,es-7 (617),BRANCH,,Private,172.24.64.0/26,0,False,False
+172.24.64.64/26,Active,0,Global,0%,,,es-8 (616),BRANCH,,Private,172.24.64.64/26,0,False,False
+172.26.3.0/26,Active,0,Global,0%,,,bio-4 (973),BRANCH,,Private,172.26.3.0/26,0,False,False
+172.26.3.128/26,Active,0,Global,0%,,,ep-2 (977),BRANCH,,Private,172.26.3.128/26,0,False,False
+172.26.5.0/25,Active,0,Global,0%,,,ric-2 (918),BRANCH,,Private,172.26.5.0/25,0,False,False
+172.26.7.0/24,Active,0,Global,0%,,,iir-4 (502),BRANCH,,Private,172.26.7.0/24,0,False,False
+172.26.8.0/24,Active,0,Global,0%,,,sangaku-3 (498),BRANCH,,Private,172.26.8.0/24,0,False,False
+172.28.0.0/22,Active,0,Global,0%,,,noc-daikou-in (328),NOC,,Private,172.28.0.0/22,0,False,False
+172.29.0.0/21,Active,0,Global,0%,,,tokyotech-o (112),NOC,,"Private,Wi-Fi",172.29.0.0/21,0,False,False
+172.29.24.0/21,Active,0,Global,0%,,,tokyotech-s (113),NOC,,"Private,Wi-Fi",172.29.24.0/21,0,False,False
+172.30.0.0/16,Active,16,Global,0%,,,,NOC,,Private,172.30.0.0/16,0,False,False
+"•
+        
+    
+
+172.30.0.0/23",Active,0,Global,0%,,,noc-m-core-o (31),NOC,,Private,172.30.0.0/23,1,False,False
+"•
+        
+    
+
+172.30.2.0/23",Active,0,Global,13%,,,noc-m-edge-o (33),NOC,,Private,172.30.2.0/23,1,False,False
+"•
+        
+    
+
+172.30.8.0/22",Active,0,Global,0%,,,noc-m-serv-o (35),NOC,,Private,172.30.8.0/22,1,False,False
+"•
+        
+    
+
+172.30.16.0/23",Active,0,Global,0%,,,noc-m-ext-o (37),NOC,,Private,172.30.16.0/23,1,False,False
+"•
+        
+    
+
+172.30.30.0/23",Active,0,Global,0%,,,noc-m-etc-o (39),NOC,,Private,172.30.30.0/23,1,False,False
+"•
+        
+    
+
+172.30.32.0/23",Active,0,Global,0%,,,noc-m-core-s (32),NOC,,Private,172.30.32.0/23,1,False,False
+"•
+        
+    
+
+172.30.34.0/23",Active,0,Global,5%,,,noc-m-edge-s (34),NOC,,Private,172.30.34.0/23,1,False,False
+"•
+        
+    
+
+172.30.40.0/22",Active,0,Global,0%,,,noc-m-serv-s (36),NOC,,Private,172.30.40.0/22,1,False,False
+"•
+        
+    
+
+172.30.48.0/23",Active,0,Global,0%,,,noc-m-ext-s (38),NOC,,Private,172.30.48.0/23,1,False,False
+"•
+        
+    
+
+172.30.62.0/23",Active,0,Global,0%,,,noc-m-etc-s (40),NOC,,Private,172.30.62.0/23,1,False,False
+"•
+        
+    
+
+172.30.128.0/21",Active,0,Global,0%,,,noc-m-wlan-o1 (360),NOC,Tn4-w AP PoESW 管理セグメントNAT内側 (大岡山1),Private,172.30.128.0/21,1,False,False
+"•
+        
+    
+
+172.30.136.0/21",Active,0,Global,0%,,,noc-m-wlan-o2 (361),NOC,Tn4-w AP PoESW 管理セグメントNAT内側 (大岡山2),Private,172.30.136.0/21,1,False,False
+"•
+        
+    
+
+172.30.160.0/21",Active,0,Global,0%,,,noc-m-wlan-s1 (362),NOC,Tn4-w AP PoESW 管理セグメントNAT内側 (すずかけ台),Private,172.30.160.0/21,1,False,False
+"•
+        
+    
+
+172.30.224.0/24",Active,0,Global,0%,,,noc-m-share-cert1 (371),NOC,CheckPoint (Maestro) 管理用,Private,172.30.224.0/24,1,False,False
+"•
+        
+    
+
+172.30.225.0/24",Active,0,Global,0%,,,noc-m-share-cert2 (374),NOC,BMF (Big Switch) 管理用,Private,172.30.225.0/24,1,False,False
+"•
+        
+    
+
+172.30.255.0/24",Active,0,Global,0%,,,noc-m-inter-core (49),NOC,,Private,172.30.255.0/24,1,False,False
+203.181.194.128/27,Active,0,Global,0%,,,peering-apanjp4 (15),PEER,Peering segment to APAN (IPv4),,203.181.194.128/27,0,False,False
+2001:200:e000:16::/64,Active,0,Global,0%,,,peering-apanjp6 (16),PEER,Peering segment to APAN (IPv6),,2001:200:e000:16::/64,0,False,False
+2001:2f8:ff00:dc::/64,Active,0,Global,0%,,,peering-sinet-o (4),PEER,Peering segment to SINET,,2001:2f8:ff00:dc::/64,0,False,False
+2001:2f8:ff00:dd::/64,Active,0,Global,0%,,,peering-sinet-via-wide (2104),PEER,,,2001:2f8:ff00:dd::/64,0,False,False
+2403:4440::/32,Active,1,Global,0%,,,,NOC,,,2403:4440::/32,0,False,False
+"•
+        
+    
+
+2403:4440::/48",Active,0,Global,0%,,,,NOC,,,2403:4440::/48,1,False,False
