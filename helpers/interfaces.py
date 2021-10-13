@@ -33,7 +33,7 @@ def enum_vlans(vlan_str):
     return None
   if type(vlan_str) == int:
     return vlan_str
-  for vlan_range in vlan_str.split(","):
+  for vlan_range in vlan_str.split():
     v = vlan_range.split("-")
     if len(v) == 1:
       vlans.append(int(v[0]))
