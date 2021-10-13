@@ -77,25 +77,26 @@ class NetBoxClient:
 
 
 class DevConfig:
-  IF_MGMT_JUNIPER = "irb"
-  IF_MGMT_CISCO = "MGMT"
-  DEV_ROLE_EDGE = "edge-sw"
-  DEV_ROLE_CORE = "core-sw"
-  REGION_OOKAYAMA = "ookayama"
-  REGION_SUZUKAKE = "suzukake"
-  REGION_TAMACHI = "tamachi"
+  VLAN_GROUP             = "titanet"
+  IF_MGMT_JUNIPER        = "irb"
+  IF_MGMT_CISCO          = "MGMT"
+  DEV_ROLE_EDGE          = "edge-sw"
+  DEV_ROLE_CORE          = "core-sw"
+  REGION_OOKAYAMA        = "ookayama"
+  REGION_SUZUKAKE        = "suzukake"
+  REGION_TAMACHI         = "tamachi"
   TAG_MGMT_EDGE_OOKAYAMA = "mgmt-vlan-eo"
   TAG_MGMT_EDGE_SUZUKAKE = "mgmt-vlan-es"
   TAG_MGMT_CORE_OOKAYAMA = "mgmt-vlan-co"
   TAG_MGMT_CORE_SUZUKAKE = "mgmt-vlan-cs"
-  TAG_PROTECT = "protect"
-  TAG_UPLINK = "uplink"
-  TAG_POE = "poe"
+  TAG_PROTECT            = "protect"
+  TAG_UPLINK             = "uplink"
+  TAG_POE                = "poe"
 
 
   def __init__(self, netbox_cli):
     self.all_sites = netbox_cli.get_all_sites()
-    self.all_vlans = netbox_cli.get_all_vlans()
+    self.all_vlans = self.__filter_vlan_group(netbox_cli.get_all_vlans())
     self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
 
@@ -116,6 +117,14 @@ class DevConfig:
     is_qsfp_port = interface_name[:3] == "et-"
     is_lag_port = interface_name[:2] == "ae"
     return is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port
+
+
+  def __filter_vlan_group(self, vlans):
+    filtered = []
+    for vlan in vlans:
+      if vlan["group"]["slug"] == DevConfig.VLAN_GROUP:
+        filtered.append(vlan)
+    return filtered
 
 
   def __filter_active_devices(self, devices):
@@ -251,8 +260,8 @@ class DevConfig:
   def get_interfaces(self, hostname):
     interfaces = {}
 
-    # See: https://github.com/netbox-community/netbox/blob/develop/netbox/dcim/choices.py#L688-L923
-    iftypes_virtual = ["lag"]
+    ## See: https://github.com/netbox-community/netbox/blob/develop/netbox/dcim/choices.py#L688-L923
+    iftypes_virtual = ["lag"]  # Ignore virtual type interfaces
     iftypes_ethernet = [
       "100base-tx", "1000base-t", "1000base-x-gbic", "1000base-x-sfp", "2.5gbase-t", "5gbase-t",
       "10gbase-t", "10gbase-cx4", "10gbase-x-sfpp", "10gbase-x-xfp", "10gbase-x-xenpak", "10gbase-x-x2",
