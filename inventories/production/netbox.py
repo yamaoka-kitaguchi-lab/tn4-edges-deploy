@@ -97,7 +97,7 @@ class DevConfig:
   def __init__(self, netbox_cli):
     self.all_sites = netbox_cli.get_all_sites()
     self.all_vlans = self.__filter_vlan_group(netbox_cli.get_all_vlans())
-    self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
+    self.all_devices = self.__filter_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
 
 
@@ -128,7 +128,7 @@ class DevConfig:
 
 
   ## ToDo: Filter out invalid VC devices
-  def __filter_active_devices(self, devices):
+  def __filter_devices(self, devices):
     filtered = []
     for dev in devices:
       is_inactive = dev["status"]["value"] != "active"
