@@ -97,7 +97,7 @@ class DevConfig:
   def __init__(self, netbox_cli):
     self.all_sites = netbox_cli.get_all_sites()
     self.all_vlans = self.__filter_vlan_group(netbox_cli.get_all_vlans())
-    self.all_devices = self.__filter_devices(netbox_cli.get_all_devices())
+    self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
 
 
@@ -127,17 +127,48 @@ class DevConfig:
     return filtered
 
 
-  ## ToDo: Filter out invalid VC devices
-  def __filter_devices(self, devices):
+  def __filter_active_vc_masters(self, devices):
     filtered = []
+    vc_masters = {}
+    are_all_active = {}
+
     for dev in devices:
-      is_inactive = dev["status"]["value"] != "active"
+      is_active = dev["status"]["value"] == "active"
+      is_stacked, is_vc_slave, basename = self.__regex_device_name(dev["name"])
+
+      if is_stacked:
+        try:
+          are_all_active[basename] &= is_active
+        except KeyError:
+          are_all_active[basename] = is_active
+        if not is_vc_slave:
+          vc_masters[basename] = dev
+
+    for basename in [n for n, c in are_all_active.items() if c]:
+      filtered.append(vc_masters[basename])
+
+    return filtered
+
+
+  def __filter_active_devices(self, devices):
+    filtered = []
+    stacked_devices = self.__filter_active_vc_masters(devices)
+    unstacked_devices = []
+
+    for dev in devices:
+      is_stacked, _, _ = self.__regex_device_name(dev["name"])
+      if not is_stacked:
+        unstacked_devices.append(dev)
+
+    for dev in [*stacked_devices, *unstacked_devices]:
+      is_active = dev["status"]["value"] == "active"
       has_ipaddr = dev["primary_ip"] is not None
-      _, is_vc_slave, basename = self.__regex_device_name(dev["name"])
-      if is_inactive or not has_ipaddr or is_vc_slave:
-        continue
-      dev["name"] = basename
-      filtered.append(dev)
+      _, _, basename = self.__regex_device_name(dev["name"])
+
+      if is_active and has_ipaddr and not is_stacked:
+        dev["name"] = basename
+        filtered.append(dev)
+
     return filtered
 
 
