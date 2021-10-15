@@ -122,6 +122,8 @@ class DevConfig:
   def __filter_vlan_group(self, vlans):
     filtered = []
     for vlan in vlans:
+      if vlan["group"] is None:
+        continue
       if vlan["group"]["slug"] == DevConfig.VLAN_GROUP:
         filtered.append(vlan)
     return filtered
