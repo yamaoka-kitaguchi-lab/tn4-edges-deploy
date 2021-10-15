@@ -26,8 +26,6 @@
     src_format: set
     comment: Action performed by ansible
     update: merge
-  tags:
-    - rendering
 
 - name: Create post-snapshots
   connection: netconf
