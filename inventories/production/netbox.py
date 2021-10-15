@@ -374,7 +374,7 @@ def timestamp():
   return n.strftime("%Y-%m-%d@%H-%M-%S")
 
 
-if __name__ == "__main__":
+def dynamic_inventory():
   ts = timestamp()
   secrets = __load_encrypted_secrets()
   nb = NetBoxClient(secrets["netbox_url"], secrets["netbox_api_token"])
@@ -407,4 +407,6 @@ if __name__ == "__main__":
       "datetime":     ts,
     }
 
-  print(json.dumps(inventory))
+
+if __name__ == "__main__":
+  print(json.dumps(dynamic_inventory))
