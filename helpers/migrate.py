@@ -14,7 +14,8 @@ import openpyxl
 SPREADSHEET_KEY = "11M9m7-C7Ogvuow7F5OG4U--TBk4gwETUcWTZWEJGCOY"
 JSON_KEYFILE_PATH = os.path.join(os.path.dirname(__file__), "../.secrets/googleapi.json")
 
-XLSX_PATH = os.path.join(os.path.dirname(__file__), "./port_migration_rules.xlsx")
+#XLSX_PATH = os.path.join(os.path.dirname(__file__), "./port_migration_rules.xlsx")
+XLSX_PATH = os.path.join(os.path.dirname(__file__), "./port_migration_rules_part2.xlsx")
 
 
 def open_worksheets(keyfile, sheetkey):
