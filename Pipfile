@@ -21,6 +21,7 @@ openpyxl     = "*"
 
 [scripts]
 seed      = 'python3 ./helpers/seed.py'
+render    = 'ansible-playbook -v --tags rendering site.yml'
 develop   = 'ansible-playbook -vvvv --skip-tags overwrite,password site.yml'
 dryrun    = 'ansible-playbook -vvvv --check --skip-tags nondry site.yml'
 migrate   = 'ansible-playbook -v --tags migrate --skip-tags develop site.yml'
