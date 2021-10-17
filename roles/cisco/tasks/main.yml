@@ -1,8 +1,0 @@
----
-- import_tasks: migrate.yml
-  tags:
-    - migrate
-
-- import_tasks: overwrite.yml
-  tags:
-    - overwrite
