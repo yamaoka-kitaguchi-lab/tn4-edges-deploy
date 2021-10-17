@@ -6,7 +6,7 @@ from pprint import pprint
 import re
 import os
 
-SNAPSHOT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vault/batfish")
+SNAPSHOT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vault")
 
 
 def group_by_node(props, key="Node", subkey="name"):
