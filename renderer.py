@@ -35,15 +35,18 @@ def render_templates(tpl_path, device_role, inventories, trim_blocks=False):
     sys.exit(1)
 
   try:
-    hosts = inventories[device_role]["hosts"]
+    hostnames = inventories[device_role]["hosts"]
   except KeyError:
     print(f"No such device role: {device_role}", file=sys.stderr)
     sys.exit(2)
 
   results = {}
-  for host in hosts:
-    params = inventories["_meta"]["hostvars"][host]
-    results[host] = template.render(params)
+  for hostname in hostnames:
+    params = inventories["_meta"]["hostvars"][hostname]
+    try:
+      results[hostname] = template.render(params)
+    except Exception as e:
+      print(f"An error occurred while rendering {hostname}. Aborted: {e}", file=sys.stderr)
 
   return results
 
