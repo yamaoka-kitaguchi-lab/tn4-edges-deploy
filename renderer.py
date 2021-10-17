@@ -46,10 +46,13 @@ def render_templates(tpl_path, device_role, inventories, trim_blocks=False):
     try:
       ip = params["ansible_host"]
       host = f"{hostname} ({ip})"
-      results[host] = template.render(params)
+      raw = template.render(params)
     except Exception as e:
       print(f"An error occurred while rendering {host}. Aborted: {e}", file=sys.stderr)
       sys.exit(4)
+    else:
+      ignore_empty_lines = lambda s: "\n".join([l for l in s.split("\n") if l != ""])
+      results[host] = ignore_empty_lines(raw)
 
   return results
 
