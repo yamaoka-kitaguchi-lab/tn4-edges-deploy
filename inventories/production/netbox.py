@@ -407,6 +407,8 @@ def dynamic_inventory():
       "datetime":     ts,
     }
 
+  return inventory
+
 
 if __name__ == "__main__":
   inventory = dynamic_inventory()
