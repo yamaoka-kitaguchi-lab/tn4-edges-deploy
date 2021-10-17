@@ -409,4 +409,5 @@ def dynamic_inventory():
 
 
 if __name__ == "__main__":
-  print(json.dumps(dynamic_inventory()))
+  inventory = dynamic_inventory()
+  print(json.dumps(inventory))
