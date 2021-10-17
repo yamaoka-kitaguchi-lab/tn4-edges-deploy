@@ -6,7 +6,7 @@ from pprint import pprint
 import re
 import os
 
-SNAPSHOT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vault")
+SNAPSHOT_PATH = os.path.join(os.path.dirname(__file__), "./tn3/vault/batfish")
 
 
 def group_by_node(props, key="Node", subkey="name"):
@@ -33,9 +33,12 @@ def enum_vlans(vlan_str):
     return None
   if type(vlan_str) == int:
     return vlan_str
-  for vlan_range in vlan_str.split():
+  separator = " "
+  if "," in vlan_str:
+    separator = ","
+  for vlan_range in vlan_str.split(separator):
     v = vlan_range.split("-")
-    if len(v) == 1:
+    if len(v) == 1 and v[0] != "":
       vlans.append(int(v[0]))
     if len(v) == 2:
       vlans.extend(list(range(int(v[0]), int(v[1])+1)))
