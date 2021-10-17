@@ -43,12 +43,13 @@ def render_templates(tpl_path, device_role, inventories, trim_blocks=False):
   results = {}
   for hostname in hostnames:
     params = inventories["_meta"]["hostvars"][hostname]
-    ip = params["ansible_host"]
     try:
+      ip = params["ansible_host"]
       host = f"{hostname} ({ip})"
       results[host] = template.render(params)
     except Exception as e:
       print(f"An error occurred while rendering {host}. Aborted: {e}", file=sys.stderr)
+      sys.exit(4)
 
   return results
 
@@ -65,7 +66,7 @@ def main():
 
   results = render_templates(tpl_path, device_role, inventories)
   for host, result in results.items():
-    print("\n".join([":"*15, host, ":"*15]))
+    print("\n".join([":"*25, host, ":"*25]))
     print(result, end="\n"*2)
 
 
