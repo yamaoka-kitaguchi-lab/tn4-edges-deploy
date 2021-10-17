@@ -1,0 +1,38 @@
+---
+- name: Enable NETCONF
+  connection: network_cli
+  junos_netconf:
+
+- name: Create pre-snapshots
+  connection: netconf
+  junos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ hostname }}_before.cfg"
+      dir_path: "backup/junos_config.{{ datetime }}"
+  tags:
+    - nondry
+
+- name: Check template rendering result
+  debug:
+    msg: "{{ lookup('template', 'overwrite.cfg.j2') }}"
+  tags:
+    - develop
+
+- name: Overwrite configurations
+  connection: netconf
+  junos_config:
+    src: overwrite.cfg.j2
+    src_format: set
+    comment: Action performed by ansible
+    update: merge
+
+- name: Create post-snapshots
+  connection: netconf
+  junos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ hostname }}_after.cfg"
+      dir_path: "backup/junos_config.{{ datetime }}"
+  tags:
+    - nondry

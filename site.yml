@@ -6,3 +6,5 @@
   roles:
     - role: juniper
       when: manufacturer == "juniper"
+    - role: cisco
+      when: manufacturer == "cisco"

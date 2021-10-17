@@ -1,0 +1,56 @@
+---
+- name: Display all variables and facts known for a host
+  debug:
+    var: hostvars[inventory_hostname]
+  tags:
+    - develop
+    - verbose
+
+- name: Show version
+  connection: network_cli
+  junos_command:
+    commands: show version
+  tags:
+    - develop
+    - verbose
+
+- name: Enable NETCONF
+  connection: network_cli
+  junos_netconf:
+
+- name: Create pre-snapshots
+  connection: netconf
+  junos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ hostname }}_before.cfg"
+      dir_path: "backup/junos_config.{{ datetime }}"
+  tags:
+    - nondry
+
+- name: Check template rendering result
+  debug:
+    msg: "{{ lookup('template', 'interface.cfg.j2') }}"
+  tags:
+    - develop
+    - rendering
+
+- name: Update interface configurations
+  connection: netconf
+  junos_config:
+    src: interface.cfg.j2
+    src_format: set
+    comment: Action performed by ansible
+    update: merge
+  vars:
+    ansible_command_timeout: 60
+
+- name: Create post-snapshots
+  connection: netconf
+  junos_config:
+    backup: yes
+    backup_options:
+      filename: "{{ hostname }}_after.cfg"
+      dir_path: "backup/junos_config.{{ datetime }}"
+  tags:
+    - nondry
