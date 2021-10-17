@@ -54,17 +54,17 @@ def render_templates(tpl_path, device_role, inventories, trim_blocks=False):
 def main():
   parser = argparse.ArgumentParser(description="rendering config template reflecting NetBox database")
   parser.add_argument("-t", "--template", required=True, dest="PATH", help="path of the template from (e.g., ./roles/juniper/templates/overwrite.cfg.j2)")
-  parser.add_argument("-r", "--device-role", required=True, dest="ROLE", help="device role (e.g., edge-sw)")
+  parser.add_argument("-d", "--device-role", required=True, dest="ROLE", help="device role (e.g., edge-sw)")
   args = parser.parse_args()
 
-  tpl_path = args.SUBPATH.strip("/")
+  tpl_path = args.PATH.strip("/")
   device_role = args.ROLE.upper()
   inventories = load_inventories()
 
   results = render_templates(tpl_path, device_role, inventories)
   for hostname, result in results.items():
-    print("\n".join([":"*10, hostname, ":"*10]))
-    print(result, end="\n")
+    print("\n".join([":"*15, hostname, ":"*15]))
+    print(result, end="\n"*2)
 
 
 if __name__ == "__main__":
