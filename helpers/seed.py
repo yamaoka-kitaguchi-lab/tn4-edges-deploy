@@ -842,45 +842,45 @@ def main():
   #if res:
   #  pprint(res)
 
-  print("STEP 4 of 12: Create VC")
-  res = nb.create_vcs(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 4 of 12: Create VC")
+  #res = nb.create_vcs(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 5 of 12: Create devices")
-  res = nb.create_devices(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 5 of 12: Create devices")
+  #res = nb.create_devices(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 6 of 12: Set VC master")
-  res = nb.update_vc_masters(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 6 of 12: Set VC master")
+  #res = nb.update_vc_masters(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 7 of 12: Create IP Addresses")
-  res = nb.create_and_assign_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 7 of 12: Create IP Addresses")
+  #res = nb.create_and_assign_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 8 of 12: Update device addresses")
-  res = nb.set_primary_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 8 of 12: Update device addresses")
+  #res = nb.set_primary_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 9 of 12: Rename interfaces")
-  res = nb.rename_interfaces()
-  if res:
-    pprint(res)
+  #print("STEP 9 of 12: Rename interfaces")
+  #res = nb.rename_interfaces()
+  #if res:
+  #  pprint(res)
 
-  print("STEP 10 of 12: Create LAG interfaces")
-  res = nb.create_lag_interfaces(tn4_lags)
-  if res:
-    pprint(res)
+  #print("STEP 10 of 12: Create LAG interfaces")
+  #res = nb.create_lag_interfaces(tn4_lags)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 11 of 12: Disable all interfaces")
-  res = nb.disable_all_interfaces(devices)
-  if res:
-    pprint(res)
+  #print("STEP 11 of 12: Disable all interfaces")
+  #res = nb.disable_all_interfaces(devices)
+  #if res:
+  #  pprint(res)
 
   print("STEP 12 of 12: Update interface configurations")
   res = nb.update_interface_configs(tn4_interfaces)
