@@ -69,8 +69,7 @@ def main():
 
   results = render_templates(tpl_path, device_role, inventories)
   for host, result in results.items():
-    print("\n".join([":"*25, host, ":"*25]))
-    print(result, end="\n"*2)
+    print("\n".join([":"*25, host, ":"*25, result]), end="\n"*2)
 
 
 if __name__ == "__main__":
