@@ -583,12 +583,8 @@ class NetBoxClient:
       return self.query("/dcim/interfaces/", data, update=True)
 
 
-  def update_interface_configs(self, interfaces):
-    __raw_interface_hints = self.get_interface_resolve_hint()
+  def add_interface_descriptions(self, interfaces):
     interface_hints = self.get_interface_resolve_hint(vc_mode=True)
-    vlan_resolver = self.make_vlan_resolver()
-    mgmt_vlanid_hints = self.get_mgmt_vlanid_resolve_hint(vc_mode=True)
-    tokyotech_vlanid_hints = self.get_tokyotech_vlanid_resolve_hint(vc_mode=True)
     data = []
     orphan_vlans = {}
 
@@ -601,68 +597,10 @@ class NetBoxClient:
           "enabled": props["enabled"],
           "tags": [],
         }
-
-        # Enable PoE feature on specified interfaces
-        if props["poe"]:
-          req["tags"].append({"slug": "poe"})
-
-        # LAG
-        if props["lag"]:
-          device_name = hostname
-          if device_name not in __raw_interface_hints:
-            device_name = f"{device_name} (1)"
-          req["lag"] = {
-            "device": {"name": device_name},
-            "name": props["lag"]
-          }
-
-        # Configure untagged VLAN based on the properties (mode: ACCESS)
-        if props["mode"] == "ACCESS":
-          vid = vlan_resolver(props["untagged"])  # Convert VLAN ID to NetBox VLAN UNIQUE ID
-          if vid is None:
-            orphan_vlans[hostname].append(props["untagged"])
-          else:
-            req["mode"] = "access"
-            req["untagged_vlan"] = vid
-
-        # Configure tagged VLAN based on the properties (mode: TRUNK)
-        if props["mode"] == "TRUNK":
-          vids = []
-          for vlanid in props["tagged"]:
-            vid = vlan_resolver(vlanid)
-            if vid is None:
-              orphan_vlans[hostname].append(vlanid)
-            else:
-              vids.append(vid)
-          if vids:
-            req["mode"] = "tagged"
-            req["tagged_vlans"] = vids
-
-        # Configure uplink (mode: UPLINK)
-        if props["mode"] == "UPLINK":
-          req["mode"] = "tagged-all"
-          req["tags"].append({"slug": "uplink"})
-
-        # Configure Wi-Fi (mode: WIFI)
-        if props["mode"] == "WIFI":
-          tokyotech = tokyotech_vlanid_hints[hostname]
-          eduroam = 169
-          event_net = [161, 162, 163, 164, 171, 173]
-          wi2 = [341, 342]
-          req["mode"] = "tagged"
-          req["untagged_vlan"] = vlan_resolver(mgmt_vlanid_hints[hostname])
-          req["tagged_vlans"] = [
-            vlan_resolver(vid) for vid in [tokyotech, eduroam, *event_net, *wi2]
-          ]
-          req["tags"].append({"slug": "wifi"})
-
         data.append(req)
-
-    if orphan_vlans:
-      with open(os.path.join(os.path.dirname(__file__), "./orphan-vlans.json"), "w") as fd:
-        json.dump(orphan_vlans, fd, indent=2)
     if data:
-      return self.query("/dcim/interfaces/", data, update=True)
+      pprint(data)
+      #return self.query("/dcim/interfaces/", data, update=True)
     return
 
 
@@ -719,9 +657,9 @@ def main():
 
   #tn3_interfaces, tn3_n_stacked = chassis_interface_load()
   tn3_n_stacked = {
-    "noc-gsic-1,2": 2,
+    "noc-gsic-1,2":   2,
     "noc-honkan-1,2": 2,
-    "noc-setubi-1": 2
+    "noc-setubi-1":   2
   }
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_n_stacked, hosts=hosts)
   #pprint(tn4_interfaces)
@@ -772,7 +710,7 @@ def main():
   if res:
     pprint(res)
 
-  print("STEP 11 of 12: Add interface descriptions")
+  print("STEP 10 of 12: Add interface descriptions")
   res = nb.add_interface_descriptions(tn4_interfaces)
   if res:
     pprint(res)
