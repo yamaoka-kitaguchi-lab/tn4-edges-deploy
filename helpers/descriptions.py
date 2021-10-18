@@ -41,8 +41,6 @@ def parse_migration_rule(lines):
     tn4_desc = tn4_desc.replace("ae1", "ae0")
     if tn4_port == "ae1":
       tn4_port = "ae0"
-    if tn4_lag == "ae1":
-      tn4_lag = "ae0"
 
     rule[tn4_port] = {
       "description": tn4_desc,
