@@ -621,7 +621,7 @@ def migrate_edge(rule, tn4_hostname):
   for tn4_port, rule_props in rule.items():
     tn4_interfaces[tn4_port] = {
       "description": rule_props["description"],
-      "enabled":      rule_props["enable"]
+      "enabled":      rule_props["enabled"]
     }
   return tn4_interfaces
 

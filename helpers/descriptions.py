@@ -44,7 +44,7 @@ def parse_migration_rule(lines):
 
     rule[tn4_port] = {
       "description": tn4_desc,
-      "enable":      tn4_noshut,
+      "enabled":      tn4_noshut,
     }
 
   return rule
