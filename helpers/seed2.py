@@ -621,7 +621,7 @@ def migrate_edge(rule, tn4_hostname):
   for tn4_port, rule_props in rule.items():
     tn4_interfaces[tn4_port] = {
       "description": rule_props["description"],
-      "enable":      rule_props["enable"]
+      "enabled":      rule_props["enable"]
     }
   return tn4_interfaces
 
@@ -660,12 +660,12 @@ def main():
     "noc-gsic-1,2":   2,
     "noc-honkan-1,2": 2,
     "noc-setubi-1":   2,
-    "10g-setubi-1":   1,
+    "10g-setsubi-1":  1,
     "10g-gsic-1":     2,
   }
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_n_stacked, hosts=hosts)
-  pprint(tn4_interfaces)
-  sys.exit(0)
+  #pprint(tn4_interfaces)
+  #sys.exit(0)
 
   #print("STEP 1 of 12: Create VLANs")
   #res = nb.create_vlans(vlans)
@@ -682,35 +682,35 @@ def main():
   #if res:
   #  pprint(res)
 
-  print("STEP 4 of 12: Create VC")
-  res = nb.create_vcs(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 4 of 12: Create VC")
+  #res = nb.create_vcs(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 5 of 12: Create devices")
-  res = nb.create_devices(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 5 of 12: Create devices")
+  #res = nb.create_devices(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 6 of 12: Set VC master")
-  res = nb.update_vc_masters(devices, tn4_n_stacked)
-  if res:
-    pprint(res)
+  #print("STEP 6 of 12: Set VC master")
+  #res = nb.update_vc_masters(devices, tn4_n_stacked)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 7 of 12: Create IP Addresses")
-  res = nb.create_and_assign_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 7 of 12: Create IP Addresses")
+  #res = nb.create_and_assign_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 8 of 12: Update device addresses")
-  res = nb.set_primary_device_ips(devices)
-  if res:
-    pprint(res)
+  #print("STEP 8 of 12: Update device addresses")
+  #res = nb.set_primary_device_ips(devices)
+  #if res:
+  #  pprint(res)
 
-  print("STEP 9 of 12: Rename interfaces")
-  res = nb.rename_interfaces()
-  if res:
-    pprint(res)
+  #print("STEP 9 of 12: Rename interfaces")
+  #res = nb.rename_interfaces()
+  #if res:
+  #  pprint(res)
 
   print("STEP 10 of 12: Add interface descriptions")
   res = nb.add_interface_descriptions(tn4_interfaces)
