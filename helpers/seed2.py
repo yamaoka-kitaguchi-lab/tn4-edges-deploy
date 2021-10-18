@@ -712,7 +712,12 @@ def main():
   #if res:
   #  pprint(res)
 
-  print("STEP 10 of 12: Add interface descriptions")
+  print("STEP 10 of 12: Disable all interfaces")
+  res = nb.disable_all_interfaces(devices)
+  if res:
+    pprint(res)
+
+  print("STEP 11 of 12: Add interface descriptions")
   res = nb.add_interface_descriptions(tn4_interfaces)
   if res:
     pprint(res)
