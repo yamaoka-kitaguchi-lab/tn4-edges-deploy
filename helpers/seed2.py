@@ -664,8 +664,8 @@ def main():
     "10g-gsic-1":     2,
   }
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_n_stacked, hosts=hosts)
-  #pprint(tn4_interfaces)
-  #sys.exit(0)
+  pprint(tn4_interfaces)
+  sys.exit(0)
 
   #print("STEP 1 of 12: Create VLANs")
   #res = nb.create_vlans(vlans)
