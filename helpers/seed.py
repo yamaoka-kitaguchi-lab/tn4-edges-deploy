@@ -877,15 +877,20 @@ def main():
   if res:
     pprint(res)
 
-  print("STEP 11 of 12: Disable all interfaces")
-  res = nb.disable_all_interfaces(devices)
+  print("STEP 11 of 12: Add interface descriptions")
+  res = nb.add_interface_descriptions(devices)
   if res:
     pprint(res)
 
-  print("STEP 12 of 12: Update interface configurations")
-  res = nb.update_interface_configs(tn4_interfaces)
-  if res:
-    pprint(res)
+  #print("STEP 11 of 12: Disable all interfaces")
+  #res = nb.disable_all_interfaces(devices)
+  #if res:
+  #  pprint(res)
+
+  #print("STEP 12 of 12: Update interface configurations")
+  #res = nb.update_interface_configs(tn4_interfaces)
+  #if res:
+  #  pprint(res)
 
 
 def develop():
