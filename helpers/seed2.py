@@ -661,7 +661,7 @@ def main():
     "noc-gsic-1,2":   2,
     "noc-honkan-1,2": 2,
     "noc-setubi-1":   2,
-    "10g-setsubi-1":  2,
+    "10g-setsubi-1":  1,
     "10g-gsic-1":     2,
   }
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_n_stacked, hosts=hosts)
