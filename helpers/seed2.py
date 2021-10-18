@@ -349,7 +349,7 @@ class NetBoxClient:
          continue
 
       # stacked use
-      if device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1:
+      if device_type in ["ex4300-48mp", "ex4300-32f", "qfx5200-32c-32q", "c1000-24p"] and n_stacked[device_name] > 1:
         for n in range(1, n_stacked[device_name]+1):
           data.append({
             "name": f"{device_name} ({n})",
@@ -453,7 +453,7 @@ class NetBoxClient:
     for device in devices:
       device_name = device["name"]
       device_type = device["device_type"]
-      is_vs = device_type in ["ex4300-48mp", "ex4300-32f"] and n_stacked[device_name] > 1
+      is_vs = device_type in ["ex4300-48mp", "ex4300-32f", "c1000-24p", "qfx5200-32c-32q"] and n_stacked[device_name] > 1
       is_special_vc = device_type in ["ex4300-48mp-32f", "ex4300-48mp-32f-st2"]
       if is_vs or is_special_vc:
         data.append({
@@ -659,7 +659,9 @@ def main():
   tn3_n_stacked = {
     "noc-gsic-1,2":   2,
     "noc-honkan-1,2": 2,
-    "noc-setubi-1":   2
+    "noc-setubi-1":   2,
+    "10g-setubi-1":   1,
+    "10g-gsic-1":     2,
   }
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_n_stacked, hosts=hosts)
   #pprint(tn4_interfaces)
