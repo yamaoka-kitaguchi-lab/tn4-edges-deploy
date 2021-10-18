@@ -591,6 +591,8 @@ class NetBoxClient:
     for hostname, device_interfaces in interfaces.items():
       orphan_vlans[hostname] = []
       for interface, props in device_interfaces.items():
+        if interface[:2] == "ae":
+          continue
         req = {
           "id": interface_hints[hostname][interface],
           "description": props["description"],
@@ -599,8 +601,7 @@ class NetBoxClient:
         }
         data.append(req)
     if data:
-      pprint(data)
-      #return self.query("/dcim/interfaces/", data, update=True)
+      return self.query("/dcim/interfaces/", data, update=True)
     return
 
 
@@ -660,7 +661,7 @@ def main():
     "noc-gsic-1,2":   2,
     "noc-honkan-1,2": 2,
     "noc-setubi-1":   2,
-    "10g-setsubi-1":  1,
+    "10g-setsubi-1":  2,
     "10g-gsic-1":     2,
   }
   tn4_interfaces, tn4_n_stacked = migrate_all_edges(devices, tn3_n_stacked, hosts=hosts)
@@ -682,35 +683,35 @@ def main():
   #if res:
   #  pprint(res)
 
-  #print("STEP 4 of 12: Create VC")
-  #res = nb.create_vcs(devices, tn4_n_stacked)
-  #if res:
-  #  pprint(res)
+  print("STEP 4 of 12: Create VC")
+  res = nb.create_vcs(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
 
-  #print("STEP 5 of 12: Create devices")
-  #res = nb.create_devices(devices, tn4_n_stacked)
-  #if res:
-  #  pprint(res)
+  print("STEP 5 of 12: Create devices")
+  res = nb.create_devices(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
 
-  #print("STEP 6 of 12: Set VC master")
-  #res = nb.update_vc_masters(devices, tn4_n_stacked)
-  #if res:
-  #  pprint(res)
+  print("STEP 6 of 12: Set VC master")
+  res = nb.update_vc_masters(devices, tn4_n_stacked)
+  if res:
+    pprint(res)
 
-  #print("STEP 7 of 12: Create IP Addresses")
-  #res = nb.create_and_assign_device_ips(devices)
-  #if res:
-  #  pprint(res)
+  print("STEP 7 of 12: Create IP Addresses")
+  res = nb.create_and_assign_device_ips(devices)
+  if res:
+    pprint(res)
 
-  #print("STEP 8 of 12: Update device addresses")
-  #res = nb.set_primary_device_ips(devices)
-  #if res:
-  #  pprint(res)
+  print("STEP 8 of 12: Update device addresses")
+  res = nb.set_primary_device_ips(devices)
+  if res:
+    pprint(res)
 
-  #print("STEP 9 of 12: Rename interfaces")
-  #res = nb.rename_interfaces()
-  #if res:
-  #  pprint(res)
+  print("STEP 9 of 12: Rename interfaces")
+  res = nb.rename_interfaces()
+  if res:
+    pprint(res)
 
   print("STEP 10 of 12: Disable all interfaces")
   res = nb.disable_all_interfaces(devices)
