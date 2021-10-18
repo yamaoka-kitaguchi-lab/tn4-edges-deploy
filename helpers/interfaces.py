@@ -209,7 +209,7 @@ def load_chassis_interfaces(excludes=[]):
   n_stacked["minami1-1"] = 1
   n_stacked["g1-1"] = 2
   n_stacked["j3-1"] = 7
-  n_stacked["gsic"] = 2
+  n_stacked["gsic-1"] = 2
 
   return interfaces, n_stacked
 
