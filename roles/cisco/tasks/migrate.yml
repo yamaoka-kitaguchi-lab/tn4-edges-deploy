@@ -6,13 +6,6 @@
     - develop
     - verbose
 
-- name: Gather all legacy facts
-  ios_facts:
-    gather_subset: all
-  tags:
-    - develop
-    - verbose
-
 - name: Create pre-snapshots
   ios_config:
     backup: yes
