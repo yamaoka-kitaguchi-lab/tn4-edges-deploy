@@ -28,17 +28,36 @@
   tags:
     - nondry
 
-- name: Check template rendering result
+- name: Check template rendering result (Edge)
   debug:
-    msg: "{{ lookup('template', 'interface.cfg.j2') }}"
+    msg: "{{ lookup('template', 'interface_edge.cfg.j2') }}"
   tags:
     - develop
     - rendering
 
-- name: Update interface configurations
+- name: Check template rendering result (Core)
+  debug:
+    msg: "{{ lookup('template', 'interface_core.cfg.j2') }}"
+  tags:
+    - develop
+    - rendering
+
+- name: Update interface configurations (Edge)
   connection: netconf
+  hosts: EDGE-SW
   junos_config:
-    src: interface.cfg.j2
+    src: interface_edge.cfg.j2
+    src_format: set
+    comment: Action performed by ansible
+    update: merge
+  vars:
+    ansible_command_timeout: 60
+
+- name: Update interface configurations (Core)
+  connection: netconf
+  hosts: CORE-SW
+  junos_config:
+    src: interface_core.cfg.j2
     src_format: set
     comment: Action performed by ansible
     update: merge
