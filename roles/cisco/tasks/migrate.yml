@@ -30,6 +30,7 @@
         state: active
         shutdown: disabled
     state: overridden
+    save_when: modified
   loop: "{{ vlans }}"
 
 - name: Update interface description and status
@@ -39,6 +40,7 @@
         description: "{{ item.value.description }}"
         enabled: "{{ item.value.enabled }}"
     state: replaced
+    save_when: modified
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Update interface VLAN (1/3) - activating access VLAN
@@ -48,6 +50,7 @@
         access:
           vlan: "{{ item.value.vid[0] }}"
     state: replaced
+    save_when: modified
   when:
     - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
     - "{{ item.value.vlan_mode }} == 'access'"
@@ -61,6 +64,7 @@
           allowed_vlans: "{{ item.value.vids|join(',') }}"
           encapsulation: dot1q
     state: replaced
+    save_when: modified
   when:
     - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
     - "{{ item.value.vlan_mode }} == 'trunk'"
@@ -74,6 +78,7 @@
           native_vlan: "{{ item.value.native_vid }}"
           encapsulation: dot1q
     state: merged
+    save_when: modified
   when:
     - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
     - "{{ item.value.vlan_mode }} == 'trunk'"
@@ -86,6 +91,7 @@
       - power inline auto
     parents:
       - "{{ item.key }}"
+    save_when: modified
   when:
     - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
     - "{{ item.value.poe }}"
