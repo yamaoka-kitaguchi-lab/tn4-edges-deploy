@@ -105,7 +105,7 @@ class DevConfig:
     self.all_vlans = self.__filter_vlan_group(netbox_cli.get_all_vlans())
     self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
-    self.__all_core_mclag_interfaces = None  # cache
+    self.__all_core_mclag_interfaces = {}  # cache
 
 
   def __regex_device_name(self, device_name):
@@ -255,12 +255,11 @@ class DevConfig:
 
 
   def get_all_devices(self):
-    roles = [DevConfig.DEV_ROLE_EDGE]
     return [{
       "hostname": d["name"],
       "role":     d["device_role"]["slug"],
       "region":   self.get_region(d["site"]["slug"]),
-    } for d in self.all_devices if d["device_role"]["slug"] in roles]
+    } for d in self.all_devices]
 
 
   def get_manufacturer(self, hostname):
@@ -365,39 +364,38 @@ class DevConfig:
 
 
   def __get_core_mclag_interfaces(self, hostname):
-    if self.__all_core_mclag_interfaces is not None:
+    if len(self.__all_core_mclag_interfaces) > 0:
       try:
         return self.__all_core_mclag_interfaces[hostname]
       except KeyError:
         return {}
 
+    has_tag = lambda p, tag: tag in p["tags"]
     is_core = lambda d: d["device_role"]["slug"] == DevConfig.DEV_ROLE_CORE
-    is_mclag_master = lambda i: DevConfig.TAG_MCLAG_MASTER in i["tags"]
-    is_mclag_master_o = lambda i: DevConfig.TAG_MCLAG_MASTER_OOKAYAMA in i["tags"]
-    is_mclag_master_s = lambda i: DevConfig.TAG_MCLAG_MASTER_SUZUKAKE in i["tags"]
-    is_mclag_slave  = lambda i: DevConfig.TAG_MCLAG_SLAVE in i["tags"]
-    is_mclag_slave_o  = lambda i: DevConfig.TAG_MCLAG_SLAVE_OOKAYAMA in i["tags"]
-    is_mclag_slave_s  = lambda i: DevConfig.TAG_MCLAG_SLAVE_SUZUKAKE in i["tags"]
-
     core_hostnames = [d["name"] for d in self.all_devices if is_core(d)]
     masters, masters_o, masters_s = {}, {}, {}
+
     for hostname in core_hostnames:
       for ifname, prop in self.all_interfaces[hostname].items():
-        if is_mclag_master(prop):
+        if has_tag(prop, DevConfig.TAG_MCLAG_MASTER):
           masters[ifname] = prop
-        elif is_mclag_master_o(prop):
+        elif has_tag(prop, DevConfig.TAG_MCLAG_MASTER_OOKAYAMA):
           masters_o[ifname] = prop
-        elif is_mclag_master_s(prop):
+        elif has_tag(prop, DevConfig.TAG_MCLAG_MASTER_SUZUKAKE):
           masters_s[ifname] = prop
 
     for hostname in core_hostnames:
       for ifname, prop in self.all_interfaces[hostname].items():
-        if is_mclag_slave(prop):
-          prop = masters[ifname]
-        elif is_mclag_slave_o(prop):
-          prop = masters_o[ifname]
-        elif is_mclag_slave_s(prop):
-          prop = masters_s[ifname]
+        try:
+          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE):
+            prop = masters[ifname]
+          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_OOKAYAMA):
+            prop = masters_o[ifname]
+          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_SUZUKAKE):
+            prop = masters_s[ifname]
+        except KeyError:
+          continue
+
         try:
           self.__all_core_mclag_interfaces[hostname][ifname] = prop
         except KeyError:
@@ -468,7 +466,8 @@ def dynamic_inventory():
 if __name__ == "__main__":
   inventory = dynamic_inventory()
   #print(json.dumps(inventory))
-  pprint(inventory["core-gsic"])
-  pprint(inventory["core-honkan"])
-  pprint(inventory["core-s1"])
-  pprint(inventory["core-s7"])
+
+  #pprint(inventory["_meta"]["hostvars"]["core-gsic"]["interfaces"])
+  pprint(inventory["_meta"]["hostvars"]["core-honkan"]["interfaces"])
+  #pprint(inventory["_meta"]["hostvars"]["core-si"]["interfaces"])
+  #pprint(inventory["_meta"]["hostvars"]["core-s7"]["interfaces"])
