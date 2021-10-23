@@ -390,7 +390,6 @@ class DevConfig:
         elif is_mclag_master_s(prop):
           masters_s[ifname] = prop
 
-
     for hostname in core_hostnames:
       for ifname, prop in self.all_interfaces[hostname].items():
         if is_mclag_slave(prop):
