@@ -1,0 +1,17 @@
+---
+- name: Display all variables and facts known for a host
+  debug:
+    var: hostvars[inventory_hostname]
+  tags:
+    - develop
+    - verbose
+
+- name: Show version
+
+- name: Create pre-snapshots
+
+- name: Check template rendering result
+
+- name: Update interface configuration
+
+- name: Create post-snapshots
