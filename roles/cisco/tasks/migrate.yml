@@ -48,7 +48,9 @@
         access:
           vlan: "{{ item.value.vid[0] }}"
     state: replaced
-  when: "{{ item.value.vlan_mode }} == 'access'"
+  when:
+    - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
+    - "{{ item.value.vlan_mode }} == 'access'"
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Update interface VLAN (2/3) - activating trunk VLAN
@@ -59,7 +61,9 @@
           allowed_vlans: "{{ item.value.vids|join(',') }}"
           encapsulation: dot1q
     state: replaced
-  when: "{{ item.value.vlan_mode }} == 'trunk'"
+  when:
+    - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
+    - "{{ item.value.vlan_mode }} == 'trunk'"
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Update interface VLAN (3/3) - activating native VLAN
@@ -71,8 +75,20 @@
           encapsulation: dot1q
     state: merged
   when:
+    - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
     - "{{ item.value.vlan_mode }} == 'trunk'"
     - "{{ item.value.native_vid }}"
+  loop: "{{ lookup('dict', interfaces) }}"
+
+- name: Update interface PoE status
+  ios_config:
+    lines:
+      - power inline auto
+    parents:
+      - "{{ item.key }}"
+  when:
+    - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
+    - "{{ item.value.poe }}"
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Create post-snapshots
