@@ -7,6 +7,7 @@
     - verbose
 
 - name: Create pre-snapshots
+  connection: network_cli
   ios_config:
     backup: yes
     backup_options:
@@ -16,6 +17,7 @@
     - nondry
 
 - name: Update VLAN database
+  connection: network_cli
   ios_vlans:
     config:
       - name: "{{ item.name }}"
@@ -27,6 +29,7 @@
   loop: "{{ vlans }}"
 
 - name: Update interface description and status
+  connection: network_cli
   ios_interfaces:
     config:
       - name: "{{ item.key }}"
@@ -37,6 +40,7 @@
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Update interface VLAN (1/3) - activating access VLAN
+  connection: network_cli
   ios_l2_interfaces:
     config:
       - name: "{{ item.key }}"
@@ -50,6 +54,7 @@
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Update interface VLAN (2/3) - activating trunk VLAN
+  connection: network_cli
   ios_l2_interfaces:
     config:
       - name: "{{ item.key }}"
@@ -64,6 +69,7 @@
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Update interface VLAN (3/3) - activating native VLAN
+  connection: network_cli
   ios_l2_interfaces:
     config:
       - name: "{{ item.key }}"
@@ -79,6 +85,7 @@
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Update interface PoE status
+  connection: network_cli
   ios_config:
     lines:
       - power inline auto
@@ -91,6 +98,7 @@
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Create post-snapshots
+  connection: network_cli
   ios_config:
     backup: yes
     backup_options:
