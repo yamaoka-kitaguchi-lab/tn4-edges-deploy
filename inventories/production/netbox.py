@@ -408,8 +408,37 @@ class DevConfig:
         except KeyError:
           continue
 
-        for key in migrate_keys:
-          prop[key] = master_prop[key]
+        is_vlan_port = master_prop["mode"] is not None
+        vlan_mode, native_vid, vids, is_trunk_all = None, None, [], False
+        if is_vlan_port:
+          vlan_mode = master_prop["mode"]["value"].lower()
+          has_untagged_vid = master_prop["untagged_vlan"] is not None
+          has_tagged_vid = master_prop["tagged_vlans"] is not None
+
+          if vlan_mode == "access":
+            if has_untagged_vid:
+              vid = master_prop["untagged_vlan"]["vid"]
+              vids = [vid]
+
+          elif vlan_mode == "tagged":
+            vlan_mode = "trunk"  # Format conversion: from netbox to juniper/cisco style
+            if has_tagged_vid:
+              vids = [v["vid"] for v in master_prop["tagged_vlans"]]
+            if has_untagged_vid:
+              native_vid = master_prop["untagged_vlan"]["vid"]
+              vids.append(native_vid)
+
+          elif vlan_mode == "tagged-all":
+            vlan_mode = "trunk"
+            is_trunk_all = True
+
+        prop = {
+          "enabled":    master_prop["enabled"],
+          "vlan_mode":  vlan_mode,
+          "vids":       vids,
+          "native_vid": native_vid,
+          "trunk_all":  is_trunk_all,
+        }
 
         try:
           self.__all_core_mclag_interfaces[hostname][ifname] = prop

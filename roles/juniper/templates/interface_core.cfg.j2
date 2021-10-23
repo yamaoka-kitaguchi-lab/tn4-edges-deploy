@@ -1,0 +1,17 @@
+{% for interface, prop in interfaces.items() %}
+set interfaces {{ interface }} {{ "enable" if prop.enabled else "disable" }}
+{% if prop.vlan_mode %}
+delete interfaces {{ interface }} unit 0 family ethernet-switching
+set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.vlan_mode }}
+{% if prop.trunk_all %}
+set interfaces {{ interface }} unit 0 family ethernet-switching vlan members all
+{% else %}
+{% for vid in prop.vids %}
+set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ vid }}
+{% endfor %}
+{% endif %}
+{% if prop.native_vid %}
+set interfaces {{ interface }} native-vlan-id {{ prop.native_vid }}
+{% endif %}
+{% endif %}
+{% endfor %}
