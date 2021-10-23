@@ -105,7 +105,7 @@ class DevConfig:
     self.all_vlans = self.__filter_vlan_group(netbox_cli.get_all_vlans())
     self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
-    self.__all_core_mclag_interfaces = {}  # cache
+    self.__all_core_mclag_interfaces = None  # cache
 
 
   def __regex_device_name(self, device_name):
@@ -365,11 +365,12 @@ class DevConfig:
 
   ## ToDo: refactoring dirty logic
   def __get_core_mclag_interfaces(self, hostname):
-    if len(self.__all_core_mclag_interfaces) > 0:
+    if self.__all_core_mclag_interfaces is not None:
       try:
         return self.__all_core_mclag_interfaces[hostname]
       except KeyError:
         return {}
+    self.__all_core_mclag_interfaces = {}
 
     has_tag = lambda p, tag: tag in p["tags"]
     is_core = lambda d: d["device_role"]["slug"] == DevConfig.DEV_ROLE_CORE
@@ -481,7 +482,7 @@ if __name__ == "__main__":
   inventory = dynamic_inventory()
   #print(json.dumps(inventory))
 
-  #pprint(inventory["_meta"]["hostvars"]["core-honkan"]["interfaces"])
+  pprint(inventory["_meta"]["hostvars"]["core-honkan"]["interfaces"])
   pprint(inventory["_meta"]["hostvars"]["core-gsic"]["interfaces"])
-  #pprint(inventory["_meta"]["hostvars"]["core-si"]["interfaces"])
-  #pprint(inventory["_meta"]["hostvars"]["core-s7"]["interfaces"])
+  pprint(inventory["_meta"]["hostvars"]["core-si"]["interfaces"])
+  pprint(inventory["_meta"]["hostvars"]["core-s7"]["interfaces"])
