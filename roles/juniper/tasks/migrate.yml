@@ -44,7 +44,6 @@
 
 - name: Update interface configurations (Edge)
   connection: netconf
-  hosts: EDGE-SW
   junos_config:
     src: interface_edge.cfg.j2
     src_format: set
@@ -52,10 +51,10 @@
     update: merge
   vars:
     ansible_command_timeout: 60
+  when: "'EDGE-SW' in group_names"
 
 - name: Update interface configurations (Core)
   connection: netconf
-  hosts: CORE-SW
   junos_config:
     src: interface_core.cfg.j2
     src_format: set
@@ -63,6 +62,7 @@
     update: merge
   vars:
     ansible_command_timeout: 60
+  when: "'CORE-SW' in group_names"
 
 - name: Create post-snapshots
   connection: netconf
