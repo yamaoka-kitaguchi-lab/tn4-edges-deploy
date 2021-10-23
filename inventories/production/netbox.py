@@ -363,6 +363,7 @@ class DevConfig:
     return interfaces
 
 
+  ## ToDo: refactoring dirty logic
   def __get_core_mclag_interfaces(self, hostname):
     if len(self.__all_core_mclag_interfaces) > 0:
       try:
@@ -373,28 +374,41 @@ class DevConfig:
     has_tag = lambda p, tag: tag in p["tags"]
     is_core = lambda d: d["device_role"]["slug"] == DevConfig.DEV_ROLE_CORE
     core_hostnames = [d["name"] for d in self.all_devices if is_core(d)]
+    migrate_keys = ["enabled", "mode", "tagged_vlans", "untagged_vlan"]
     masters, masters_o, masters_s = {}, {}, {}
 
     for hostname in core_hostnames:
       for ifname, prop in self.all_interfaces[hostname].items():
+        is_lag_parent = prop["type"]["value"] == "lag"
+        if not is_lag_parent:
+          continue
+
+        master_prop = {key: prop[key] for key in migrate_keys}
         if has_tag(prop, DevConfig.TAG_MCLAG_MASTER):
-          masters[ifname] = prop
+          masters[ifname] = master_prop
         elif has_tag(prop, DevConfig.TAG_MCLAG_MASTER_OOKAYAMA):
-          masters_o[ifname] = prop
+          masters_o[ifname] = master_prop
         elif has_tag(prop, DevConfig.TAG_MCLAG_MASTER_SUZUKAKE):
-          masters_s[ifname] = prop
+          masters_s[ifname] = master_prop
 
     for hostname in core_hostnames:
       for ifname, prop in self.all_interfaces[hostname].items():
+        is_lag_parent = prop["type"]["value"] == "lag"
+        if not is_lag_parent:
+          continue
+
         try:
-          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE):
-            prop = masters[ifname]
-          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_OOKAYAMA):
-            prop = masters_o[ifname]
-          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_SUZUKAKE):
-            prop = masters_s[ifname]
+          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE) or has_tag(prop, DevConfig.TAG_MCLAG_MASTER):
+            master_prop = masters[ifname]
+          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_OOKAYAMA) or has_tag(prop, DevConfig.TAG_MCLAG_MASTER_OOKAYAMA):
+            master_prop = masters_o[ifname]
+          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_SUZUKAKE) or has_tag(prop, DevConfig.TAG_MCLAG_MASTER_SUZUKAKE):
+            master_prop = masters_s[ifname]
         except KeyError:
           continue
+
+        for key in migrate_keys:
+          prop[key] = master_prop[key]
 
         try:
           self.__all_core_mclag_interfaces[hostname][ifname] = prop
@@ -467,7 +481,7 @@ if __name__ == "__main__":
   inventory = dynamic_inventory()
   #print(json.dumps(inventory))
 
-  #pprint(inventory["_meta"]["hostvars"]["core-gsic"]["interfaces"])
-  pprint(inventory["_meta"]["hostvars"]["core-honkan"]["interfaces"])
+  #pprint(inventory["_meta"]["hostvars"]["core-honkan"]["interfaces"])
+  pprint(inventory["_meta"]["hostvars"]["core-gsic"]["interfaces"])
   #pprint(inventory["_meta"]["hostvars"]["core-si"]["interfaces"])
   #pprint(inventory["_meta"]["hostvars"]["core-s7"]["interfaces"])
