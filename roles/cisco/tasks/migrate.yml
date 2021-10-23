@@ -70,7 +70,9 @@
           native_vlan: "{{ item.value.native_vid }}"
           encapsulation: dot1q
     state: merged
-  when: "{{ item.value.vlan_mode }} == 'trunk' and {{ item.value.native_vid }}"
+  when:
+    - "{{ item.value.vlan_mode }} == 'trunk'"
+    - "{{ item.value.native_vid }}"
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Create post-snapshots
