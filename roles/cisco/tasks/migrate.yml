@@ -32,15 +32,35 @@
     state: overridden
   loop: "{{ vlans }}"
 
-- name: Update interface configuration
+- name: Update interface description and status
   ios_interfaces:
     config:
       - name: "{{ item.key }}"
         description: "{{ item.value.description }}"
         enabled: "{{ item.value.enabled }}"
-    state: overridden
+    state: replaced
   loop: "{{ lookup('dict', interfaces) }}"
 
+- name: Update interface VLAN (access)
+  ios_l2_interfaces:
+    config:
+      - name: "{{ item.key }}"
+        access:
+          vlan: "{{ item.value.vid[0] }}"
+    state: replaced
+  when: "{{ item.value.vlan_mode }} == access"
+  loop: "{{ lookup('dict', interfaces) }}"
+
+- name: Update interface VLAN (trunk)
+  ios_l2_interfaces:
+    config:
+      - name: "{{ item.key }}"
+        trunk:
+          allowed_vlans: "{{ item.value.vids|join(',') }}"
+          encapsulation: dot1q
+    state: replaced
+  when: "{{ item.value.vlan_mode }} == trunk"
+  loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Create post-snapshots
   ios_config:
