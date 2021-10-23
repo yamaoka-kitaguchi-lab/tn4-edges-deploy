@@ -6,12 +6,47 @@
     - develop
     - verbose
 
-- name: Show version
+- name: Gather all legacy facts
+  ios_facts:
+    gather_subset: all
+  tags:
+    - develop
+    - verbose
 
 - name: Create pre-snapshots
+  ios_config:
+    backup: yes
+    backup_options:
+      filename: "{{ hostname }}_before.cfg"
+      dir_path: "backup/cisco_config.{{ datetime }}"
+  tags:
+    - nondry
 
-- name: Check template rendering result
+- name: Update VLAN database
+  ios_vlans:
+    config:
+      - name: "{{ item.name }}"
+        vlan_id: "{{ item.vid }}"
+        state: active
+        shutdown: disabled
+    state: overridden
+  loop: "{{ vlans }}"
 
 - name: Update interface configuration
+  ios_interfaces:
+    config:
+      - name: "{{ item.key }}"
+        description: "{{ item.value.description }}"
+        enabled: "{{ item.value.enabled }}"
+    state: overridden
+  loop: "{{ lookup('dict', interfaces) }}"
+
 
 - name: Create post-snapshots
+  ios_config:
+    backup: yes
+    backup_options:
+      filename: "{{ hostname }}_after.cfg"
+      dir_path: "backup/cisco_config.{{ datetime }}"
+  tags:
+    - nondry
