@@ -77,21 +77,27 @@ class NetBoxClient:
 
 
 class DevConfig:
-  VLAN_GROUP             = "titanet"
-  IF_MGMT_JUNIPER        = "irb"
-  IF_MGMT_CISCO          = "MGMT"
-  DEV_ROLE_EDGE          = "edge-sw"
-  DEV_ROLE_CORE          = "core-sw"
-  REGION_OOKAYAMA        = "ookayama"
-  REGION_SUZUKAKE        = "suzukake"
-  REGION_TAMACHI         = "tamachi"
-  TAG_MGMT_EDGE_OOKAYAMA = "mgmt-vlan-eo"
-  TAG_MGMT_EDGE_SUZUKAKE = "mgmt-vlan-es"
-  TAG_MGMT_CORE_OOKAYAMA = "mgmt-vlan-co"
-  TAG_MGMT_CORE_SUZUKAKE = "mgmt-vlan-cs"
-  TAG_PROTECT            = "protect"
-  TAG_UPLINK             = "uplink"
-  TAG_POE                = "poe"
+  VLAN_GROUP                = "titanet"
+  IF_MGMT_JUNIPER           = "irb"
+  IF_MGMT_CISCO             = "MGMT"
+  DEV_ROLE_EDGE             = "edge-sw"
+  DEV_ROLE_CORE             = "core-sw"
+  REGION_OOKAYAMA           = "ookayama"
+  REGION_SUZUKAKE           = "suzukake"
+  REGION_TAMACHI            = "tamachi"
+  TAG_MGMT_EDGE_OOKAYAMA    = "mgmt-vlan-eo"
+  TAG_MGMT_EDGE_SUZUKAKE    = "mgmt-vlan-es"
+  TAG_MGMT_CORE_OOKAYAMA    = "mgmt-vlan-co"
+  TAG_MGMT_CORE_SUZUKAKE    = "mgmt-vlan-cs"
+  TAG_MCLAG_MASTER          = "mclag-master-core"
+  TAG_MCLAG_MASTER_OOKAYAMA = "mclag-master-co"
+  TAG_MCLAG_MASTER_SUZUKAKE = "mclag-master-cs"
+  TAG_MCLAG_SLAVE           = "mclag-slave-core"
+  TAG_MCLAG_SLAVE_OOKAYAMA  = "mclag-slave-co"
+  TAG_MCLAG_SLAVE_SUZUKAKE  = "mclag-slave-cs"
+  TAG_PROTECT               = "protect"
+  TAG_UPLINK                = "uplink"
+  TAG_POE                   = "poe"
 
 
   def __init__(self, netbox_cli):
@@ -99,6 +105,7 @@ class DevConfig:
     self.all_vlans = self.__filter_vlan_group(netbox_cli.get_all_vlans())
     self.all_devices = self.__filter_active_devices(netbox_cli.get_all_devices())
     self.all_interfaces = self.__group_by_device(netbox_cli.get_all_interfaces())
+    self.__all_core_mclag_interfaces = None  # cache
 
 
   def __regex_device_name(self, device_name):
@@ -291,7 +298,7 @@ class DevConfig:
     return lag_members
 
 
-  def get_interfaces(self, hostname):
+  def __get_edge_interfaces(self, hostname):
     interfaces = {}
 
     ## See: https://github.com/netbox-community/netbox/blob/develop/netbox/dcim/choices.py#L688-L923
@@ -357,6 +364,54 @@ class DevConfig:
     return interfaces
 
 
+  def __get_core_mclag_interfaces(self, hostname):
+    if self.__all_core_mclag_interfaces is not None:
+      try:
+        return self.__all_core_mclag_interfaces[hostname]
+      except KeyError:
+        return {}
+
+    is_core = lambda d: d["device_role"]["slug"] == DevConfig.DEV_ROLE_CORE
+    is_mclag_master = lambda i: DevConfig.TAG_MCLAG_MASTER in i["tags"]
+    is_mclag_master_o = lambda i: DevConfig.TAG_MCLAG_MASTER_OOKAYAMA in i["tags"]
+    is_mclag_master_s = lambda i: DevConfig.TAG_MCLAG_MASTER_SUZUKAKE in i["tags"]
+    is_mclag_slave  = lambda i: DevConfig.TAG_MCLAG_SLAVE in i["tags"]
+    is_mclag_slave_o  = lambda i: DevConfig.TAG_MCLAG_SLAVE_OOKAYAMA in i["tags"]
+    is_mclag_slave_s  = lambda i: DevConfig.TAG_MCLAG_SLAVE_SUZUKAKE in i["tags"]
+
+    core_hostnames = [d["name"] for d in self.all_devices if is_core(d)]
+    masters, masters_o, masters_s = {}, {}, {}
+    for hostname in core_hostnames:
+      for ifname, prop in self.all_interfaces[hostname].items():
+        if is_mclag_master(prop):
+          masters[ifname] = prop
+        elif is_mclag_master_o(prop):
+          masters_o[ifname] = prop
+        elif is_mclag_master_s(prop):
+          masters_s[ifname] = prop
+
+
+    for hostname in core_hostnames:
+      for ifname, prop in self.all_interfaces[hostname].items():
+        if is_mclag_slave(prop):
+          prop = masters[ifname]
+        elif is_mclag_slave_o(prop):
+          prop = masters_o[ifname]
+        elif is_mclag_slave_s(prop):
+          prop = masters_s[ifname]
+        try:
+          self.__all_core_mclag_interfaces[hostname][ifname] = prop
+        except KeyError:
+          self.__all_core_mclag_interfaces[hostname] = {ifname: prop}
+
+
+  def get_interfaces(self, role, hostname):
+    if role == DevConfig.DEV_ROLE_EDGE:
+      return self.__get_edge_interfaces(hostname)
+    elif role == DevConfig.DEV_ROLE_CORE:
+      return self.__get_core_mclag_interfaces(hostname)
+
+
 def __load_encrypted_secrets():
   with open(VAULT_FILE) as v, open(VAULT_PASSWORD_FILE, "r") as p:
     key = str.encode(p.read().rstrip())
@@ -389,7 +444,8 @@ def dynamic_inventory():
 
   for device in devices:
     hostname = device["hostname"]
-    group = device["role"].upper()
+    role = device["role"]
+    group = role.upper()
     try:
       inventory[group]["hosts"].append(hostname)
     except KeyError:
@@ -400,8 +456,8 @@ def dynamic_inventory():
       "region":       device["region"],
       "manufacturer": cf.get_manufacturer(hostname),
       "vlans":        cf.get_vlans(hostname),
-      "mgmt_vlan":    cf.get_mgmt_vlan(device["role"], device["region"]),
-      "interfaces":   cf.get_interfaces(hostname),
+      "mgmt_vlan":    cf.get_mgmt_vlan(role, device["region"]),
+      "interfaces":   cf.get_interfaces(role, hostname),
       "lag_members":  cf.get_lag_members(hostname),
       "ansible_host": cf.get_ip_address(hostname),
       "datetime":     ts,
@@ -412,4 +468,8 @@ def dynamic_inventory():
 
 if __name__ == "__main__":
   inventory = dynamic_inventory()
-  print(json.dumps(inventory))
+  #print(json.dumps(inventory))
+  pprint(inventory["core-gsic"])
+  pprint(inventory["core-honkan"])
+  pprint(inventory["core-s1"])
+  pprint(inventory["core-s7"])
