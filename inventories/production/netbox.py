@@ -416,12 +416,16 @@ class DevConfig:
         except KeyError:
           self.__all_core_mclag_interfaces[hostname] = {ifname: prop}
 
+    return self.__all_core_mclag_interfaces[hostname]
+
 
   def get_interfaces(self, role, hostname):
+    interfaces = {}
     if role == DevConfig.DEV_ROLE_EDGE:
-      return self.__get_edge_interfaces(hostname)
+      interfaces = self.__get_edge_interfaces(hostname)
     elif role == DevConfig.DEV_ROLE_CORE:
-      return self.__get_core_mclag_interfaces(hostname)
+      interfaces = self.__get_core_mclag_interfaces(hostname)
+    return interfaces
 
 
 def __load_encrypted_secrets():
@@ -480,9 +484,4 @@ def dynamic_inventory():
 
 if __name__ == "__main__":
   inventory = dynamic_inventory()
-  #print(json.dumps(inventory))
-
-  pprint(inventory["_meta"]["hostvars"]["core-honkan"]["interfaces"])
-  pprint(inventory["_meta"]["hostvars"]["core-gsic"]["interfaces"])
-  pprint(inventory["_meta"]["hostvars"]["core-si"]["interfaces"])
-  pprint(inventory["_meta"]["hostvars"]["core-s7"]["interfaces"])
+  print(json.dumps(inventory))
