@@ -41,17 +41,17 @@
     state: replaced
   loop: "{{ lookup('dict', interfaces) }}"
 
-- name: Update interface VLAN (access)
+- name: Update interface VLAN (1/3) - activating access VLAN
   ios_l2_interfaces:
     config:
       - name: "{{ item.key }}"
         access:
           vlan: "{{ item.value.vid[0] }}"
     state: replaced
-  when: "{{ item.value.vlan_mode }} == access"
+  when: "{{ item.value.vlan_mode }} == 'access'"
   loop: "{{ lookup('dict', interfaces) }}"
 
-- name: Update interface VLAN (trunk)
+- name: Update interface VLAN (2/3) - activating trunk VLAN
   ios_l2_interfaces:
     config:
       - name: "{{ item.key }}"
@@ -59,7 +59,18 @@
           allowed_vlans: "{{ item.value.vids|join(',') }}"
           encapsulation: dot1q
     state: replaced
-  when: "{{ item.value.vlan_mode }} == trunk"
+  when: "{{ item.value.vlan_mode }} == 'trunk'"
+  loop: "{{ lookup('dict', interfaces) }}"
+
+- name: Update interface VLAN (3/3) - activating native VLAN
+  ios_l2_interfaces:
+    config:
+      - name: "{{ item.key }}"
+        trunk:
+          native_vlan: "{{ item.value.native_vid }}"
+          encapsulation: dot1q
+    state: merged
+  when: "{{ item.value.vlan_mode }} == 'trunk' and {{ item.value.native_vid }}"
   loop: "{{ lookup('dict', interfaces) }}"
 
 - name: Create post-snapshots
