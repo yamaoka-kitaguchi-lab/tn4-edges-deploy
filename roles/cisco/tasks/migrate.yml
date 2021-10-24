@@ -22,7 +22,7 @@
         vlan_id: "{{ item.vid }}"
         state: active
         shutdown: disabled
-    state: overridden
+    state: merged
   loop: "{{ vlans }}"
 
 - name: Update interface description and status
