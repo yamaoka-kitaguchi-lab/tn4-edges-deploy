@@ -122,7 +122,7 @@ class DevConfig:
     is_mgmt_port = interface_name in [DevConfig.IF_MGMT_JUNIPER, DevConfig.IF_MGMT_CISCO]
     is_upstream_port = interface_name == "ae0"
     is_qsfp_port = interface_name[:3] == "et-"
-    is_lag_port = interface_name[:2] == "ae"
+    is_lag_port = interface_name[:2] == "ae" or interface_name[:12] == "Port-channel"
     return is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port
 
 

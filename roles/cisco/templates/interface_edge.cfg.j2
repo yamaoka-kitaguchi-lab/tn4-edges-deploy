@@ -1,0 +1,37 @@
+{% for vlan in vlans %}
+{% if not vlan.protected %}
+vlan {{ vlan.vid }}
+ name {{ vlan.name }}
+{% endif %}
+{% endfor %}
+{% for interface, prop in interfaces.items() %}
+{% if prop.physical and not prop.lag_member %}
+interface {{ interface }}
+{% if prop.enabled %}
+ no shutdown
+{% else %}
+ shutdown
+{% endif %}
+{% if prop.description %}
+ description {{ prop.description }}
+{% endif %}
+{% if prop.trunk_all %}
+ switchport mode trunk
+ switchport trunk alloewd vlan all
+{% elif prop.vlan_mode == "access" %}
+ switchport mode access
+ switchport access vlan {{ prop.vids[0] }}
+{% elif prop.vlan_mode == "trunk" %}
+ switchport mode trunk
+{% for vid in prop.vids %}
+ switchport trunk allowed vlan add {{ vid }}
+{% endfor %}
+{% endif %}
+{% if prop.native_vid %}
+ switchport trunk native vlan {{ prop.native_vid }}
+{% endif %}
+{% if prop.poe %}
+ power inline auto
+{% endif %}
+{% endif %}
+{% endfor %}
