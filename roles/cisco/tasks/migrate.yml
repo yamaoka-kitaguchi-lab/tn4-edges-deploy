@@ -15,75 +15,20 @@
   tags:
     - nondry
 
-- name: Update VLAN database
-  ios_vlans:
-    config:
-      - name: "{{ item.name }}"
-        vlan_id: "{{ item.vid }}"
-        state: active
-        shutdown: disabled
-    state: merged
-  loop: "{{ vlans }}"
+- name: Check template rendering result (Edge)
+  debug:
+    msg: "{{ lookup('template', 'interface_edge.cfg.j2') }}"
+  tags:
+    - develop
+    - rendering
 
-- name: Update interface description and status
-  ios_interfaces:
-    config:
-      - name: "{{ item.key }}"
-        description: "{{ item.value.description }}"
-        enabled: "{{ item.value.enabled }}"
-    state: replaced
-  loop: "{{ lookup('dict', interfaces) }}"
-
-- name: Update interface VLAN (1/3) - activating access VLAN
-  ios_l2_interfaces:
-    config:
-      - name: "{{ item.key }}"
-        access:
-          vlan: "{{ item.value.vid[0] }}"
-    state: replaced
-  when:
-    - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
-    - "{{ item.value.vlan_mode }} == 'access'"
-  loop: "{{ lookup('dict', interfaces) }}"
-
-- name: Update interface VLAN (2/3) - activating trunk VLAN
-  ios_l2_interfaces:
-    config:
-      - name: "{{ item.key }}"
-        trunk:
-          allowed_vlans: "{{ item.value.vids|join(',') }}"
-          encapsulation: dot1q
-    state: replaced
-  when:
-    - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
-    - "{{ item.value.vlan_mode }} == 'trunk'"
-  loop: "{{ lookup('dict', interfaces) }}"
-
-- name: Update interface VLAN (3/3) - activating native VLAN
-  ios_l2_interfaces:
-    config:
-      - name: "{{ item.key }}"
-        trunk:
-          native_vlan: "{{ item.value.native_vid }}"
-          encapsulation: dot1q
-    state: merged
-  when:
-    - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
-    - "{{ item.value.vlan_mode }} == 'trunk'"
-    - "{{ item.value.native_vid }}"
-  loop: "{{ lookup('dict', interfaces) }}"
-
-- name: Update interface PoE status
+- name: Update interface configurations (Edge)
   ios_config:
-    lines:
-      - power inline auto
-    parents:
-      - "{{ item.key }}"
-    save_when: modified
-  when:
-    - "{{ item.value.physical }} and not {{ item.value.lag_member }}"
-    - "{{ item.value.poe }}"
-  loop: "{{ lookup('dict', interfaces) }}"
+    src: interface_edge.cfg.j2
+    save_when: changed
+  vars:
+    ansible_command_timeout: 60
+  when: "'EDGE-SW' in group_names"
 
 - name: Create post-snapshots
   ios_config:
