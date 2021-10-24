@@ -17,6 +17,8 @@
 - name: Enable NETCONF
   connection: network_cli
   junos_netconf:
+  vars:
+    ansible_command_timeout: 60
 
 - name: Create pre-snapshots
   connection: netconf
