@@ -23,7 +23,7 @@ def load_inventories():
   return inventories
 
 
-def render_templates(tpl_path, device_role, inventories, trim_blocks=False):
+def render_templates(tpl_path, device_role, inventories, manufacturer=None, trim_blocks=False):
   loader_base = os.path.join(CURDIR, os.path.dirname(tpl_path))
   tpl_name = os.path.basename(tpl_path)
   env = jinja2.Environment(loader=jinja2.FileSystemLoader(loader_base), trim_blocks=trim_blocks)
@@ -43,6 +43,9 @@ def render_templates(tpl_path, device_role, inventories, trim_blocks=False):
   results = {}
   for hostname in hostnames:
     params = inventories["_meta"]["hostvars"][hostname]
+    if manufacturer is not None:
+      if params["manufacturer"] != manufacturer:
+        continue
     try:
       ip = params["ansible_host"]
       host = f"{hostname} ({ip})"
@@ -61,13 +64,15 @@ def main():
   parser = argparse.ArgumentParser(description="rendering config template reflecting NetBox database")
   parser.add_argument("-t", "--template", required=True, dest="PATH", help="path of the template from (e.g., ./roles/juniper/templates/overwrite.cfg.j2)")
   parser.add_argument("-d", "--device-role", required=True, dest="ROLE", help="device role (e.g., edge-sw)")
+  parser.add_argument("-m", "--manufacturer", required=False, dest="VENDOR", help="manufacturer (e.g., juniper)")
   args = parser.parse_args()
 
   tpl_path = args.PATH.strip("/")
   device_role = args.ROLE.upper()
+  manufacturer = args.VENDOR
   inventories = load_inventories()
 
-  results = render_templates(tpl_path, device_role, inventories)
+  results = render_templates(tpl_path, device_role, inventories, manufacturer=manufacturer)
   for host, result in results.items():
     print("\n".join([":"*25, host, ":"*25, result]), end="\n"*2)
 
