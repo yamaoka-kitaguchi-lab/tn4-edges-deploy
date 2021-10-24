@@ -347,17 +347,21 @@ class DevConfig:
           vlan_mode = "trunk"
           is_trunk_all = True
 
+      ## Cisco
+      removed_vids = [vid for vid in range(1,4095) if vid not in vids]
+
       interfaces[ifname] = {
-        "physical":    not (is_mgmt_port or is_lag_port),
-        "enabled":     prop["enabled"],
-        "description": description,
-        "lag_member":  is_lag_member_port,
-        "poe":         is_poe_port,
-        "auto_speed":  True,
-        "vlan_mode":   vlan_mode,
-        "vids":        vids,
-        "native_vid":  native_vid,
-        "trunk_all":   is_trunk_all,
+        "physical":     not (is_mgmt_port or is_lag_port),
+        "enabled":      prop["enabled"],
+        "description":  description,
+        "lag_member":   is_lag_member_port,
+        "poe":          is_poe_port,
+        "auto_speed":   True,
+        "vlan_mode":    vlan_mode,
+        "vids":         vids,
+        "removed_vids": removed_vids,
+        "native_vid":   native_vid,
+        "trunk_all":    is_trunk_all,
       }
 
     return interfaces

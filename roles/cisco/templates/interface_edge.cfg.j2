@@ -23,12 +23,8 @@ interface {{ interface }}
  switchport access vlan {{ prop.vids[0] }}
 {% elif prop.vlan_mode == "trunk" %}
  switchport mode trunk
- no switchport trunk allowed vlan
-{% for vid in prop.vids %}
-{% if vid != prop.native_vid %}
- switchport trunk allowed vlan add {{ vid }}
-{% endif %}
-{% endfor %}
+ switchport trunk allowed vlan add {{ prop.vids | join(',') }}
+ switchport trunk allowed vlan remove {{ prop.removed_vids | join(',') }}
 {% endif %}
 {% if prop.native_vid %}
  switchport trunk native vlan {{ prop.native_vid }}
