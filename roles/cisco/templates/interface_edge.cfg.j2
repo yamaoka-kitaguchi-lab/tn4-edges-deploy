@@ -23,12 +23,15 @@ interface {{ interface }}
  switchport access vlan {{ prop.vids[0] }}
 {% elif prop.vlan_mode == "trunk" %}
  switchport mode trunk
+ no switchport trunk allowed vlan
 {% for vid in prop.vids %}
  switchport trunk allowed vlan add {{ vid }}
 {% endfor %}
 {% endif %}
 {% if prop.native_vid %}
  switchport trunk native vlan {{ prop.native_vid }}
+{% else %}
+ no switchport trunk native vlan
 {% endif %}
 {% if prop.poe %}
  power inline auto
