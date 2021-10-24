@@ -1,38 +1,33 @@
 ---
-- name: Enable NETCONF
-  connection: network_cli
-  junos_netconf:
-
 - name: Create pre-snapshots
-  connection: netconf
-  junos_config:
+  ios_config:
     backup: yes
     backup_options:
       filename: "{{ hostname }}_before.cfg"
-      dir_path: "backup/junos_config.{{ datetime }}"
+      dir_path: "backup/cisco_config.{{ datetime }}"
   tags:
     - nondry
 
-- name: Check template rendering result
+- name: Check template rendering result (Edge)
   debug:
     msg: "{{ lookup('template', 'overwrite.cfg.j2') }}"
   tags:
     - develop
+    - rendering
 
-- name: Overwrite configurations
-  connection: netconf
-  junos_config:
+- name: Update interface configurations (Edge)
+  ios_config:
     src: overwrite.cfg.j2
-    src_format: set
-    comment: Action performed by ansible
-    update: merge
+    save_when: changed
+  vars:
+    ansible_command_timeout: 60
+  when: "'EDGE-SW' in group_names"
 
 - name: Create post-snapshots
-  connection: netconf
-  junos_config:
+  ios_config:
     backup: yes
     backup_options:
       filename: "{{ hostname }}_after.cfg"
-      dir_path: "backup/junos_config.{{ datetime }}"
+      dir_path: "backup/cisco_config.{{ datetime }}"
   tags:
     - nondry
