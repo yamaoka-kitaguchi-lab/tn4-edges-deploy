@@ -349,7 +349,7 @@ class DevConfig:
 
       ## Cisco
       removed_vids = [vid for vid in range(1,4095) if vid not in vids]
-      removed_vids_packed = [removed_vids[i:i+10] for i in range(0, len(removed_vids), 10)]
+      removed_vids_packed = [removed_vids[i:i+20] for i in range(0, len(removed_vids), 20)]
 
       interfaces[ifname] = {
         "physical":     not (is_mgmt_port or is_lag_port),
