@@ -25,7 +25,7 @@
 - name: Update interface configurations (Edge)
   ios_config:
     src: interface_edge.cfg.j2
-    save_when: changed
+    save_when: modified
   vars:
     ansible_command_timeout: 60
   when: "'EDGE-SW' in group_names"
