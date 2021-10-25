@@ -29,6 +29,9 @@ interface {{ interface }}
  switchport trunk allowed vlan remove {{ removed_vids | join(',') }}
 {% endfor %}
  switchport trunk allowed vlan add {{ prop.vids | join(',') }}
+{% else %}
+ no switchport
+ switchport
 {% endif %}
 {% if prop.native_vid %}
  switchport trunk allowed vlan remove {{ prop.native_vid }}
