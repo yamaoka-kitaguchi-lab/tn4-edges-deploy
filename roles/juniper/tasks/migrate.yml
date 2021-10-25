@@ -17,8 +17,6 @@
 - name: Enable NETCONF
   connection: network_cli
   junos_netconf:
-  vars:
-    ansible_command_timeout: 60
 
 - name: Create pre-snapshots
   connection: netconf
@@ -51,8 +49,6 @@
     src_format: set
     comment: Action performed by ansible
     update: merge
-  vars:
-    ansible_command_timeout: 60
   when: "'EDGE-SW' in group_names"
 
 - name: Update interface configurations (Core)
@@ -62,8 +58,6 @@
     src_format: set
     comment: Action performed by ansible
     update: merge
-  vars:
-    ansible_command_timeout: 60
   when: "'CORE-SW' in group_names"
 
 - name: Create post-snapshots

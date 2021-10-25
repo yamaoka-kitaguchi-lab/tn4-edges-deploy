@@ -26,8 +26,6 @@
   ios_config:
     src: interface_edge.cfg.j2
     save_when: modified
-  vars:
-    ansible_command_timeout: 60
   when: "'EDGE-SW' in group_names"
   diff: no
   no_log: yes
