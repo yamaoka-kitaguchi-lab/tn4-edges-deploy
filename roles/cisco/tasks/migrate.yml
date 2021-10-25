@@ -29,6 +29,7 @@
   vars:
     ansible_command_timeout: 60
   when: "'EDGE-SW' in group_names"
+  diff: no
 
 - name: Create post-snapshots
   ios_config:
