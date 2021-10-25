@@ -14,6 +14,8 @@ interface {{ interface }}
 {% endif %}
 {% if prop.description %}
  description {{ prop.description }}
+{% else %}
+ no description
 {% endif %}
 {% if prop.trunk_all %}
  switchport mode trunk
