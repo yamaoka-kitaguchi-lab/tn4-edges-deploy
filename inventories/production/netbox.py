@@ -368,7 +368,7 @@ class DevConfig:
     return interfaces
 
 
-  ## ToDo: refactoring dirty logic
+  ## ToDo: need refactoring
   def __get_core_mclag_interfaces(self, hostname):
     if self.__all_core_mclag_interfaces is not None:
       try:
@@ -377,7 +377,12 @@ class DevConfig:
         return {}
     self.__all_core_mclag_interfaces = {}
 
-    has_tag = lambda p, tag: tag in p["tags"]
+    def has_tag(prop, *tags):
+      for tag in tags:
+        if tag in prop["tags"]:
+          return True
+      return False
+
     is_core = lambda d: d["device_role"]["slug"] == DevConfig.DEV_ROLE_CORE
     core_hostnames = [d["name"] for d in self.all_devices if is_core(d)]
     migrate_keys = ["enabled", "mode", "tagged_vlans", "untagged_vlan"]
@@ -404,12 +409,16 @@ class DevConfig:
           continue
 
         try:
-          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE) or has_tag(prop, DevConfig.TAG_MCLAG_MASTER):
+          master_prop = None
+          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE, DevConfig.TAG_MCLAG_MASTER):
             master_prop = masters[ifname]
-          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_OOKAYAMA) or has_tag(prop, DevConfig.TAG_MCLAG_MASTER_OOKAYAMA):
+          elif has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_OOKAYAMA, DevConfig.TAG_MCLAG_MASTER_OOKAYAMA):
             master_prop = masters_o[ifname]
-          if has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_SUZUKAKE) or has_tag(prop, DevConfig.TAG_MCLAG_MASTER_SUZUKAKE):
+          elif has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_SUZUKAKE, DevConfig.TAG_MCLAG_MASTER_SUZUKAKE):
             master_prop = masters_s[ifname]
+          else:
+            print(hostname, ifname, prop)
+            continue
         except KeyError:
           continue
 
@@ -519,3 +528,7 @@ def dynamic_inventory():
 if __name__ == "__main__":
   inventory = dynamic_inventory()
   print(json.dumps(inventory))
+
+  ## for deadman
+  #for hostname, props in inventory["_meta"]["hostvars"].items():
+  #  print(hostname, props["ansible_host"])
