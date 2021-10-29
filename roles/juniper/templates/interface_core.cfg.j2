@@ -16,7 +16,7 @@ set interfaces {{ interface }} description "{{ prop.description }}"
 {% else %}
 delete interfaces {{ interface }} description
 {% endif %}
-{% if prop.vlan_mode %}
+{% if prop.vlan_mode and prop.vids %}
 delete interfaces {{ interface }} unit 0 family ethernet-switching
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.vlan_mode }}
 {% if prop.trunk_all %}
@@ -29,5 +29,7 @@ set interfaces {{ interface }} unit 0 family ethernet-switching vlan members {{ 
 {% if prop.native_vid %}
 set interfaces {{ interface }} native-vlan-id {{ prop.native_vid }}
 {% endif %}
+{% else %}
+delete interfaces {{ interface }} unit 0 family ethernet-switching
 {% endif %}
 {% endfor %}
