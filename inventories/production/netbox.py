@@ -471,17 +471,22 @@ class DevConfig:
     return interfaces
 
 
-  ## CAUTION:
+  ## CAUTION: hardcoded hostnames
   def get_device_vlans(self, hostname):
-    uniq_vlans = []
     vlans = self.get_vlans(hostname)
-    if hostname == "core-gsic":
+    uniq_vlans = []
+    if hostname in ["core-gsic", "core-honkan", "core-si", "core-s7"]:
       vlans.extend(self.get_vlans("core-honkan"))
-    if hostname == "core-s7":
-      vlans.extend(self.get_vlans("core-honkan"))
-    if hostname == "core-si":
-      vlans.extend(self.get_vlans("core-honkan"))
+      vlans.extend(self.get_vlans("core-gsic"))
       vlans.extend(self.get_vlans("core-si"))
+      vlans.extend(self.get_vlans("core-s7"))
+    #if hostname == "core-gsic":
+    #  vlans.extend(self.get_vlans("core-honkan"))
+    #if hostname == "core-s7":
+    #  vlans.extend(self.get_vlans("core-honkan"))
+    #if hostname == "core-si":
+    #  vlans.extend(self.get_vlans("core-honkan"))
+    #  vlans.extend(self.get_vlans("core-si"))
     for vlan in vlans:
       if vlan not in uniq_vlans:
         uniq_vlans.append(vlan)
