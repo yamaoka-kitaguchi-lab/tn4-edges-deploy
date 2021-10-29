@@ -71,7 +71,7 @@ def main():
   tpl_path = args.PATH.strip("/")
   device_role = args.ROLE.upper()
   manufacturer = args.VENDOR
-  output_dir = args.DIR_PATH.strip("/")
+  output_dir = args.DIR_PATH.rstrip("/")
   inventories = load_inventories()
 
   results = render_templates(tpl_path, device_role, inventories, manufacturer=manufacturer)
