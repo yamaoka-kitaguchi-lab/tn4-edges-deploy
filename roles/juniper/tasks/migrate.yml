@@ -48,6 +48,7 @@
     src: interface_edge.cfg.j2
     src_format: set
     comment: Action performed by ansible
+    confirm: 0
     update: merge
   when: "'EDGE-SW' in group_names"
 
@@ -57,6 +58,7 @@
     src: interface_core.cfg.j2
     src_format: set
     comment: Action performed by ansible
+    confirm: 0
     update: merge
   when: "'CORE-SW' in group_names"
 
