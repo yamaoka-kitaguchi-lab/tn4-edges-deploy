@@ -68,7 +68,7 @@ def main():
   parser.add_argument("-o", "--output", required=False, dest="DIR_PATH", help="save rendered config if specified")
   args = parser.parse_args()
 
-  tpl_path = args.PATH.strip("/")
+  tpl_path = args.PATH
   device_role = args.ROLE.upper()
   manufacturer = args.VENDOR
   output_dir = args.DIR_PATH.rstrip("/")
