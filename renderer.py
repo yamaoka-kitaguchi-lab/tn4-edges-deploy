@@ -71,13 +71,14 @@ def main():
   tpl_path = args.PATH
   device_role = args.ROLE.upper()
   manufacturer = args.VENDOR
-  output_dir = args.DIR_PATH.rstrip("/")
+  output_dir = args.DIR_PATH
   inventories = load_inventories()
 
   results = render_templates(tpl_path, device_role, inventories, manufacturer=manufacturer)
   for host, result in results.items():
     print("\n".join([":"*25, host, ":"*25, result]), end="\n"*2)
     if output_dir is not None:
+      output_dir = output_dir.rstrip("/")
       hostname = host.split()[0]
       with open(f"{output_dir}/{hostname}.cfg", "w") as fd:
         fd.write(result)
