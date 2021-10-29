@@ -65,16 +65,22 @@ def main():
   parser.add_argument("-t", "--template", required=True, dest="PATH", help="path of the template from (e.g., ./roles/juniper/templates/overwrite.cfg.j2)")
   parser.add_argument("-d", "--device-role", required=True, dest="ROLE", help="device role (e.g., edge-sw)")
   parser.add_argument("-m", "--manufacturer", required=False, dest="VENDOR", help="manufacturer (e.g., juniper)")
+  parser.add_argument("-o", "--output", required=False, dest="DIR_PATH", help="save rendered config if specified")
   args = parser.parse_args()
 
   tpl_path = args.PATH.strip("/")
   device_role = args.ROLE.upper()
   manufacturer = args.VENDOR
+  output_dir = args.DIR_PATH.strip("/")
   inventories = load_inventories()
 
   results = render_templates(tpl_path, device_role, inventories, manufacturer=manufacturer)
   for host, result in results.items():
     print("\n".join([":"*25, host, ":"*25, result]), end="\n"*2)
+    if output_dir is not None:
+      hostname = host.split()[0]
+      with open(f"{output_dir}/{hostname}.cfg") as fd:
+        fd.write(result)
 
 
 if __name__ == "__main__":
