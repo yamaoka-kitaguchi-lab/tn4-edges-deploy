@@ -471,6 +471,23 @@ class DevConfig:
     return interfaces
 
 
+  ## CAUTION:
+  def get_device_vlans(self, hostname):
+    uniq_vlans = []
+    vlans = self.get_vlans(hostname)
+    if hostname == "core-gsic":
+      vlans.extend(self.get_vlans("core-honkan"))
+    if hostname == "core-s7":
+      vlans.extend(self.get_vlans("core-honkan"))
+    if hostname == "core-si":
+      vlans.extend(self.get_vlans("core-honkan"))
+      vlans.extend(self.get_vlans("core-si"))
+    for vlan in vlans:
+      if vlan not in uniq_vlans:
+        uniq_vlans.append(vlan)
+    return uniq_vlans
+
+
 def __load_encrypted_secrets():
   with open(VAULT_FILE) as v, open(VAULT_PASSWORD_FILE, "r") as p:
     key = str.encode(p.read().rstrip())
@@ -514,7 +531,7 @@ def dynamic_inventory():
       "hostname":     hostname,
       "region":       device["region"],
       "manufacturer": cf.get_manufacturer(hostname),
-      "vlans":        cf.get_vlans(hostname),
+      "vlans":        cf.get_device_vlans(hostname),
       "mgmt_vlan":    cf.get_mgmt_vlan(role, device["region"]),
       "interfaces":   cf.get_device_interfaces(role, hostname),
       "lag_members":  cf.get_lag_members(hostname),
