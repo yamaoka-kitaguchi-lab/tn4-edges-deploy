@@ -368,7 +368,7 @@ class DevConfig:
     return interfaces
 
 
-  ## ToDo: need refactoring
+  ## ToDo: need refactoring (soon-to-be obsoleted)
   def __get_core_mclag_interfaces(self, hostname):
     if self.__all_core_mclag_interfaces is not None:
       try:
