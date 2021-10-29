@@ -12,6 +12,9 @@ set vlans "{{ vlan.name }}" l3-interface irb.{{ vlan.vid }}
 
 {% for interface, prop in interfaces.items() %}
 set interfaces {{ interface }} {{ "enable" if prop.enabled else "disable" }}
+{% if prop.description %}
+set interfaces {{ interface }} description "{{ prop.description }}"
+{% endif %}
 {% if prop.vlan_mode %}
 delete interfaces {{ interface }} unit 0 family ethernet-switching
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.vlan_mode }}
