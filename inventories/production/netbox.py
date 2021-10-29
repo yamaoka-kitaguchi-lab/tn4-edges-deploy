@@ -78,8 +78,6 @@ class NetBoxClient:
 
 class DevConfig:
   VLAN_GROUP                = "titanet"
-  IF_MGMT_JUNIPER           = "irb"
-  IF_MGMT_CISCO             = "MGMT"
   DEV_ROLE_EDGE             = "edge-sw"
   DEV_ROLE_CORE             = "core-sw"
   REGION_OOKAYAMA           = "ookayama"
@@ -206,20 +204,25 @@ class DevConfig:
 
 
   def get_vlans(self, hostname):
-    vlans, vids = [], set()
-    for prop in self.all_interfaces[hostname].values():
+    vlans, vids, irb_vids = [], set(), set()
+    for ifname, prop in self.all_interfaces[hostname].items():
+      is_irb_port = ifname[:4] == "irb."
       for vlan in [prop["untagged_vlan"], *prop["tagged_vlans"]]:
         if vlan is not None:
           vids.add(vlan["vid"])
+        if is_irb_port:
+          irb_vids.add(vlan["vid"])
 
     for vid in vids:
       for vlan in self.all_vlans:
         is_in_use_vlan = vlan["vid"] == vid
         is_protected_vlan = "protect" in vlan["tags"]
+        is_irb_vlan = vlan["vid"] in irb_vids
         if is_in_use_vlan or is_protected_vlan:
           vlans.append({
             "name":        vlan["name"],
             "vid":         vlan["vid"],
+            "irb":         is_irb_vlan,
             "used":        is_in_use_vlan,
             "protected":   is_protected_vlan,
             "description": vlan["description"],
@@ -460,7 +463,7 @@ class DevConfig:
     return self.__all_core_mclag_interfaces[hostname]
 
 
-  def get_interfaces(self, role, hostname):
+  def get_device_interfaces(self, role, hostname):
     interfaces = self.get_interfaces(hostname)
     if role == DevConfig.DEV_ROLE_CORE:
       mlag = self.get_core_mclag_interfaces(hostname)
@@ -513,7 +516,7 @@ def dynamic_inventory():
       "manufacturer": cf.get_manufacturer(hostname),
       "vlans":        cf.get_vlans(hostname),
       "mgmt_vlan":    cf.get_mgmt_vlan(role, device["region"]),
-      "interfaces":   cf.get_interfaces(role, hostname),
+      "interfaces":   cf.get_device_interfaces(role, hostname),
       "lag_members":  cf.get_lag_members(hostname),
       "ansible_host": cf.get_ip_address(hostname),
       "datetime":     ts,

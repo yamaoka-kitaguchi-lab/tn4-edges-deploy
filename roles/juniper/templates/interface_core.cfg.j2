@@ -1,8 +1,12 @@
 delete vlans
 delete interfaces
+
 {% for vlan in vlans %}
 {% if vlan.used %}
 set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }}
+{% if vlan.irb %}
+set vlans "{{ vlan.name }}" l3-interface irb.{{ vlan.vid }}
+{% endif %}
 {% endif %}
 {% endfor %}
 
