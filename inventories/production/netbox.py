@@ -368,7 +368,7 @@ class DevConfig:
     return interfaces
 
 
-  ## ToDo: need refactoring (soon-to-be obsoleted)
+  ## ToDo: need refactoring but soon to be obsoleted
   def __get_core_mclag_interfaces(self, hostname):
     if self.__all_core_mclag_interfaces is not None:
       try:
@@ -388,8 +388,8 @@ class DevConfig:
     migrate_keys = ["enabled", "mode", "tagged_vlans", "untagged_vlan"]
     masters, masters_o, masters_s = {}, {}, {}
 
-    for hostname in core_hostnames:
-      for ifname, prop in self.all_interfaces[hostname].items():
+    for hname in core_hostnames:
+      for ifname, prop in self.all_interfaces[hname].items():
         is_lag_parent = prop["type"]["value"] == "lag"
         if not is_lag_parent:
           continue
@@ -402,8 +402,8 @@ class DevConfig:
         elif has_tag(prop, DevConfig.TAG_MCLAG_MASTER_SUZUKAKE):
           masters_s[ifname] = master_prop
 
-    for hostname in core_hostnames:
-      for ifname, prop in self.all_interfaces[hostname].items():
+    for hname in core_hostnames:
+      for ifname, prop in self.all_interfaces[hname].items():
         is_lag_parent = prop["type"]["value"] == "lag"
         if not is_lag_parent:
           continue
@@ -417,7 +417,6 @@ class DevConfig:
           elif has_tag(prop, DevConfig.TAG_MCLAG_SLAVE_SUZUKAKE, DevConfig.TAG_MCLAG_MASTER_SUZUKAKE):
             master_prop = masters_s[ifname]
           else:
-            print(hostname, ifname, prop)
             continue
         except KeyError:
           continue
@@ -455,9 +454,9 @@ class DevConfig:
         }
 
         try:
-          self.__all_core_mclag_interfaces[hostname][ifname] = prop
+          self.__all_core_mclag_interfaces[hname][ifname] = prop
         except KeyError:
-          self.__all_core_mclag_interfaces[hostname] = {ifname: prop}
+          self.__all_core_mclag_interfaces[hname] = {ifname: prop}
 
     return self.__all_core_mclag_interfaces[hostname]
 
