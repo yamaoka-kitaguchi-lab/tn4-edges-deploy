@@ -387,7 +387,7 @@ class DevConfig:
 
     is_core = lambda d: d["device_role"]["slug"] == DevConfig.DEV_ROLE_CORE
     core_hostnames = [d["name"] for d in self.all_devices if is_core(d)]
-    migrate_keys = ["enabled", "mode", "tagged_vlans", "untagged_vlan"]
+    migrate_keys = ["enabled", "mode", "tagged_vlans", "untagged_vlan", "description"]
     masters, masters_o, masters_s = {}, {}, {}
 
     for hname in core_hostnames:
@@ -448,11 +448,12 @@ class DevConfig:
             is_trunk_all = True
 
         prop = {
-          "enabled":    master_prop["enabled"],
-          "vlan_mode":  vlan_mode,
-          "vids":       vids,
-          "native_vid": native_vid,
-          "trunk_all":  is_trunk_all,
+          "enabled":     master_prop["enabled"],
+          "description": master_prop["description"],
+          "vlan_mode":   vlan_mode,
+          "vids":        vids,
+          "native_vid":  native_vid,
+          "trunk_all":   is_trunk_all,
         }
 
         try:
@@ -480,13 +481,6 @@ class DevConfig:
       vlans.extend(self.get_vlans("core-gsic"))
       vlans.extend(self.get_vlans("core-si"))
       vlans.extend(self.get_vlans("core-s7"))
-    #if hostname == "core-gsic":
-    #  vlans.extend(self.get_vlans("core-honkan"))
-    #if hostname == "core-s7":
-    #  vlans.extend(self.get_vlans("core-honkan"))
-    #if hostname == "core-si":
-    #  vlans.extend(self.get_vlans("core-honkan"))
-    #  vlans.extend(self.get_vlans("core-si"))
     for vlan in vlans:
       if vlan not in uniq_vlans:
         uniq_vlans.append(vlan)
