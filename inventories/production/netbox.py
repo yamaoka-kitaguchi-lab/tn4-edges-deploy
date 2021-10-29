@@ -119,11 +119,10 @@ class DevConfig:
 
 
   def __regex_interface_name(self, interface_name):
-    is_mgmt_port = interface_name in [DevConfig.IF_MGMT_JUNIPER, DevConfig.IF_MGMT_CISCO]
     is_upstream_port = interface_name == "ae0"
     is_qsfp_port = interface_name[:3] == "et-"
     is_lag_port = interface_name[:2] == "ae" or interface_name[:12] == "Port-channel"
-    return is_mgmt_port, is_upstream_port, is_qsfp_port, is_lag_port
+    return is_upstream_port, is_qsfp_port, is_lag_port
 
 
   def __filter_vlan_group(self, vlans):
@@ -279,10 +278,10 @@ class DevConfig:
   def get_lag_members(self, hostname):
     lag_members = {}
     for ifname, prop in self.all_interfaces[hostname].items():
-      is_mgmt_port, is_upstream_port, _, is_lag_port = self.__regex_interface_name(ifname)
+      is_upstream_port, _, is_lag_port = self.__regex_interface_name(ifname)
       is_lag_member_port = prop["lag"] is not None
 
-      if is_mgmt_port or is_upstream_port:
+      if is_upstream_port:
         continue
 
       if is_lag_port:
@@ -297,7 +296,7 @@ class DevConfig:
     return lag_members
 
 
-  def __get_edge_interfaces(self, hostname):
+  def get_interfaces(self, hostname):
     interfaces = {}
 
     ## See: https://github.com/netbox-community/netbox/blob/develop/netbox/dcim/choices.py#L688-L923
@@ -311,11 +310,11 @@ class DevConfig:
 
     for ifname, prop in self.all_interfaces[hostname].items():
       is_deploy_port = prop["type"]["value"] in [*iftypes_virtual, *iftypes_ethernet]
-      is_mgmt_port, is_upstream_port, _, is_lag_port = self.__regex_interface_name(ifname)
+      is_upstream_port, _, is_lag_port = self.__regex_interface_name(ifname)
       is_lag_member_port = prop["lag"] is not None
       is_poe_port = DevConfig.TAG_POE in prop["tags"]
 
-      if not is_deploy_port or is_mgmt_port or is_upstream_port:
+      if not is_deploy_port or is_upstream_port:
         continue
 
       description = prop["description"]
@@ -352,7 +351,7 @@ class DevConfig:
       removed_vids_packed = [removed_vids[i:i+20] for i in range(0, len(removed_vids), 20)]
 
       interfaces[ifname] = {
-        "physical":     not (is_mgmt_port or is_lag_port),
+        "physical":     not is_lag_port,
         "enabled":      prop["enabled"],
         "description":  description,
         "lag_member":   is_lag_member_port,
@@ -369,7 +368,7 @@ class DevConfig:
 
 
   ## ToDo: need refactoring but soon to be obsoleted
-  def __get_core_mclag_interfaces(self, hostname):
+  def get_core_mclag_interfaces(self, hostname):
     if self.__all_core_mclag_interfaces is not None:
       try:
         return self.__all_core_mclag_interfaces[hostname]
@@ -462,11 +461,10 @@ class DevConfig:
 
 
   def get_interfaces(self, role, hostname):
-    interfaces = {}
-    if role == DevConfig.DEV_ROLE_EDGE:
-      interfaces = self.__get_edge_interfaces(hostname)
-    elif role == DevConfig.DEV_ROLE_CORE:
-      interfaces = self.__get_core_mclag_interfaces(hostname)
+    interfaces = self.get_interfaces(hostname)
+    if role == DevConfig.DEV_ROLE_CORE:
+      mlag = self.get_core_mclag_interfaces(hostname)
+      interfaces.update(mlag)
     return interfaces
 
 

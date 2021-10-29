@@ -1,3 +1,11 @@
+delete vlans
+delete interfaces
+{% for vlan in vlans %}
+{% if vlan.used %}
+set vlans "{{ vlan.name }}" vlan-id {{ vlan.vid }}
+{% endif %}
+{% endfor %}
+
 {% for interface, prop in interfaces.items() %}
 set interfaces {{ interface }} {{ "enable" if prop.enabled else "disable" }}
 {% if prop.vlan_mode %}
