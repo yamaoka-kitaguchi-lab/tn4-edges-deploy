@@ -79,7 +79,7 @@ def main():
     print("\n".join([":"*25, host, ":"*25, result]), end="\n"*2)
     if output_dir is not None:
       hostname = host.split()[0]
-      with open(f"{output_dir}/{hostname}.cfg") as fd:
+      with open(f"{output_dir}/{hostname}.cfg", "w") as fd:
         fd.write(result)
 
 
