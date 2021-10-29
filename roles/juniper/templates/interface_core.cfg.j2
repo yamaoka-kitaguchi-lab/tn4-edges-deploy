@@ -1,5 +1,4 @@
 delete vlans
-delete interfaces
 
 {% for vlan in vlans %}
 {% if vlan.used %}
@@ -14,6 +13,8 @@ set vlans "{{ vlan.name }}" l3-interface irb.{{ vlan.vid }}
 set interfaces {{ interface }} {{ "enable" if prop.enabled else "disable" }}
 {% if prop.description %}
 set interfaces {{ interface }} description "{{ prop.description }}"
+{% else %}
+delete interfaces {{ interface }} description
 {% endif %}
 {% if prop.vlan_mode %}
 delete interfaces {{ interface }} unit 0 family ethernet-switching
