@@ -16,7 +16,7 @@ set interfaces {{ interface }} description "{{ prop.description }}"
 {% else %}
 delete interfaces {{ interface }} description
 {% endif %}
-{% if prop.vlan_mode and prop.vids %}
+{% if prop.vlan_mode and prop.vids or prop.trunk_all %}
 delete interfaces {{ interface }} unit 0
 set interfaces {{ interface }} unit 0 family ethernet-switching interface-mode {{ prop.vlan_mode }}
 {% if prop.trunk_all %}
