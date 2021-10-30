@@ -12,6 +12,8 @@
     state: directory
   register: local_dir
   delegate_to: localhost
+  tags:
+    - nondry
 
 - name: Create pre-snapshots
   ios_config:
