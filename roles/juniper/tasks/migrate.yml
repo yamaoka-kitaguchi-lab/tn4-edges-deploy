@@ -24,6 +24,8 @@
     state: directory
   register: local_dir
   delegate_to: localhost
+  vars:
+    display_ok_hosts: no
   tags:
     - nondry
 
