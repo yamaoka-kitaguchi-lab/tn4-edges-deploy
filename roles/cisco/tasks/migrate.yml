@@ -6,6 +6,13 @@
     - develop
     - verbose
 
+- name: Create backup directory
+  ansible.builtin.file:
+    path: "backup/cisco_config.{{ datetime }}"
+    state: directory
+  register: local_dir
+  delegate_to: localhost
+
 - name: Create pre-snapshots
   ios_config:
     backup: yes

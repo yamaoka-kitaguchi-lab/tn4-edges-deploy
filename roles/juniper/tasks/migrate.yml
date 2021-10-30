@@ -18,6 +18,13 @@
   connection: network_cli
   junos_netconf:
 
+- name: Create backup directory
+  ansible.builtin.file:
+    path: "backup/juniper_config.{{ datetime }}"
+    state: directory
+  register: local_dir
+  delegate_to: localhost
+
 - name: Create pre-snapshots
   connection: netconf
   junos_config:
