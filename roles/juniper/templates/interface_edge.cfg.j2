@@ -1,7 +1,9 @@
 delete vlans
-{% for interface, _ in interfaces.items() %}
+{% for interface, prop in interfaces.items() %}
+{% if not prop.skip_delete %}
 delete interfaces {{ interface }}
 delete poe interface {{ interface }}
+{% endif %}
 {% endfor %}
 
 set vlans default vlan-id 1

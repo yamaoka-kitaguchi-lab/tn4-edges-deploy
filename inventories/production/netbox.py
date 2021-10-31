@@ -333,7 +333,7 @@ class DevConfig:
         vlan_mode = "trunk"
         is_trunk_all = True
 
-      elif is_vlan_port:
+      if not is_upstream_port and is_vlan_port:
         vlan_mode = prop["mode"]["value"].lower()
         has_untagged_vid = prop["untagged_vlan"] is not None
         has_tagged_vid = prop["tagged_vlans"] is not None
@@ -374,6 +374,7 @@ class DevConfig:
         "removed_vids": removed_vids_packed,
         "native_vid":   native_vid,
         "trunk_all":    is_trunk_all,
+        "skip_delete":  is_upstream_port,
       }
 
     return interfaces
