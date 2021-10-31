@@ -118,10 +118,9 @@ class DevConfig:
 
 
   def __regex_interface_name(self, interface_name):
-    is_upstream_port = interface_name == "ae0"
     is_qsfp_port = interface_name[:3] == "et-"
     is_lag_port = interface_name[:2] == "ae" or interface_name[:12] == "Port-channel"
-    return is_upstream_port, is_qsfp_port, is_lag_port
+    return is_qsfp_port, is_lag_port
 
 
   def __filter_vlan_group(self, vlans):
@@ -284,8 +283,9 @@ class DevConfig:
   def get_lag_members(self, hostname):
     lag_members = {}
     for ifname, prop in self.all_interfaces[hostname].items():
-      is_upstream_port, _, is_lag_port = self.__regex_interface_name(ifname)
+      _, is_lag_port = self.__regex_interface_name(ifname)
       is_lag_member_port = prop["lag"] is not None
+      is_upstream_port = DevConfig.TAG_UPLINK in prop["tags"]
 
       if is_upstream_port:
         continue
@@ -316,18 +316,23 @@ class DevConfig:
 
     for ifname, prop in self.all_interfaces[hostname].items():
       is_deploy_port = prop["type"]["value"] in [*iftypes_virtual, *iftypes_ethernet]
-      is_upstream_port, _, is_lag_port = self.__regex_interface_name(ifname)
+      _, is_lag_port = self.__regex_interface_name(ifname)
       is_lag_member_port = prop["lag"] is not None
+      is_upstream_port = DevConfig.TAG_UPLINK in prop["tags"]
       is_poe_port = DevConfig.TAG_POE in prop["tags"]
 
-      if not is_deploy_port or is_upstream_port:
+      if not is_deploy_port:
         continue
 
       description = prop["description"]
       is_vlan_port = prop["mode"] is not None
       vlan_mode, native_vid, vids, is_trunk_all = None, None, [], False
 
-      if is_vlan_port:
+      if is_upstream_port:
+        vlan_mode = "trunk"
+        is_trunk_all = True
+
+      elif is_vlan_port:
         vlan_mode = prop["mode"]["value"].lower()
         has_untagged_vid = prop["untagged_vlan"] is not None
         has_tagged_vid = prop["tagged_vlans"] is not None
@@ -358,7 +363,7 @@ class DevConfig:
 
       interfaces[ifname] = {
         "physical":     not is_lag_port,
-        "enabled":      prop["enabled"],
+        "enabled":      prop["enabled"] or is_upstream_port,
         "description":  description,
         "lag_member":   is_lag_member_port,
         "poe":          is_poe_port,
