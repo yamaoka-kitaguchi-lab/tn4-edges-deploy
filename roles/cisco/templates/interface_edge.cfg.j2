@@ -19,7 +19,6 @@ interface {{ interface }}
 {% endif %}
 {% if prop.trunk_all %}
  switchport mode trunk
- switchport trunk alloewd vlan all
 {% elif prop.vlan_mode == "access" %}
  switchport mode access
  switchport access vlan {{ prop.vids[0] }}
