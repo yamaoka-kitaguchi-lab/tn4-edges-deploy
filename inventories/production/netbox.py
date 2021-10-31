@@ -93,6 +93,7 @@ class DevConfig:
   TAG_MCLAG_SLAVE           = "mclag-slave-core"
   TAG_MCLAG_SLAVE_OOKAYAMA  = "mclag-slave-co"
   TAG_MCLAG_SLAVE_SUZUKAKE  = "mclag-slave-cs"
+  TAG_ANSIBLE               = "ansible"
   TAG_PROTECT               = "protect"
   TAG_UPLINK                = "uplink"
   TAG_POE                   = "poe"
@@ -140,13 +141,14 @@ class DevConfig:
 
     for dev in devices:
       is_active = dev["status"]["value"] == "active"
+      has_ansible_tag = DevConfig.TAG_ANSIBLE in dev["tags"]
       is_stacked, is_vc_slave, basename = self.__regex_device_name(dev["name"])
 
       if is_stacked:
         try:
-          are_all_active[basename] &= is_active
+          are_all_active[basename] &= has_ansible_tag and is_active
         except KeyError:
-          are_all_active[basename] = is_active
+          are_all_active[basename] = has_ansible_tag and is_active
         if not is_vc_slave:
           vc_masters[basename] = dev
 
@@ -168,10 +170,11 @@ class DevConfig:
 
     for dev in [*stacked_devices, *unstacked_devices]:
       is_active = dev["status"]["value"] == "active"
+      has_ansible_tag = DevConfig.TAG_ANSIBLE in dev["tags"]
       has_ipaddr = dev["primary_ip"] is not None
       _, _, basename = self.__regex_device_name(dev["name"])
 
-      if is_active and has_ipaddr and not is_stacked:
+      if is_active and has_ansible_tag and has_ipaddr and not is_stacked:
         dev["name"] = basename
         filtered.append(dev)
 
