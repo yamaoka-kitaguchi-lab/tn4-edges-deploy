@@ -397,7 +397,7 @@ class DevConfig:
 
     is_core = lambda d: d["device_role"]["slug"] == DevConfig.DEV_ROLE_CORE
     core_hostnames = [d["name"] for d in self.all_devices if is_core(d)]
-    migrate_keys = ["enabled", "mode", "tagged_vlans", "untagged_vlan", "description"]
+    migrate_keys = ["enabled", "mode", "tagged_vlans", "untagged_vlan", "description", "tags"]
     masters, masters_o, masters_s = {}, {}, {}
 
     for hname in core_hostnames:
