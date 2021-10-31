@@ -315,13 +315,14 @@ class DevConfig:
     ]
 
     for ifname, prop in self.all_interfaces[hostname].items():
-      is_deploy_port = prop["type"]["value"] in [*iftypes_virtual, *iftypes_ethernet]
+      is_target_iftype = prop["type"]["value"] in [*iftypes_virtual, *iftypes_ethernet]
+      is_protected = DevConfig.TAG_PROTECT in prop["tags"]
       _, is_lag_port = self.__regex_interface_name(ifname)
       is_lag_member_port = prop["lag"] is not None
       is_upstream_port = DevConfig.TAG_UPLINK in prop["tags"]
       is_poe_port = DevConfig.TAG_POE in prop["tags"]
 
-      if not is_deploy_port:
+      if not is_target_iftype or is_protected:
         continue
 
       description = prop["description"]
