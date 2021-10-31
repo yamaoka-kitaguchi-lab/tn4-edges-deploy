@@ -433,6 +433,10 @@ class DevConfig:
         except KeyError:
           continue
 
+        is_protected = DevConfig.TAG_PROTECT in master_prop["tags"]
+        if is_protected:
+          continue
+
         is_vlan_port = master_prop["mode"] is not None
         vlan_mode, native_vid, vids, is_trunk_all = None, None, [], False
         if is_vlan_port:
