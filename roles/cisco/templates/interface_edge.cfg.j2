@@ -5,7 +5,7 @@ vlan {{ vlan.vid }}
 {% endif %}
 {% endfor %}
 {% for interface, prop in interfaces.items() %}
-{% if prop.physical and not prop.lag_member %}
+{% if not prop.lag_member %}
 interface {{ interface }}
 {% if prop.enabled %}
  no shutdown
@@ -39,7 +39,7 @@ interface {{ interface }}
 {% else %}
  no switchport trunk native vlan
 {% endif %}
-{% if prop.poe %}
+{% if prop.physical and prop.poe %}
  power inline auto
 {% endif %}
 {% endif %}
