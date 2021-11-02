@@ -3,13 +3,22 @@
   connection: network_cli
   junos_netconf:
 
+- name: Create backup directory
+  ansible.builtin.file:
+    path: "backup/juniper_config.{{ datetime }}"
+    state: directory
+  register: local_dir
+  delegate_to: localhost
+  tags:
+    - nondry
+
 - name: Create pre-snapshots
   connection: netconf
   junos_config:
     backup: yes
     backup_options:
       filename: "{{ hostname }}_before.cfg"
-      dir_path: "backup/junos_config.{{ datetime }}"
+      dir_path: "backup/juniper_config.{{ datetime }}"
   tags:
     - nondry
 
@@ -33,6 +42,6 @@
     backup: yes
     backup_options:
       filename: "{{ hostname }}_after.cfg"
-      dir_path: "backup/junos_config.{{ datetime }}"
+      dir_path: "backup/juniper_config.{{ datetime }}"
   tags:
     - nondry
